@@ -1,5 +1,5 @@
-# semanticlink-js-cache
-Client-side application cache for hypermedia clients
+# semanticlink network
+Semantic network is a set of query and synchronisation utilities based on link relations for having a client-side application cache when writing hypermedia clients
 
 The code currently lives in the sample tutorial code:
-https://github.com/semanticlink/todo-hypermedia/tree/master/client/src/lib/semantic-link-cache
+https://github.com/semanticlink/todo-hypermedia/tree/master/client/src/lib/semantic-network
