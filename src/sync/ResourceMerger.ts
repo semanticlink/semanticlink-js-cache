@@ -1,13 +1,14 @@
 import _ from 'underscore';
 import * as SparseResource from '../cache/sparseResource';
 import * as link from 'semantic-link';
-import {FieldType} from '../interfaces';
-import {log} from '..';
+import {CacheOptions, FieldType, FormRepresentation} from '../interfaces';
 import {defaultResolver} from './syncResolver';
 import {dashToCamel, filterCamelToDash, camelToDash} from '../utils/linkRel';
 import {compactObject} from '../utils/representation';
 import {mapWaitAll, sequentialWaitAll, mapAttributeWaitAll} from '../utils/asyncCollection';
-import {Link} from "semantic-link";
+import {Link, LinkedRepresentation} from "semantic-link";
+import {CreateMergeOptions, EditMergeOptions, MergeOptions} from "../cache/interfaces";
+import {log} from "semantic-link/lib/logger";
 
 /**
  * Processes difference sets (created, update, delete) for between two client-side collections {@Link CollectionRepresentation}
@@ -66,8 +67,7 @@ export default class ResourceMerger {
      * @return {Promise} containing the merged document
      * @private
      */
-    resolveFields(doc, form, options) {
-
+    resolveFields<T>(doc:T, form:FormRepresentation, options:CacheOptions) :Promise<T>{
         return mapAttributeWaitAll(
             doc,
             (textUriOrResource, field) => {
@@ -315,7 +315,7 @@ export default class ResourceMerger {
      * @return {Promise.<*>|Promise} containing the document updates to be merged
      * @private
      */
-    mergeLinksAndFields(document, formResource, options) {
+    mergeLinksAndFields<T>(document:T, formResource:FormRepresentation, options:MergeOptions):Promise<T> {
         options.resolver = options.resolver || defaultResolver;
         options.resourceResolver = options.resourceResolver || (() => () => Promise.resolve(undefined));
 
@@ -505,7 +505,7 @@ export default class ResourceMerger {
      * @param {CreateMergeOptions=} options
      * @return {Promise} containing the resource to be created as a resource
      */
-    createMerge(resource, formResource, options = {}) {
+    createMerge<T>(resource:T, formResource:FormRepresentation, options:CreateMergeOptions = {}):Promise<T> {
         return this.mergeLinksAndFields(resource, formResource, options);
     }
 
@@ -526,7 +526,11 @@ export default class ResourceMerger {
      * @param {EditMergeOptions=} options
      * @return {*|undefined}
      */
-    editMerge(resource, document, formResource, options = {}) {
+    editMerge<T extends LinkedRepresentation>(
+        resource:T,
+        document,
+        formResource:FormRepresentation,
+        options:EditMergeOptions = {}) {
 
         const isTracked = options.isTracked || (() => false);
 
@@ -540,7 +544,10 @@ export default class ResourceMerger {
                 if (options.undefinedWhenNoUpdateRequired) {
 
                     // now check if the two resources are actually different based on matching only fields that need to be returned
-                    const fieldsToUpdate = this.fieldsRequiringUpdate(resource, mergedDocument, this.fields(formResource, options.defaultFields));
+                    const fieldsToUpdate = this.fieldsRequiringUpdate(
+                        resource,
+                        mergedDocument,
+                        this.fields(formResource, options.defaultFields));
 
                     if (!_(fieldsToUpdate).isEmpty()) {
                         log.info(`Update required on '${mergedDocument.name || link.getUri(mergedDocument, /self/)}': different fields ${fieldsToUpdate.join(',')}`);

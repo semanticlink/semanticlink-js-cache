@@ -1,4 +1,5 @@
-import {normalise} from './collection';
+import {NormalisableType, normalise} from './collection';
+import {LinkedRepresentation} from "semantic-link";
 
 /**
  * Concurrent support for waiting for one or more promises. It is likely that you will inline using Promise.all.
@@ -59,7 +60,11 @@ export const waitAll = <T>(promises:Promise<T>[]|Promise<T>) :Promise<T[]> => Pr
  * @param {T|T[]|*} context?
  * @return {Promise<T[]>}
  */
-export const mapWaitAll = (collection, iterator, context = {}) => Promise.all(normalise(collection).map(iterator, context));
+export const mapWaitAll = <T extends LinkedRepresentation>(
+    collection: NormalisableType,
+    iterator: (item: T) => Promise<T>,
+    context = {}) => Promise
+    .all(normalise(collection).map(iterator, context));
 
 
 /**
@@ -126,7 +131,7 @@ export const mapAttributeWaitAll = (resource, callbackFunction, keyReplacer) => 
  * @param {T|*} context
  * @return {Promise<T|undefined|*>}
  */
-export const sequentialWaitAll = (collection, promise, context = {}) =>
+export const sequentialWaitAll = (collection:NormalisableType, promise, context = {}) =>
     normalise(collection)
         .reduce(
             (acc, item) => acc.then(result => promise(result, item)),

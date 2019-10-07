@@ -32,7 +32,7 @@ const defaultCreateFormStrategy = (resource, createForm, options) =>
  * @return {State}
  * @private
  */
-const getResourceState = (resource) => State.get(resource);
+const getResourceState = <T extends LinkedRepresentation>(resource:T) :State => State.get(resource);
 
 /*
 
@@ -80,17 +80,17 @@ export function getResource<T extends LinkedRepresentation>(resource: T, options
  * @return {Promise<LinkedRepresentation>}
  */
 export function tryGetResource<T extends LinkedRepresentation>(
-    resource: LinkedRepresentation,
-    defaultValue: LinkedRepresentation | undefined = undefined,
+    resource: T,
+    defaultValue: T | undefined = undefined,
     options: CacheOptions = {}): Promise<T | undefined> {
-    const tryResource = State.tryGet(resource, defaultValue);
+    const tryResource = State.tryGet<T>(resource, defaultValue);
 
     if (tryResource === defaultValue) {
         log.debug(`Using default value on ${link.getUri(resource, /self/)}`);
         return Promise.resolve(defaultValue);
     } else {
         return tryResource
-            .getResource(resource, options);
+            .getResource<T>(resource, options);
     }
 }
 

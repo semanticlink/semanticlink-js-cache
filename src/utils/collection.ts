@@ -3,13 +3,14 @@ import {CollectionRepresentation, LinkedRepresentation, RelationshipType, Uri} f
 import * as SparseResource from '../cache/sparseResource';
 import {log} from '..';
 
+export type NormalisableType = any | LinkedRepresentation[] | CollectionRepresentation | undefined;
 /**
  * Takes a resource and normalises it to a valid iterable. Particularly if you hand in a resource that isn't a
  * collection then it will return an empty iterable (array).
  * @param {*|LinkedRepresentation[]|CollectionRepresentation|undefined} itemsOrCollection takes a collection and returns the items if available
  * @return {LinkedRepresentation[]}
  */
-export const normalise = (itemsOrCollection?: any | LinkedRepresentation[] | CollectionRepresentation):
+export const normalise = (itemsOrCollection: NormalisableType):
     LinkedRepresentation[] => {
     if (!itemsOrCollection) {
         return [];
@@ -240,7 +241,7 @@ export const differenceCollection = (
  */
 export const spliceAll = <T>(array: T[], values?: T[]): T[] => {
     if (array) {
-        array.splice.apply(array, [0, array.length].concat(values));
+        array.splice(0, array.length, ...(values ? values : []));
     } else {
         log.error('Array cannot be undefined');
     }
@@ -271,12 +272,15 @@ export const pushAll = <T>(array: T[], values: any[]): T[] => {
  * @param resource
  * @param attributeNameOrLinkRelation
  */
-export const pushResource = <T>(array: T[], resource:T, attributeNameOrLinkRelation: string): T[] => {
+export const pushResource = <T extends LinkedRepresentation>(
+    array: T[],
+    resource:T,
+    attributeNameOrLinkRelation: string): T[] => {
 
     array = array || [];
 
     const uri = link.getUri(resource, /self|canonical/);
-    if (!findResourceInCollectionByUri(array, uri, attributeNameOrLinkRelation)) {
+    if (uri && !findResourceInCollectionByUri(array, uri, attributeNameOrLinkRelation)) {
         array.push(resource);
     } else {
         log.error('[Collection] Array cannot be undefined');

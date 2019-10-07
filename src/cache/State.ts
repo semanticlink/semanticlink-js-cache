@@ -95,7 +95,7 @@ export default class State {
      * @return {State}
      * @throws
      */
-    static get(resource: any): State {
+    static get<T extends LinkedRepresentation>(resource: T): State {
         if (!resource) {
             throw new Error('No resource to find state on');
         }
@@ -114,7 +114,7 @@ export default class State {
      * @param {*=undefined} defaultValue
      * @return {State|*|undefined}
      */
-    static tryGet(resource, defaultValue = undefined): State {
+    static tryGet<T extends LinkedRepresentation>(resource:T, defaultValue :T|undefined= undefined): State {
         if (!resource) {
             log.debug('[State] No resource using default');
             return defaultValue;

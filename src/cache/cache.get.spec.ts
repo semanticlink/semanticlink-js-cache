@@ -3,8 +3,8 @@ import * as cache from '.';
 import State from './State';
 import * as sinon from '@types/sinon';
 
-global.Element = () => {
-};
+// global.Element = () => {
+// };
 
 describe('Cache', () => {
 
@@ -20,7 +20,7 @@ describe('Cache', () => {
                     });
 
                 return cache.getResource({})
-                    .then(newResource => {
+                    .then((newResource) => {
                         expect(newResource.x).to.equal(4);
                         expect(newResource.links).to.not.be.null;
                         expect(stateFactory.called).to.be.true;
@@ -39,7 +39,7 @@ describe('Cache', () => {
                     });
 
                 return cache.tryGetResource({})
-                    .then(newResource => {
+                    .then((newResource) => {
                         expect(newResource.x).to.equal(4);
                         expect(newResource.links).to.not.be.null;
                         expect(stateFactory.called).to.be.true;
@@ -53,7 +53,7 @@ describe('Cache', () => {
                     .returns(undefined);
 
                 return cache.tryGetResource({}, undefined)
-                    .then(newResource => {
+                    .then((newResource) => {
                         expect(newResource).not.to.not.be.null;
                         expect(stateFactory.called).to.be.true;
                         stateFactory.restore();
