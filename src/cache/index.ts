@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { _ } from 'underscore';
 import * as SparseResource from './sparseResource';
 import {resourceMerger} from '../sync/ResourceMerger';
 import * as link from 'semantic-link';
@@ -8,7 +8,8 @@ import State from './State';
 import {filter} from 'semantic-link/lib/filter';
 import {mapWaitAll} from '../utils/asyncCollection';
 import {findResourceInCollection, findResourceInCollectionByRelOrAttribute} from '../utils/collection';
-import {CacheOptions, UriList} from "../interfaces";
+import {CacheOptions, FormRepresentation, UriList} from "../interfaces";
+import {CreateCollectionResourceItemOptions} from "./interfaces";
 
 /**
  *
@@ -23,7 +24,10 @@ import {CacheOptions, UriList} from "../interfaces";
  * @param {CreateCollectionResourceItemOptions} options
  * @type {CreateFormMergeStrategy}
  */
-const defaultCreateFormStrategy = (resource, createForm, options) =>
+const defaultCreateFormStrategy = <T>(
+    resource: T,
+    createForm: FormRepresentation,
+    options: CreateCollectionResourceItemOptions): Promise<T> =>
     resourceMerger.createMerge(resource, createForm, options);
 
 /**
@@ -32,7 +36,7 @@ const defaultCreateFormStrategy = (resource, createForm, options) =>
  * @return {State}
  * @private
  */
-const getResourceState = <T extends LinkedRepresentation>(resource:T) :State => State.get(resource);
+const getResourceState = <T extends LinkedRepresentation>(resource: T): State => State.get(resource);
 
 /*
 
@@ -118,7 +122,9 @@ export function tryGetResource<T extends LinkedRepresentation>(
  * populate the items as {@link LinkedRepr  esentation} to {@link StateEnum.locationOnly} in the current
  * set (but not refresh the item set itself)
  */
-export function getCollection<T extends CollectionRepresentation>(collection: T, options: CacheOptions): Promise<T> {
+export function getCollection<T extends CollectionRepresentation>(
+    collection: T,
+    options: CacheOptions): Promise<T> {
     return getResourceState(collection)
         .getCollectionResource(collection, options);
 }
@@ -150,7 +156,8 @@ export function getCollectionItem<T extends LinkedRepresentation>(
     collection: CollectionRepresentation,
     resource: T,
     options: CacheOptions): Promise<T> {
-    return getCollectionItemByUri(collection, link.getUri(resource, /canonical|self/), options);
+    let uri = link.getUri(resource, /canonical|self/);
+    return getCollectionItemByUri(collection, uri, options);
 }
 
 /**
@@ -996,7 +1003,7 @@ export function tryUpdateResource(resource, documentResource, options = {}) {
  * @param {CacheOptions} options
  * @returns {Promise<CollectionRepresentation | never>}
  */
-export const updateCollection = (collection:CollectionRepresentation, uriList:UriList, options:CacheOptions) => {
+export const updateCollection = (collection: CollectionRepresentation, uriList: UriList, options: CacheOptions) => {
 
     return getCollection(collection, options)
         .then((collection => link.patch(
@@ -1070,7 +1077,7 @@ export function createCollectionItem(collectionRepresentation, document, options
  * @param {CacheOptions} options
  * @return {Promise} contains the original resource {@link LinkedRepresentation}
  */
-export function deleteResource<T extends LinkedRepresentation>(resource:T, options:CacheOptions = {}) :Promise<T>{
+export function deleteResource<T extends LinkedRepresentation>(resource: T, options: CacheOptions = {}): Promise<T> {
     return getResourceState(resource)
         .deleteResource(resource, options)
         .then(() => resource);
@@ -1125,5 +1132,5 @@ export function deleteCollectionItem(collection, item, options = {}) {
  * @param {RelationshipType} rel
  * @return {LinkedRepresentation|CollectionRepresentation}
  */
-export const create = (links:LinkType, rel:RelationshipType) => SparseResource.makeSparseResourceFromUri(link.getUri(
+export const create = (links: LinkType, rel: RelationshipType) => SparseResource.makeSparseResourceFromUri(link.getUri(
     links, rel));

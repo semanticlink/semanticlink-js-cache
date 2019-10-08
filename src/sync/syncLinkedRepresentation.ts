@@ -6,6 +6,9 @@ import Differencer from './Differencer';
 import {defaultResolver} from './syncResolver';
 import {findResourceInCollection} from '../utils/collection';
 import {mapWaitAll, sequentialWaitAll} from '../utils/asyncCollection';
+import {CollectionRepresentation, LinkedRepresentation, RelationshipType} from "semantic-link";
+import {StrategyType, SyncInfo, SyncOptions} from "./interfaces";
+import {CacheOptions} from "../interfaces";
 
 /**
  * Default resource finder assumes that resources are in a collection via the 'items' attribute/array.
@@ -31,9 +34,8 @@ export const defaultFindResourceInCollectionStrategy = findResourceInCollection;
  * @return {Promise.<void>}
  * @private
  */
-function tailRecursionThroughStrategies(strategies, options, syncInfos) {
+function tailRecursionThroughStrategies(strategies:StrategyType[], options:SyncOptions, syncInfos:SyncInfo[]) :Promise<void>{
     return sequentialWaitAll(strategies, (unusedMemo, strategy) => {
-
         if (options.strategyBatchSize === 0 || _(options.strategyBatchSize).isUndefined()) {
             // invoke a parallel strategy when want to go for it
             return mapWaitAll(syncInfos, syncInfo => strategy({
@@ -49,9 +51,10 @@ function tailRecursionThroughStrategies(strategies, options, syncInfos) {
                 options
             }));
         }
-
     });
 }
+
+export type SyncInfoFn = (syncInfo:SyncInfo) => Promise<LinkedRepresentation>;
 
 /**
  * Recurse through all the strategies working through change sets.
@@ -60,8 +63,8 @@ function tailRecursionThroughStrategies(strategies, options, syncInfos) {
  * @return {function(syncInfo:SyncInfo):Promise.<LinkedRepresentation>} containing the representation (@link LinkedRepresentation}
  * @private
  */
-function syncInfos(strategies, options) {
-    return syncInfo =>
+function syncInfos(strategies:StrategyType[], options:SyncOptions) :SyncInfoFn {
+    return (syncInfo) =>
         tailRecursionThroughStrategies(strategies, options, [syncInfo])
             .then(() => syncInfo.resource);
 }
@@ -76,7 +79,10 @@ function syncInfos(strategies, options) {
  * @return {Promise.<SyncInfo>} contains a syncInfo
  * @private
  */
-function syncResourceInCollection(collectionResource, resourceDocument, options = {}) {
+function syncResourceInCollection(
+    collectionResource:CollectionRepresentation,
+    resourceDocument:any,
+    options:CacheOptions = {}) :Promise<SyncInfo>{
 
     const findResourceInCollectionStrategy = options.findResourceInCollectionStrategy || defaultFindResourceInCollectionStrategy;
 
@@ -156,7 +162,6 @@ function synchroniseCollection(collectionResource, collectionDocument, options =
                 );
                 return updateResource;
             });
-
     };
 
     /**
@@ -219,10 +224,9 @@ function synchroniseCollection(collectionResource, collectionDocument, options =
      * add the item to the collection
      */
     const addContributeOnlyResourceAndUpdateResolver = (createDataDocument) => {
-
         return cache
             .createCollectionItem(collectionResource, createDataDocument, options)
-            .then(result => {
+            .then((result) => {
                 resolver.add(
                     link.getUri(createDataDocument, /self|canonical/),
                     link.getUri(result, /self|canonical/));
@@ -323,7 +327,7 @@ function synchroniseCollection(collectionResource, collectionDocument, options =
  * @return {function(syncResult:SyncResult<Representation>):Promise.<void>} callback function to be attached onto a Promise.then
  * @private
  */
-function syncResources(resource, document, strategies = [], options = {}) {
+function syncResources(resource:LinkedRepresentation, document:any, strategies = [], options = {}) {
     return () => sequentialWaitAll(
         strategies,
         (memo, strategy) => {
@@ -360,7 +364,7 @@ function syncResources(resource, document, strategies = [], options = {}) {
  * @param {CacheOptions} options
  * @return {Promise} containing the resource {@link LinkedRepresentation}
  */
-export function getResource(resource, resourceDocument, strategies = [], options = {}) {
+export function getResource(resource:LinkedRepresentation, resourceDocument:any, strategies = [], options = {}) {
     log.debug(`[Sync] resource ${link.getUri(resource, /self/)}`);
 
     return cache.getResource(resource, options)
@@ -405,7 +409,13 @@ export function getResource(resource, resourceDocument, strategies = [], options
  * @param {CacheOptions} options
  * @return {Promise} containing the parent {@link LinkedRepresentation}
  */
-export function getSingleton(parentResource, singletonName, singletonRel, parentDocument, strategies = [], options = {}) {
+export function getSingleton(
+    parentResource:LinkedRepresentation,
+    singletonName:string,
+    singletonRel:RelationshipType,
+    parentDocument:any,
+    strategies :StrategyType[]= [],
+    options :CacheOptions= {}) {
 
     log.debug(`[Sync] singleton '${singletonName}' on ${link.getUri(parentResource, /self/)}`);
 
@@ -454,12 +464,15 @@ export function getSingleton(parentResource, singletonName, singletonRel, parent
  * @param {CacheOptions} options
  * @return {Promise} containing the resource {@link LinkedRepresentation}
  */
-export function getResourceInCollection(parentResource, resourceDocument, strategies = [], options = {}) {
-
+export function getResourceInCollection<T extends LinkedRepresentation>(
+    parentResource:CollectionRepresentation,
+    resourceDocument:any,
+    strategies :StrategyType[]= [],
+    options :CacheOptions= {}): Promise<T> {
     log.debug(`[Sync] collection ${link.getUri(parentResource, /self/)} with '${resourceDocument.name}'`);
 
     return cache
-        .getCollection(parentResource, options)
+        .getCollection<CollectionRepresentation>(parentResource, options)
         .then(collectionResource => syncResourceInCollection(collectionResource, resourceDocument, options))
         .then(syncInfos(strategies, options));
 }
@@ -493,7 +506,13 @@ export function getResourceInCollection(parentResource, resourceDocument, strate
  * @param {CacheOptions} options
  * @return {Promise} containing the resource {@link LinkedRepresentation}
  */
-export function getResourceInNamedCollection(parentResource, collectionName, collectionRel, resourceDocument, strategies = [], options = {}) {
+export function getResourceInNamedCollection(
+    parentResource:LinkedRepresentation,
+    collectionName:string,
+    collectionRel:RelationshipType,
+    resourceDocument:any,
+    strategies :StrategyType[]= [],
+    options:CacheOptions = {}) {
 
     log.debug(`[Sync] resource '${collectionName}' on ${link.getUri(parentResource, /self/)}`);
 
@@ -533,7 +552,13 @@ export function getResourceInNamedCollection(parentResource, collectionName, col
  * @param {CacheOptions} options
  * @return {Promise} containing the collection {@link CollectionRepresentation}
  */
-export function getCollectionInNamedCollection(parentResource, collectionName, collectionRel, collectionDocument, strategies = [], options = {}) {
+export function getCollectionInNamedCollection(
+    parentResource:LinkedRepresentation,
+    collectionName:string,
+    collectionRel:RelationshipType,
+    collectionDocument:any,
+    strategies :StrategyType[]= [],
+    options:CacheOptions = {}) {
 
     log.debug(`[Sync] collection '${collectionName}' on ${link.getUri(parentResource, /self/)}`);
 
@@ -593,6 +618,12 @@ export function getCollectionInNamedCollection(parentResource, collectionName, c
  * @param {CacheOptions} options
  * @return {Promise} containing the collection {@link CollectionRepresentation}
  */
-export function getNamedCollectionInNamedCollection(parentResource, collectionName, collectionRel, parentDocument, strategies = [], options) {
+export function getNamedCollectionInNamedCollection(
+    parentResource:LinkedRepresentation,
+    collectionName:string,
+    collectionRel:RelationshipType,
+    parentDocument:any,
+    strategies:StrategyType[] = [],
+    options:CacheOptions) {
     return getCollectionInNamedCollection(parentResource, collectionName, collectionRel, parentDocument[collectionName], strategies, options);
 }

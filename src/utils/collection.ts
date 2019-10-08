@@ -10,8 +10,7 @@ export type NormalisableType = any | LinkedRepresentation[] | CollectionRepresen
  * @param {*|LinkedRepresentation[]|CollectionRepresentation|undefined} itemsOrCollection takes a collection and returns the items if available
  * @return {LinkedRepresentation[]}
  */
-export const normalise = (itemsOrCollection: NormalisableType):
-    LinkedRepresentation[] => {
+export const normalise = (itemsOrCollection: NormalisableType): LinkedRepresentation[] => {
     if (!itemsOrCollection) {
         return [];
     } else if (Array.isArray(itemsOrCollection)) {
@@ -38,7 +37,7 @@ const isLinkedRepresentation = (resource: any) => {
 export const findResourceInCollectionByUri = (
     collection: CollectionRepresentation | LinkedRepresentation[],
     uri: Uri,
-    rel: RelationshipType): LinkedRepresentation | undefined=>
+    rel: RelationshipType): LinkedRepresentation | undefined =>
     normalise(collection).find(item => link.getUri(item, rel || /self|canonical/) === uri);
 
 
@@ -66,7 +65,7 @@ export const findResourceInCollection = (
         log.debug(`No match on collection ${link.getUri(collection, /self/)} no match against on rel '${attributeNameOrLinkRelation}'`);
     }
 
-    const name:string|undefined = representation[SparseResource.mappedTitle];
+    const name: string | undefined = representation[SparseResource.mappedTitle];
     if (name) {
         const itemByName = findResourceInCollectionByRelOrAttribute(collection, name, SparseResource.mappedTitle);
         if (itemByName) {
@@ -77,7 +76,6 @@ export const findResourceInCollection = (
     } else {
         log.debug(`No match on collection ${link.getUri(collection, /self/)} no attribute '${SparseResource.mappedTitle}'`);
     }
-
 };
 
 /**
@@ -90,9 +88,9 @@ export const findResourceInCollection = (
  * @return {LinkedRepresentation}
  */
 export const findResourceInCollectionByRel = (
-    collection:CollectionRepresentation|LinkedRepresentation[],
-    representation:LinkedRepresentation,
-    attributeNameOrLinkRelation:string):LinkedRepresentation|undefined => {
+    collection: CollectionRepresentation | LinkedRepresentation[],
+    representation: LinkedRepresentation,
+    attributeNameOrLinkRelation: string): LinkedRepresentation | undefined => {
     const uri = link.getUri(representation, /canonical|self/, undefined);
 
     if (uri) {
@@ -127,10 +125,10 @@ export const findResourceInCollectionByRel = (
  * @return {LinkedRepresentation|undefined}
  */
 export const findResourceInCollectionByRelAndAttribute = (
-    collection:CollectionRepresentation|LinkedRepresentation[],
-    resource:LinkedRepresentation,
+    collection: CollectionRepresentation | LinkedRepresentation[],
+    resource: LinkedRepresentation,
     rel: RelationshipType = /canonical|self/,
-    attributeName:string = 'name') :LinkedRepresentation | undefined=> {
+    attributeName: string = 'name'): LinkedRepresentation | undefined => {
 
     // if its not a resource return
     if (!isLinkedRepresentation(resource)) {
@@ -174,26 +172,29 @@ export const findResourceInCollectionByRelAndAttribute = (
  * @private
  */
 export const findResourceInCollectionByRelOrAttribute = (
-    collection:CollectionRepresentation|LinkedRepresentation[],
-    resourceIdentifier:LinkedRepresentation|string,
-    attributeNameOrLinkRelation:string|string[]):LinkedRepresentation | undefined => {
+    collection: CollectionRepresentation | LinkedRepresentation[],
+    resourceIdentifier: LinkedRepresentation | string,
+    attributeNameOrLinkRelation: RelationshipType): LinkedRepresentation | undefined => {
 
     // if a linked representation is handed in (instead of a string) find its self link
     if (isLinkedRepresentation(resourceIdentifier)) {
-        resourceIdentifier = link.getUri(
+        const resourceIdentifierUri = link.getUri(
             resourceIdentifier,
             attributeNameOrLinkRelation || /self|canonical/);
 
-        if (resourceIdentifier) {
+        if (resourceIdentifierUri) {
+            resourceIdentifier = resourceIdentifierUri;
             log.debug(`Using ${resourceIdentifier}`);
         }
     }
 
     // go through the collection and match the URI against either a link relation or attribute
-    const result = normalise(collection).find(item =>
-        link.getUri(item, attributeNameOrLinkRelation || /canonical|self/) === resourceIdentifier
-        || item[attributeNameOrLinkRelation || SparseResource.mappedTitle] === resourceIdentifier);
-
+    const result = normalise(collection)
+        .find(item => link.getUri(
+            item,
+            attributeNameOrLinkRelation ||
+            /canonical|self/) === resourceIdentifier ||
+            item[attributeNameOrLinkRelation || SparseResource.mappedTitle] === resourceIdentifier);
     if (!result) {
         log.debug(`No resource '${resourceIdentifier}' found in collection '${link.getUri(collection, /self/)}'`);
     }
@@ -212,9 +213,9 @@ export const findResourceInCollectionByRelOrAttribute = (
  * @return {LinkedRepresentation[]}
  */
 export const differenceCollection = (
-    leftCollection:CollectionRepresentation|LinkedRepresentation[],
-    rightCollection:CollectionRepresentation|LinkedRepresentation[],
-    attributeNameOrLinkRelation?:string) :LinkedRepresentation[]=> {
+    leftCollection: CollectionRepresentation | LinkedRepresentation[],
+    rightCollection: CollectionRepresentation | LinkedRepresentation[],
+    attributeNameOrLinkRelation?: string): LinkedRepresentation[] => {
 
     // guard for the reject
     leftCollection = leftCollection || [];
@@ -274,7 +275,7 @@ export const pushAll = <T>(array: T[], values: any[]): T[] => {
  */
 export const pushResource = <T extends LinkedRepresentation>(
     array: T[],
-    resource:T,
+    resource: T,
     attributeNameOrLinkRelation: string): T[] => {
 
     array = array || [];

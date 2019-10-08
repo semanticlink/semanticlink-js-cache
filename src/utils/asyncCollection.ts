@@ -42,7 +42,7 @@ import {LinkedRepresentation} from "semantic-link";
  * @param {Promise[]|Promise} [promises]
  * @return {Promise}
  */
-export const waitAll = <T>(promises:Promise<T>[]|Promise<T>) :Promise<T[]> => Promise.all<T>(normalise(promises));
+export const waitAll = <T>(promises: Promise<T>[] | Promise<T>): Promise<T[]> => Promise.all<T>(normalise(promises));
 
 
 /**
@@ -131,7 +131,7 @@ export const mapAttributeWaitAll = (resource, callbackFunction, keyReplacer) => 
  * @param {T|*} context
  * @return {Promise<T|undefined|*>}
  */
-export const sequentialWaitAll = (collection:NormalisableType, promise, context = {}) =>
+export const sequentialWaitAll = (collection: NormalisableType, promise, context = {}) =>
     normalise(collection)
         .reduce(
             (acc, item) => acc.then(result => promise(result, item)),

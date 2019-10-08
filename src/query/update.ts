@@ -22,7 +22,10 @@ export function update<T extends Representation>(resource: T[], predicate: (t: T
  * @param options query options to remove an item from a collection
  * @returns the resource that was logically deleted
  */
-export function update<T extends Representation | Representation[]>(resource: T | T[], document: (t: T) => T | T, options?: QueryOptions): Promise<T | T[] | never> {
+export function update<T extends Representation | Representation[]>(
+    resource: T | T[],
+    document: (t: T) => T | T,
+    options?: QueryOptions): Promise<T | T[] | never> {
 
     // PATCH
     if (instanceOfCollection(resource)) {

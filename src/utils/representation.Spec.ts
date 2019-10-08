@@ -1,11 +1,12 @@
 import {mergeByFields, compactObject, extendResource} from './representation';
 import {expect} from 'chai';
+import {LinkedRepresentation} from "semantic-link";
 
 describe('Representation mixins', () => {
 
     describe('extendResource()', () => {
 
-        const assertExtendResource = (resource, document) => {
+        const assertExtendResource = (resource:object, document:object) => {
             const result = extendResource({}, resource, document);
             expect(result).to.deep.equal(document);
         };
