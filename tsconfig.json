@@ -1,19 +1,32 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
-    "baseUrl": ".",
-    "target": "es5",
     "lib": [
-      "ES6",
-      "ES7",
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
+      "es6",
+      "es7",
+      "esnext",
+      "dom",
+      "dom.iterable"
     ],
-    "module": "es6",
-    "moduleResolution": "node",
     "declaration": true,
-    "outDir": "./lib",
-    "strict": true
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "checkJs": false,
+    "outDir": "lib",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "types": [
+      "jest"
+    ]
   },
   "include": [
     "src"
