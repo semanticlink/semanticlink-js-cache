@@ -9,17 +9,17 @@
       "dom.iterable"
     ],
     "declaration": true,
-    "target": "esnext",
+    "target": "es6",
     "module": "esnext",
     "strict": true,
-    "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false,
+    //    "pretty": true,
     "outDir": "lib",
-    "noEmit": true,
+    "noEmit": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
@@ -32,6 +32,8 @@
     "src"
   ],
   "exclude": [
+    "lib",
+    "docs",
     "node_modules",
     "**/__tests__/*"
   ]

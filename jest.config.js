@@ -57,9 +57,9 @@ module.exports = {
     // A set of global variables that need to be available in all test environments
     globals: {
         'ts-jest': {
-            'tsConfig': 'tsconfig.json',
-            'babelConfig': true,
-            'diagnostics': true,
+            tsconfig: 'tsconfig.json',
+            babelConfig: true,
+            diagnostics: true,
         },
     },
 
@@ -69,21 +69,17 @@ module.exports = {
     // ],
 
     // An array of file extensions your modules use
-    moduleFileExtensions: [
-        'ts',
-        'tsx',
-        'js',
-        'json',
-        'node',
-    ],
+    moduleFileExtensions: ['ts', 'js', 'json', 'node'],
 
-    // A map from regular expressions to module names that allow to stub out resources with a single module
-    // moduleNameMapper: {},
-    moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1',
-        '^logger$': '<rootDir>/node_modules/semantic-link/lib/logger',
-        '^semantic-link(.*)$': '<rootDir>/node_modules/semantic-link$1',
-    },
+    // tsc is unable to do module name resolution
+    // it is possible using ttsc https://stackoverflow.com/a/59386941
+    // // A map from regular expressions to module names that allow to stub out resources with a single module
+    // // moduleNameMapper: {},
+    // moduleNameMapper: {
+    //     '^@/(.*)$': '<rootDir>/src/$1',
+    //     '^logger$': '<rootDir>/src/Logger',
+    //     '^semantic-link(.*)$': '<rootDir>/node_modules/semantic-link$1',
+    // },
 
     // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
     // modulePathIgnorePatterns: [],
@@ -119,9 +115,7 @@ module.exports = {
     // rootDir: null,
 
     // A list of paths to directories that Jest should use to search for files in
-    roots: [
-        '<rootDir>',
-    ],
+    roots: ['<rootDir>'],
 
     // Allows you to use a custom runner instead of Jest's default test runner
     // runner: "jest-runner",
@@ -132,6 +126,9 @@ module.exports = {
     // The path to a module that runs some code to configure or set up the testing framework before each test
     // setupTestFrameworkScriptFile: null,
     // setupTestFrameworkScriptFile: '<rootDir>/tests/__mocks__/localStorage.js',
+
+    // see https://github.com/jest-community/jest-extended#jest-v24
+    setupFilesAfterEnv: ['jest-extended'],
 
     // A list of paths to snapshot serializer modules Jest should use for snapshot testing
     // snapshotSerializers: ['jest-serializer-vue'],
@@ -156,7 +153,7 @@ module.exports = {
     // ],
 
     // The regexp pattern Jest uses to detect test files
-    testRegex: '(/__tests__/.*|(\\.|/)(test|[sS]pec))\\.(jsx?|tsx?)$',
+    testRegex: '(/__tests__/.*|(\\.|/)(test|[sS]pec))\\.ts$',
 
     // This option allows the use of a custom results processor
     // testResultsProcessor: null,
@@ -181,7 +178,7 @@ module.exports = {
     //   "/node_modules/"
     // ],
     transformIgnorePatterns: [
-        '<rootDir>/node_modules/(?!semantic-link)',
+        '<rootDir>/node_modules/',
     ],
 
     // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them

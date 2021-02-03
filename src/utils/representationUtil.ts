@@ -1,0 +1,187 @@
+import {
+    CollectionRepresentation,
+    instanceOfLinkedRepresentation,
+    LinkedRepresentation,
+    LinkUtil,
+    Uri,
+} from 'semantic-link';
+import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
+import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
+import LinkRelation from '../linkRelation';
+import anylogger from 'anylogger';
+import { instanceOfCollection } from './instanceOf';
+import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
+
+const log = anylogger('RepresentationUtil');
+/**
+ * internal type for {@link properties}
+ */
+type ObjectKeys<T> =
+    T extends Record<string, unknown> ? (keyof T)[] :
+        T extends number ? [] :
+            T extends Array<any> | string ? string[] :
+                never;
+
+/**
+ * internal type for {@link properties}
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface ObjectConstructor {
+    keys<T>(o: T): ObjectKeys<T>
+}
+
+/**
+ * Return the list of keys as a typed array from a representation.
+ *
+ *  see https://fettblog.eu/typescript-better-object-keys/
+ *  see https://stackoverflow.com/questions/52856496/typescript-object-keys-return-string
+ *
+ * @param representation representation object
+ * @returns array of all the field property keys
+ */
+export function properties<T extends LinkedRepresentation | Partial<T>, P extends keyof T>(representation: T): P[] {
+    return Object.keys(representation)
+        .map(x => x as P)
+        .filter(x => x !== 'links');
+}
+
+export function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
+    return o[propertyName];
+}
+
+
+type NoUndefinedOrEmptyProperties<T> = {
+    [P in keyof T]-?: Exclude<T[P], null | undefined | ''>
+};
+
+/**
+ * Remove fields that have empty and undefined values from the object.
+ */
+export function compact<T extends LinkedRepresentation>(representation: T): NoUndefinedOrEmptyProperties<T> {
+
+    for (const field of properties(representation)) {
+        const prop = RepresentationUtil.getProperty(representation, field);
+        if (prop && typeof prop === 'object' && (/*prop === '' ||*/ prop === undefined || prop === null)) {
+            delete representation[field];
+        }
+    }
+    return representation as NoUndefinedOrEmptyProperties<T>;
+}
+
+/**
+ * Remove fields that have empty and undefined values from the object.
+ */
+export function omit<T extends LinkedRepresentation, P extends keyof T>(representation: T, properties: P[]): Omit<T, P> {
+
+    for (const property of properties) {
+        delete representation[property];
+    }
+    return representation;
+}
+
+/**
+ * Finds (by OR) a resource item in a collection identified through a found link relation or resource attribute
+ * that matches an item in the collection items.
+ *
+ * It looks for items:
+ *
+ *   1. matching link relation (default: self) by uri
+ *   2. field attribute (default: name ({@link TrackedRepresentationFactory.mappedTitleAttributeName}) on a resource by string
+ *
+ */
+export function findInCollection<T extends LinkedRepresentation>(
+    collection: CollectionRepresentation<T>,
+    options?: ResourceQueryOptions): T | undefined {
+
+    if (!collection || !instanceOfCollection(collection)) {
+        log.debug(`Not an instance of collection: '${LinkUtil.getUri(collection, LinkRelation.Self, undefined)}'`);
+        return undefined;
+    }
+
+    const { rel = undefined, where = undefined } = { ...options };
+
+    let resourceIdentifier: Uri;
+
+    if (typeof where === 'string' /* Uri */) {
+        // treat predicate as Uri
+        resourceIdentifier = where;
+    } else if (instanceOfLinkedRepresentation(where)) {
+        const uri = LinkUtil.getUri(where, rel || LinkRelation.Self);
+        if (uri) {
+            resourceIdentifier = uri;
+        } else {
+            log.error('find resource in collection failed: no \'where\' and \'rel\' options that combine to create resource identifier');
+            return;
+        }
+    }
+
+    // attribute look up strategy. Used for fallback strategy 2.
+    // TODO: allow for multiple link relations in underlying function
+    const name = NamedRepresentationFactory.defaultNameStrategy(rel);
+
+    // title will only exist where a resource is passed in AND there is a mapped title. Used for fallback strategy 3.
+    const mappedTitleAttributeName = SparseRepresentationFactory.mappedTitleAttributeName;
+
+    /** internal helper function to return comparable string from the property of a resource */
+    function getResourceTitle(obj?: any, prop: string = mappedTitleAttributeName) {
+        return obj?.[prop]?.toLowerCase();
+    }
+
+    const resourceTitle = getResourceTitle(where);
+
+    // go through the collection and match the URI against either a link relation or attribute
+    return collection
+        .items
+        .find(item =>
+            // strategy 1: self link of item matches
+            LinkUtil.getUri(item, LinkRelation.Self) === resourceIdentifier ||
+            // strategy 2: the attribute on the resource is a uri that matches
+            (name && getResourceTitle(item, name) === resourceIdentifier) ||
+            // strategy 3: fallback to mapped title values matching (not uris but titles)
+            (resourceTitle && getResourceTitle(item) === resourceTitle)
+        );
+}
+
+
+// TODO: inline methods
+export default class RepresentationUtil {
+    public static fields = properties;
+    public static compact = compact;
+    public static omit = omit;
+    public static getProperty = getProperty;
+    public static findInCollection = findInCollection;
+
+    /**
+     * Removes the item from the collection by matching its self link. If not found, it returns undefined.
+     */
+    public static removeItemFromCollection<T extends LinkedRepresentation>(
+        collection: CollectionRepresentation<T>,
+        item: T): T | undefined {
+
+        const resourceUri = LinkUtil.getUri(item, LinkRelation.Self);
+        const indexOfItemToBeRemoved = collection.items.findIndex(item => LinkUtil.getUri(item, LinkRelation.Self) === resourceUri);
+
+        if (indexOfItemToBeRemoved >= 0) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [head, _] = collection.items.splice(indexOfItemToBeRemoved, 1);
+            return head;
+        }
+        return undefined;
+    }
+
+    /**
+     * Removes the item from the collection by matching its self link. If not found, it returns undefined.
+     */
+    public static addItemToCollection<T extends LinkedRepresentation>(
+        collection: CollectionRepresentation<T>,
+        item: T): CollectionRepresentation<T> {
+
+        if (collection.items) {
+            collection.items.splice(collection.items.length, 0, item);
+        } else {
+            log.warn('Collection adding new items array, reactive bindings may fail');
+            collection.items = [item];
+        }
+        return collection;
+    }
+}

@@ -1,0 +1,171 @@
+import PooledCollectionUtil from '../../representation/sync/pooledCollectionUtil';
+import { assertThat } from 'mismatched';
+import ApiUtil from '../../apiUtil';
+import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
+import { noopResolver } from '../../representation/resourceMergeFactory';
+
+
+describe('Pooled collection', () => {
+    const document = {
+        links: [{ rel: 'self', href: 'http://api.example.com/role/1' }],
+        name: 'Admin',
+    };
+
+    const pooledCollection = {
+        links: [{ rel: 'self', href: 'http://api.example.com/role/' }],
+        items: [document],
+    };
+
+    const parentCollection = {
+        links: [
+            { rel: 'self', href: 'http://api.example.com/collection/' },
+            { rel: 'roles', href: 'http://api.example.com/role/' },
+        ],
+        roles: pooledCollection,
+    };
+
+    const spy = jest.spyOn(ApiUtil, 'get').mockResolvedValue(pooledCollection);
+    // sinon.stub(cache, 'getNamedCollection').callsFake(() => Promise.resolve(pooledCollection));
+
+    describe('strategy one & two: it is simply found map it based on self and/or mappedTitle', () => {
+        const resource = {
+            links: [
+                {
+                    rel: 'self',
+                    href: 'http://api.example.com/role/2',
+                },
+            ],
+            name: 'Admin',
+        };
+
+        it('returns document based on uri/name matching', async () => {
+            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource);
+            assertThat(result).is(document);
+            expect(spy).toHaveBeenCalled();
+        });
+
+        // it('returns document based on uri only matching', () => {
+        //     document.name = undefined;
+        //     nodCollection
+        //         .getResourceInNamedCollection(parentCollection, 'roles', /roles/, document)
+        //         .then(representation => {
+        //             expect(representation).to.deep.equal(document);
+        //         });
+        // });
+
+        it('add uris to the resolution map when existing resource', async () => {
+            let documentUriResolved;
+            let nodUriResolved;
+            const options = {
+                resolver: {
+                    add: (l, r) => {
+                        documentUriResolved = l;
+                        nodUriResolved = r;
+                    },
+                },
+            } as PooledCollectionOptions;
+            await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+
+            assertThat(documentUriResolved).is('http://api.example.com/role/2');
+            assertThat(nodUriResolved).is('http://api.example.com/role/1');
+        });
+    });
+
+    describe('strategy three: check to see if self is an actual resource anyway and map it if it is, otherwise make', () => {
+        const resource = {
+            links: [
+                {
+                    rel: 'self',
+                    href: 'http://api.example.com/role/2',
+                },
+            ],
+            name: 'NewRole',
+        };
+
+        it('should find self, resolve uri and then return resource', async () => {
+            const options = {
+                resolver: {
+                    resolve: resolving => {
+                        assertThat(resolving).is('http://api.example.com/role/2');
+                        // we just say here that we've already got it - so return this from the known collection
+                        return 'http://api.example.com/role/1';
+                    },
+                },
+            } as PooledCollectionOptions;
+            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+            assertThat(result).is(document);
+
+        });
+
+        it('should find self and then make resource with add mapping', async () => {
+            const mock = jest.fn();
+            const options = {
+                resolver: {
+                    ...noopResolver,
+                    add: (documentUri, nodUri) => {
+                        mock();
+                        assertThat(documentUri).is('http://api.example.com/role/2');
+                        assertThat(nodUri).is('http://api.example.com/role/3');
+                    },
+                },
+            } as PooledCollectionOptions;
+
+            const createdResource = {
+                links: [{ rel: 'self', href: 'http://api.example.com/role/3', },],
+                name: 'NewRole',
+            };
+
+            // sinon.stub(cache, 'createCollectionItem').callsFake(() => Promise.resolve(createdResource));
+            const spy = jest.spyOn(ApiUtil, 'create').mockResolvedValue(createdResource);
+            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+
+            assertThat(result).is(createdResource);
+            expect(mock).toHaveBeenCalled();
+            spy.mockReset();
+        });
+    });
+
+    describe('strategy four: make if we can because we at least might have the attributes', () => {
+        it('should make resource', async () => {
+            const resource = {
+                links: [],
+                name: 'UtterlyNewRole',
+            };
+
+            let addResolverCalled = false;
+
+            const options = {
+                resolver: {
+                    ...noopResolver,
+                    add: () => {
+                        addResolverCalled = true;
+                    },
+                },
+            } as PooledCollectionOptions;
+
+            const createdResource = {
+                links: [
+                    {
+                        rel: 'self',
+                        href: 'http://api.example.com/role/3',
+                    },
+                ],
+                name: 'UtterlyNewRole',
+            };
+
+            // sinon.stub(cache, 'createCollectionItem').callsFake(() => Promise.resolve(createdResource));
+            const spy = jest.spyOn(ApiUtil, 'get').mockResolvedValue(createdResource);
+
+            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+
+            if (result) {
+                assertThat(result).is(createdResource);
+                expect(addResolverCalled).not.toHaveBeenCalled();
+            }
+
+            spy.mockReset();
+
+
+        });
+    });
+});
