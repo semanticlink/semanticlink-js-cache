@@ -1,4 +1,3 @@
-import { instanceOfCollection, instanceOfUriList } from '../../../semantic-network/src/query/utils';
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import ResourceUpdateOptions from '../interfaces/ResourceUpdateOptions';
 import anylogger from 'anylogger';
@@ -13,6 +12,7 @@ import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
+import { instanceOfCollection, instanceOfUriList } from '../utils/instanceOf';
 
 const log = anylogger('update');
 

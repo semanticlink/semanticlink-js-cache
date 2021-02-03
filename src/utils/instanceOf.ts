@@ -10,6 +10,7 @@ import { SingletonRepresentation } from '../types/types';
 import { FeedItemRepresentation } from 'semantic-link/lib/interfaces';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { FormItem } from '../interfaces/formItem';
+import { UriList } from '../types/mediaTypes';
 
 /**
  * A guard to detect whether the object is a {@link CollectionRepresentation<T extends LinkedRepresentation>}.
@@ -82,4 +83,17 @@ export function instanceOfForm(object: unknown | LinkedRepresentation): object i
         }
     }
     return false;
+}
+
+/**
+ * A guard to detect whether the object is a {@link UriList}
+ *
+ * @param object
+ * @returns whether the object is an instance on the interface
+ */
+export function instanceOfUriList(object: any): object is UriList {
+    const [first,] = object;
+    // a very naive type check for a UriList
+    return Array.isArray(object) && typeof first === 'string';
+
 }

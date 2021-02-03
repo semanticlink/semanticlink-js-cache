@@ -13,8 +13,7 @@ import { ResourceSync } from '../../interfaces/sync/resourceSync';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
 import { NamedResourceSync } from '../../interfaces/sync/namedResourceSync';
 import LinkRelConvertUtil from '../../utils/linkRelConvertUtil';
-import { instanceOfCollection } from '../../utils/instanceOf';
-import { instanceOfUriList } from '../../../../semantic-network/src/query/utils';
+import { instanceOfCollection, instanceOfUriList } from '../../utils/instanceOf';
 import anylogger from 'anylogger';
 
 const log = anylogger('Sync');
