@@ -13,25 +13,15 @@ const log = anylogger('PooledOrganisation');
 
 
 export default class PooledOrganisation<T extends LinkedRepresentation> extends AbstractPooledResource<T> {
-    constructor() {
-        // note: super can't have a 'this' and thus can't hand in resolvers through constructor
-        super();
-        /*
-         * Looks up the questions collection that is parented (global to) the organisation
-         */
-        this.resolvers = {
+
+    protected makeResolvers(): Record<string, PooledResourceResolver> {
+        return {
             [CustomLinkRelation.Question as string]: this.resolve(CustomLinkRelation.Questions as string, { pooledResolver: Question.syncPooled }),
             [CustomLinkRelation.Information as string]: this.resolve(CustomLinkRelation.Information as string, { readonly: true }),
             [CustomLinkRelation.Template as string]: this.resolve(CustomLinkRelation.Templates as string, { pooledResolver: Template.syncPooled }),
         };
     }
 
-    /**
-     *
-     * @param rel
-     * @param options
-     * @private
-     */
     private resolve(rel: string, options?: SyncOptions): PooledResourceResolver {
 
         const { pooledResolver } = { ...options };

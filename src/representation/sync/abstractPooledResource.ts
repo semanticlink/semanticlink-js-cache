@@ -14,26 +14,30 @@ export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
 
     protected resolvers: Record<string, PooledResourceResolver>;
 
-    protected constructor(resolvers?: Record<string, PooledResourceResolver>) {
-        this.resolvers = resolvers ?? {};
-    }
-
-    public init(resource: T): (type: string) => PooledResourceResolver {
+    public constructor(resource: T) {
         if (!resource) {
             log.error('empty resource for pooled resources');
-            return this.defaultPooledResolver;
         }
 
         this.collection = resource;
-        // binding here allows for us to access super fields in the abstract method
+
+        this.resolvers = this.makeResolvers();
+    }
+
+    public get resourceResolver(): (type: string) => PooledResourceResolver {
         return this.pooledResource.bind(this);
     }
+
+    /**
+     * Set of resolvers returning the sub collections
+     */
+    protected abstract makeResolvers(): Record<string, PooledResourceResolver>;
 
     /**
      * The resolver returns the 'questions'
      * pooled collection. The question required in this test already exists.
      */
-    protected pooledResource(type: string): PooledResourceResolver {
+    private pooledResource(type: string): PooledResourceResolver {
         if (this.resolvers[type]) {
             log.debug('resolving resource pool type: %s', type);
             return this.resolvers[type];
@@ -45,5 +49,5 @@ export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
     /**
      * Default resolves returns a noop undefined
      */
-    private defaultPooledResolver: (type: string) => PooledResourceResolver = () => async () => undefined;
+    protected defaultPooledResolver: (type: string) => PooledResourceResolver = () => async () => undefined;
 }

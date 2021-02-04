@@ -134,7 +134,7 @@ describe('Steps with pooled resources', () => {
                   * Organisation is the 'tenanted' home of the questions that live outside the lifecycle
                   * of the application workflow
                   */
-                resourceResolver: new PooledOrganisation().init(makeHydratedResource(organisation)),
+                resourceResolver: new PooledOrganisation(makeHydratedResource(organisation)).resourceResolver,
             };
 
             await sync({
