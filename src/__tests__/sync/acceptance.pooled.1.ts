@@ -22,7 +22,7 @@ import { SyncOptions } from '../../interfaces/sync/syncOptions';
 import { sync } from '../../representation/sync';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
-import OrganisationPooledResource from '../../fixture/domain/organisationPooledResource';
+import PooledOrganisation from '../../fixture/domain/pooledOrganisation';
 import CustomLinkRelation from '../../fixture/domain/CustomLinkRelation';
 
 const log = anylogger('Steps Test');
@@ -134,7 +134,7 @@ describe('Steps with pooled resources', () => {
                   * Organisation is the 'tenanted' home of the questions that live outside the lifecycle
                   * of the application workflow
                   */
-                resourceResolver: new OrganisationPooledResource().init(makeHydratedResource(organisation)),
+                resourceResolver: new PooledOrganisation().init(makeHydratedResource(organisation)),
             };
 
             await sync({

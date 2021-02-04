@@ -21,7 +21,7 @@ import LinkRelation from '../../linkRelation';
 import Step from '../../fixture/domain/step';
 import { MergeOptions } from 'src/interfaces/mergeOptions';
 import { uriMappingResolver } from '../../representation/sync/uriMappingResolver';
-import OrganisationPooledResource from '../../fixture/domain/organisationPooledResource';
+import PooledOrganisation from '../../fixture/domain/pooledOrganisation';
 import { sync } from '../../representation/sync';
 import CustomLinkRelation from '../../fixture/domain/CustomLinkRelation';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
@@ -142,7 +142,7 @@ describe('Steps with pooled (new) resources', () => {
                   * Organisation is the 'tenanted' home of the questions that live outside the lifecycle
                   * of the application workflow
                   */
-                resourceResolver: new OrganisationPooledResource().init(makeHydratedResource(organisation)),
+                resourceResolver: new PooledOrganisation().init(makeHydratedResource(organisation)),
             };
 
             await sync({

@@ -15,7 +15,10 @@ export class Template {
      *
      * In the text field, the content also requires field resolution with the new fields added to the template
      */
-    public static async syncPooledTemplate<T extends LinkedRepresentation>(resource: T, document: T, cacheOptions?: ApiOptions): Promise<void> {
+    public static async syncPooled<T extends LinkedRepresentation>(resource: T, document: T, options?: SyncOptions): Promise<void> {
+
+        const { resolver } = { ...options };
+
         await sync({
             resource,
             document,
@@ -34,9 +37,9 @@ export class Template {
                              */
                             fieldResolver: (field, value) => {
                                 if (field === 'text' && value) {
-                                    if (cacheOptions?.resolver) {
+                                    if (resolver) {
                                         log.debug('resolve field \'%s\'', field);
-                                        return UriFieldResolver.resolve(value, cacheOptions?.resolver);
+                                        return UriFieldResolver.resolve(value, resolver);
                                     }
                                 } // else no resolution required
                                 return value;
@@ -45,7 +48,7 @@ export class Template {
                     });
                 },
             ],
-            options: cacheOptions,
+            options,
         });
     }
 }

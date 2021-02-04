@@ -36,7 +36,7 @@ export class Question {
      * The design of choices is such that most question already have a default choice created and that matches
      * requires matching on no name or title. Otherwise, choices are deleted/created unnecessarily.
      */
-    public static async syncPooledQuestion<T extends LinkedRepresentation>(resource: T, document: T, cacheOptions?: SyncOptions): Promise<void> {
+    public static async syncPooled<T extends LinkedRepresentation>(resource: T, document: T, cacheOptions?: SyncOptions): Promise<void> {
         return await sync({
             resource,
             document,

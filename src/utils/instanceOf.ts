@@ -92,8 +92,10 @@ export function instanceOfForm(object: unknown | LinkedRepresentation): object i
  * @returns whether the object is an instance on the interface
  */
 export function instanceOfUriList(object: any): object is UriList {
-    const [first,] = object;
     // a very naive type check for a UriList
-    return Array.isArray(object) && typeof first === 'string';
-
+    if (Array.isArray(object)) {
+        return typeof object[0] === 'string';
+    } else {
+        return false;
+    }
 }

@@ -4,21 +4,21 @@ import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOption
 
 const log = anylogger('AbstractPooledResource');
 
-export type PooledResolverType = <T extends LinkedRepresentation>(resource: T, options?: PooledCollectionOptions) => Promise<T | undefined>;
+export type PooledResourceResolver = <T extends LinkedRepresentation>(resource: T, options?: PooledCollectionOptions) => Promise<T | undefined>;
 
 export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
     /**
-     * the 'tenanted' home of the sub collections
+     * the home resource (or starting point) of the sub collections
      */
     protected collection: T | undefined;
 
-    protected rels: Record<string, PooledResolverType>;
+    protected resolvers: Record<string, PooledResourceResolver>;
 
-    protected constructor(rels?: Record<string, PooledResolverType>) {
-        this.rels = rels ?? {};
+    protected constructor(resolvers?: Record<string, PooledResourceResolver>) {
+        this.resolvers = resolvers ?? {};
     }
 
-    public init(resource: T): (type: string) => PooledResolverType {
+    public init(resource: T): (type: string) => PooledResourceResolver {
         if (!resource) {
             log.error('empty resource for pooled resources');
             return this.defaultPooledResolver;
@@ -30,13 +30,13 @@ export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
     }
 
     /**
-     * Demonstrate the use of a resolver for this network of data. The resolver returns the 'questions'
+     * The resolver returns the 'questions'
      * pooled collection. The question required in this test already exists.
      */
-    protected pooledResource(type: string): PooledResolverType {
-        if (this.rels[type]) {
+    protected pooledResource(type: string): PooledResourceResolver {
+        if (this.resolvers[type]) {
             log.debug('resolving resource pool type: %s', type);
-            return this.rels[type];
+            return this.resolvers[type];
         } else {
             return async () => undefined;
         }
@@ -45,5 +45,5 @@ export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
     /**
      * Default resolves returns a noop undefined
      */
-    private defaultPooledResolver: (type: string) => PooledResolverType = () => async () => undefined;
+    private defaultPooledResolver: (type: string) => PooledResourceResolver = () => async () => undefined;
 }
