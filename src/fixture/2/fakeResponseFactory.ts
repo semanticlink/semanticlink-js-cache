@@ -1,16 +1,10 @@
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import { resource as workflow, self as workflowUri } from './organisation/a65/step/314-workflow';
 import { resource as pageOne, self as pageOneUri } from './organisation/a65/step/ac5-page-1';
-import {
-    resource as pagesFeed,
-    self as pagesFeedUri,
-} from './organisation/a65/step/314-workflow/step-pages-feed';
-import {
-    resource as pageFeed,
-    self as pageFeedUri,
-} from './organisation/a65/step/ac5-page-1/step-page-1-feed';
+import { resource as pagesFeed, self as pagesFeedUri, } from './organisation/a65/step/314-workflow/step-pages-feed';
+import { resource as pageFeed, self as pageFeedUri, } from './organisation/a65/step/ac5-page-1/step-page-1-feed';
 import { resource as createForm, self as createFormUri } from './organisation/a65/step/form/create';
-import { resource as questionStep, self as questionStepUri } from '../1/organisation/a65/step/92c-question';
+import { resource as questionStep, self as questionStepUri } from './organisation/a65/step/92c-question';
 import { resource as question, self as questionUri } from './question/1-question';
 import { resource as questionFeed, self as questionFeedUri } from './organisation/a65/question-feed';
 import { resource as questionEditForm, self as questionEditFormUri } from './question/form/edit';
@@ -25,33 +19,6 @@ import anylogger from 'anylogger';
 
 const log = anylogger('Fakes');
 let count = 1;
-
-/*
-
-// it is shame not to load all fixtures below with code like
-// see https://github.com/facebook/create-react-app/issues/517
-const requireComponent = require.context('./fixtures', true, /\.ts$/);
-
-const fakes = new Map<Uri, LinkedRepresentation>();
-
-interface FakeResponse {
-    self: Uri;
-    resource: LinkedRepresentation;
-}
-
-requireComponent.keys().forEach(fileName => {
-    const componentConfig: FakeResponse = requireComponent(fileName);
-    fakes.set(componentConfig.self, componentConfig.resource);
-});
-
-// then, instead of switch hand entered:
-
-if (fakes.has(uri)){
-    return fakes.get(uri) as unknown as T
-} else {
-    throw new Error(`Fake not found: ${uri}`);
-}
-*/
 
 /**
  * Return a fake of an across-the-wire representation
@@ -111,7 +78,7 @@ export const fakeResponseFactory = <T extends LinkedRepresentation>(resource: T,
     }
 
     if (uri) {
-        return { data: factory(uri) };
+        return { data: { ...factory(uri) } };
     } else {
         throw new Error('Not found');
     }

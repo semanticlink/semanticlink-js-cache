@@ -1,5 +1,4 @@
 import { LinkedRepresentation } from 'semantic-link';
-import { ApiOptions } from '../../interfaces/apiOptions';
 import { sync } from '../../representation/sync';
 import CustomLinkRelation from './CustomLinkRelation';
 import { UriFieldResolver } from '../../representation/sync/uriFieldResolver';

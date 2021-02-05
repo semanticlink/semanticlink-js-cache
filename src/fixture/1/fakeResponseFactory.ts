@@ -93,7 +93,7 @@ export const fakeResponseFactory = <T extends LinkedRepresentation>(resource: T,
     }
 
     if (uri) {
-        return { data: factory(uri) };
+        return { data: { ...factory(uri) } };
     } else {
         throw new Error('Not found');
     }

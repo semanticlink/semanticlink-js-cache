@@ -17,7 +17,7 @@ export default class Step {
      * Return steps collection with items hydrated
      */
     public static async getSteps(step: StepRepresentation, options?: ResourceQueryOptions): Promise<StepCollection | undefined> {
-        return await ApiUtil.get<StepRepresentation, StepCollection>(
+        return await ApiUtil.get(
             step as TrackedRepresentation<StepRepresentation>,
             { ...options, includeItems: true, rel: CustomLinkRelation.Steps });
     }

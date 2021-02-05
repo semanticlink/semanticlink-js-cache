@@ -1,15 +1,14 @@
 import {
     resource as page1Feed,
     self as page1FeedUri,
-} from '../../fixture/1/organisation/a65/step/ac5-page-1/step-page-1-feed';
-import { resource as page1 } from '../../fixture/1/organisation/a65/step/ac5-page-1';
-import { resource as questionStep, self as questionStepUri } from '../../fixture/1/organisation/a65/step/92c-question';
-import { resource as question } from '../../fixture/1/question/cf6-question';
-import { resource as organisation } from '../../fixture/1/organisation/a65';
-import { resource as choiceFeed } from '../../fixture/1/question/cf6/choice-feed';
-import { resource as choice } from '../../fixture/1/choice/881-name';
+} from '../../fixture/2/organisation/a65/step/ac5-page-1/step-page-1-feed';
+import { resource as page1 } from '../../fixture/2/organisation/a65/step/ac5-page-1';
+import { resource as questionStep, self as questionStepUri } from '../../fixture/2/organisation/a65/step/92c-question';
+import { resource as question, self as newQuestionUri } from '../../fixture/2/question/1-question';
+import { resource as organisation } from '../../fixture/2/organisation/a65';
+import { resource as choiceFeed } from '../../fixture/2/question/1/choice-feed';
+import { resource as choice } from '../../fixture/2/choice/881-name';
 import { self as questionFeedUri } from '../../fixture/2/organisation/a65/question-feed';
-import { self as newQuestionUri } from '../../fixture/2/question/1-question';
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import anylogger from 'anylogger';
 import { AxiosResponse } from 'axios';
@@ -19,7 +18,6 @@ import SparseRepresentationFactory from '../../representation/sparseRepresentati
 import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
 import LinkRelation from '../../linkRelation';
 import Step from '../../fixture/domain/step';
-import { MergeOptions } from 'src/interfaces/mergeOptions';
 import { uriMappingResolver } from '../../representation/sync/uriMappingResolver';
 import PooledOrganisation from '../../fixture/domain/pooledOrganisation';
 import { sync } from '../../representation/sync';
@@ -103,7 +101,7 @@ describe('Steps with pooled (new) resources', () => {
          * Note: rather than less GET requests with a new data set, we'll remove the steps manually
          */
         resource = makeHydratedResource(page1);
-        await Step.getSteps(resource, options);
+        await Step.loadStep(resource, options);
 
         // clear out all steps so that we can practice adding a new one
         if (resource.steps) {
