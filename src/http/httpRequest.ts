@@ -24,8 +24,7 @@ export default class HttpRequest {
 
         const { getFactory = this.options.getFactory } = { ...options };
 
-        const axiosResponse = await getFactory<T>(link, rel, options);
-        return axiosResponse;
+        return await getFactory<T>(link, rel, options);
     }
 
     public async update<T extends LinkedRepresentation>(

@@ -281,7 +281,8 @@ export default class FieldResolverUtil {
             case FieldValueType.single: // could have checks to ensure this is a 'text' or 'uri' only
                 if (fieldValue && !instanceOfSimpleValue(fieldValue)) {
                     log.error('Unexpected type \'%s\' on form type %s with \'%s\'', typeof fieldValue, formItem.type, formItem.name);
-                    throw new Error('Not implemented. Resource on simple field');
+                    return undefined;
+                    // throw new Error('Not implemented. Resource on simple field');
                 }
                 if (formItem.multiple) {
                     log.error('Unexpected attribute \'multiple\' on form type %s with \'%s\'', formItem.type, formItem.name);

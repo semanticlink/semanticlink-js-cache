@@ -34,9 +34,9 @@ export class FieldLinksResolverUtil {
 
         const { resourceResolver } = { ...options };
         for (const rel of linksToResolve) {
-            if (resourceResolver) {
-                throw new Error('Resource resolver not implemented');
-                // await resourceResolver(aLink, resource, options)(singleton, options);
+            if (resourceResolver && rel) {
+                // throw new Error('Resource resolver not implemented');
+                await resourceResolver(rel as string)(resource as LinkedRepresentation, options);
             }
             const fieldName = LinkRelConvertUtil.dashToCamel(rel as string);
             const formItem = FormUtil.findByField(form, fieldName);

@@ -150,14 +150,14 @@ describe('Steps with pooled (new) resources', () => {
                 resource,
                 document: aDocument,
                 rel: CustomLinkRelation.Steps,
-                options: { ...options, ...resolvers },
+                options: resolvers,
             });
 
             /*
              * Expect only that the 'step' is created (and not the 'question')
              */
             const postUris = [
-                'https://api.example.com/organisation/a656927b0f/question',
+                // 'https://api.example.com/organisation/a656927b0f/question',
                 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step',
             ];
             const actualPostUris = post.mock.calls.map(x => LinkUtil.getUri(x[0], LinkRelation.Self));
@@ -170,6 +170,7 @@ describe('Steps with pooled (new) resources', () => {
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step'],
                 // start action (outside step)
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/form/create'],
+                ["self", "https://api.example.com/organisation/a656927b0f/step/92c28454b7"]
                 // start action (inside question)
                 // ['questions', 'https://api.example.com/organisation/a656927b0f'],
                 // ['self', 'https://api.example.com/organisation/a656927b0f/question'],
@@ -185,11 +186,12 @@ describe('Steps with pooled (new) resources', () => {
             ];
 
 
+            verifyMocks(4, 1, 0, 0);
+
             const actualUris = get.mock.calls.map(x => [x[1], LinkUtil.getUri(x[0], x[1])]);
             assertThat(actualUris).is(uris);
-            // assertThat(actualPostUris).is(postUris);
+            assertThat(actualPostUris).is(postUris);
 
-            verifyMocks(3, 0, 0, 0);
             // verifyMocks(9, 2, 0, 0);
 
         }, 100000);

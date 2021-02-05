@@ -1,15 +1,8 @@
-import { LinkedRepresentation, LinkUtil } from 'semantic-link';
-import anylogger from 'anylogger';
+import { LinkedRepresentation } from 'semantic-link';
 import { AbstractPooledResource, PooledResourceResolver } from '../../representation/sync/abstractPooledResource';
-import { SyncOptions } from '../../interfaces/sync/syncOptions';
-import PooledCollectionUtil from '../../representation/sync/pooledCollectionUtil';
 import CustomLinkRelation from './CustomLinkRelation';
-import LinkRelation from '../../linkRelation';
-import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
 import { Template } from './template';
 import { Question } from './question';
-
-const log = anylogger('PooledOrganisation');
 
 
 export default class PooledOrganisation<T extends LinkedRepresentation> extends AbstractPooledResource<T> {
@@ -22,29 +15,5 @@ export default class PooledOrganisation<T extends LinkedRepresentation> extends 
         };
     }
 
-    private resolve(rel: string, options?: SyncOptions): PooledResourceResolver {
-
-        const { pooledResolver } = { ...options };
-
-        return async <T extends LinkedRepresentation>(document: T, options?: PooledCollectionOptions): Promise<T | undefined> => {
-            log.debug('resolve pooled %s %s', rel, LinkUtil.getUri(document, LinkRelation.Self));
-            if (this.collection) {
-                const resource = await PooledCollectionUtil.sync(
-                    this.collection,
-                    document as LinkedRepresentation,
-                    { ...options, rel });
-
-                /*
-                 * If a pooled collection has linked representations, process here as a nest sync
-                 */
-                if (resource) {
-                    pooledResolver?.(resource, document, options);
-                }
-
-                return resource as T;
-            }
-
-        };
-    }
 }
 
