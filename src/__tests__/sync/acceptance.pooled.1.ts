@@ -16,14 +16,13 @@ import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
 import StepRepresentation from '../../fixture/domain/interfaces/stepRepresentation';
 import LinkRelation from '../../linkRelation';
 import Step from '../../fixture/domain/step';
-import { MergeOptions } from '../../interfaces/mergeOptions';
 import { uriMappingResolver } from '../../representation/sync/uriMappingResolver';
-import { SyncOptions } from '../../interfaces/sync/syncOptions';
 import { sync } from '../../representation/sync';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
 import PooledOrganisation from '../../fixture/domain/pooledOrganisation';
 import CustomLinkRelation from '../../fixture/domain/CustomLinkRelation';
+import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
 
 const log = anylogger('Steps Test');
 /**
@@ -128,7 +127,7 @@ describe('Steps with pooled resources', () => {
                 },
             } as unknown as StepRepresentation;
 
-            const mergeOptions: MergeOptions = {
+            const resolvers: PooledCollectionOptions = {
                 resolver: uriMappingResolver,
                 /*
                   * Organisation is the 'tenanted' home of the questions that live outside the lifecycle
@@ -141,40 +140,29 @@ describe('Steps with pooled resources', () => {
                 resource,
                 document: aDocument,
                 rel: CustomLinkRelation.Steps,
-                options: { ...options, ...mergeOptions } as SyncOptions,
+                options: { ...options, ...resolvers },
                 strategies: [syncResult => sync({ ...syncResult, rel: CustomLinkRelation.Field })],
             });
 
             /*
              * Expect only that the 'step' is created (and not the 'question')
              */
-            verifyMocks(9, 0, 0, 2);
+            verifyMocks(12, 0, 0, 2);
 
             /* list of out the requests to aid understanding (rather than overwhelm!) */
             const uris = [
-                // ['steps', 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/ec7a386294'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/92c28454b7'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/b3666ee92c'],
-                // ['field', 'https://api.example.com/organisation/a656927b0f/step/92c28454b7'],
+                ['self', 'https://api.example.com/question/cf6c4b9c7f'],
+                ['self', 'https://api.example.com/question/cf6c4b9c7f/choice'],
+                ['self', 'https://api.example.com/choice/881e3ed135'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/92c28454b7'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/form/edit'],
                 ['self', 'https://api.example.com/question/cf6c4b9c7f'],
-                ['self', 'https://api.example.com/question/form/edit'],
-                /*
-                ['self', 'https://api.example.com/question/cf6c4b9c7f'],
-                ['choices', 'https://api.example.com/question/cf6c4b9c7f'],
-                ['self', 'https://api.example.com/question/cf6c4b9c7f/choice'],
-                ['self', 'https://api.example.com/choice/881e3ed135'],
-                ['self', 'https://api.example.com/organisation/a656927b0f/step/form/create'],
-                ['questions', 'https://api.example.com/organisation/a656927b0f'],
-                ['self', 'https://api.example.com/organisation/a656927b0f/question'],
-                ['self', 'https://api.example.com/question/cf6c4b9c7f'],
-                ['self', 'https://api.example.com/question/cf6c4b9c7f/choice'],
-                ['self', 'https://api.example.com/organisation/a656927b0f/step/92c28454b7'],
-                */
+                ['self', 'https://api.example.com/question/form/edit']
             ];
 
             const actualUris = get.mock.calls.map(x => [x[1], LinkUtil.getUri(x[0], x[1])]);

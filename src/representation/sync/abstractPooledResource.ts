@@ -1,6 +1,7 @@
 import { LinkedRepresentation } from 'semantic-link';
 import anylogger from 'anylogger';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
+import { ResourceResolver } from '../../interfaces/resourceResolver';
 
 const log = anylogger('AbstractPooledResource');
 
@@ -24,7 +25,7 @@ export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
         this.resolvers = this.makeResolvers();
     }
 
-    public get resourceResolver(): (type: string) => PooledResourceResolver {
+    public get resourceResolver(): ResourceResolver {
         return this.pooledResource.bind(this);
     }
 

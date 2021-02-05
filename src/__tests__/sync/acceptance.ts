@@ -1,8 +1,5 @@
 import { resource as workflow } from '../../fixture/1/organisation/a65/step/314-workflow';
-import {
-    resource as workflowPagesFeed,
-    self as workflowPagesFeedUri,
-} from '../../fixture/1/organisation/a65/step/314-workflow/step-pages-feed';
+import { resource as workflowPagesFeed, } from '../../fixture/1/organisation/a65/step/314-workflow/step-pages-feed';
 import { resource as page1Feed } from '../../fixture/1/organisation/a65/step/ac5-page-1/step-page-1-feed';
 import { resource as page1 } from '../../fixture/1/organisation/a65/step/ac5-page-1';
 import { resource as heading } from '../../fixture/1/organisation/a65/step/ec7-heading';
@@ -87,31 +84,17 @@ describe('Steps', () => {
         it('load, recursively', () => {
 
             const calls = [
-                [LinkRelation.Self, workflowPagesFeedUri],
-                [LinkRelation.Self, 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff'],
-                [LinkRelation.Self, 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step'],
-                [LinkRelation.Self, 'https://api.example.com/organisation/a656927b0f/step/ec7a386294'],
-                [LinkRelation.Self, 'https://api.example.com/organisation/a656927b0f/step/92c28454b7'],
-                [LinkRelation.Self, 'https://api.example.com/organisation/a656927b0f/step/b3666ee92c'],
+                ["self", "https://api.example.com/organisation/a656927b0f/step/314ee4fc57/step"],
+                ["self", "https://api.example.com/organisation/a656927b0f/step/ac50e024ff"],
+                ["self", "https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step"],
+                ["self", "https://api.example.com/organisation/a656927b0f/step/ec7a386294"],
+                ["self", "https://api.example.com/organisation/a656927b0f/step/92c28454b7"],
+                ["self", "https://api.example.com/organisation/a656927b0f/step/b3666ee92c"],
+                ["self", "https://api.example.com/question/cf6c4b9c7f"],
+                ["self", "https://api.example.com/question/cf6c4b9c7f/choice"],
+                ["self", "https://api.example.com/choice/881e3ed135"],
             ];
-            /*
-            const calls = [
-                CustomLinkRelation.Steps, // pages collection
-                LinkRelation.Self, // lookahead
-                LinkRelation.Self, // page (about) [feed item]
-                CustomLinkRelation.Steps, // page items
-                LinkRelation.Self, // lookahead
-                LinkRelation.Self, // heading
-                LinkRelation.Self,
-                LinkRelation.Self,
-                CustomLinkRelation.Field,
-                LinkRelation.Self,
-                CustomLinkRelation.Choices,
-                LinkRelation.Self,
-                LinkRelation.Self,
-            ];
-            */
-
+            
             const actualCalls = get.mock.calls.map((x: any) => [x[1], LinkUtil.getUri(x[0], x[1])]);
             assertThat(actualCalls).is(calls);
         });

@@ -27,6 +27,7 @@ import CustomLinkRelation from '../../fixture/domain/CustomLinkRelation';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
 import StepRepresentation from '../../fixture/domain/interfaces/stepRepresentation';
+import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
 
 const log = anylogger('Steps Test');
 
@@ -136,7 +137,7 @@ describe('Steps with pooled (new) resources', () => {
                 },
             } as unknown as StepRepresentation;
 
-            const mergeOptions: MergeOptions = {
+            const resolvers: PooledCollectionOptions = {
                 resolver: uriMappingResolver,
                 /*
                   * Organisation is the 'tenanted' home of the questions that live outside the lifecycle
@@ -149,7 +150,7 @@ describe('Steps with pooled (new) resources', () => {
                 resource,
                 document: aDocument,
                 rel: CustomLinkRelation.Steps,
-                options: { ...options, ...mergeOptions },
+                options: { ...options, ...resolvers },
             });
 
             /*

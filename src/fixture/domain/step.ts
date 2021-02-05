@@ -6,6 +6,8 @@ import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
 import StepType from './interfaces/stepType';
 import StepRepresentation from './interfaces/stepRepresentation';
 import { TrackedRepresentation } from '../../types/types';
+import QuestionRepresentation from './interfaces/questionRepresentation';
+import ChoiceCollection from './interfaces/choiceCollection';
 
 const log = anylogger('Step');
 
@@ -20,6 +22,17 @@ export default class Step {
             { ...options, includeItems: true, rel: CustomLinkRelation.Steps });
     }
 
+    public static async getQuestion(sections: StepRepresentation, options?: ResourceQueryOptions): Promise<QuestionRepresentation | undefined> {
+        return await ApiUtil.get(
+            sections as TrackedRepresentation<StepRepresentation>,
+            { ...options, rel: CustomLinkRelation.Field });
+    }
+
+    public static async getChoices(questions: QuestionRepresentation, options?: ResourceQueryOptions): Promise<ChoiceCollection | undefined> {
+        return await ApiUtil.get(
+            questions as TrackedRepresentation<QuestionRepresentation>,
+            { includeItems: true, ...options, rel: CustomLinkRelation.Choices });
+    }
 
     /**
      * Takes all steps (level: workflow, page or item), recursively hydrates each type (simple types and complex types)
@@ -37,24 +50,26 @@ export default class Step {
     private static async loadType(step: StepRepresentation, options?: ResourceQueryOptions): Promise<void> {
         log.debug('loading type \'%s\': \'%s\'', step.type, step.name || '');
         switch (step.type) {
-            case StepType.information:
-                // await Information.getByStep(step, options);
-                return;
             case StepType.question:
-                //await this.loadQuestionWithChoices(step, options);
+                await this.loadQuestionWithChoices(step, options);
                 return;
-            case StepType.template:
-                //await this.loadTemplateWithContentAndFields(step, options);
-                return;
-            case StepType.page:
+             case StepType.page:
                 await this.loadStep(step, options);
                 return;
-            case StepType.image:
+           case StepType.image:
             case StepType.video:
             case StepType.heading:
                 return;
             default:
                 log.warn('Not implemented %s', step.type);
+        }
+    }
+
+
+    private static async loadQuestionWithChoices(step: StepRepresentation, options?: ResourceQueryOptions): Promise<void> {
+        const questions = await Step.getQuestion(step, options);
+        if (questions) {
+            await Step.getChoices(questions, options);
         }
     }
 
