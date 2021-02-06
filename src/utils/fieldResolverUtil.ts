@@ -100,6 +100,7 @@ function instanceOfDocumentRepresentationGroup(obj: any): obj is DocumentReprese
 
 export default class FieldResolverUtil {
 
+
     /**
      * Recursive, resolving merger that adds fields to a document based on a (create or edit) form
      * and the allowed fields with their type.
@@ -152,7 +153,57 @@ export default class FieldResolverUtil {
         options?: MergeOptions): Promise<T | undefined> {
 
         const field = await this.resolveByType(fieldValue, item, options);
-        return await this.resolvePooled(field, options) as T;
+        if (field) {
+            return field;
+        }
+        return await this.resolvePooled(fieldValue, item, options) as T;
+    }
+
+    /**
+     * Resolves any {@link FormItem.id} as a {@link LinkedRepresentation} when there is a {@link MergeOptions.resourceResolver}.
+     *
+     * Note:
+     *  - current strategy to resolve on the title of the canonical on the field value.
+     *  - there is no placement of the resolution onto the item
+     *
+     * @param formItem form item to process for resolution
+     * @param fieldValue
+     * @param options
+     */
+    public static async resolveResource<T extends ResourceValue>(fieldValue: T, formItem: FormItem, options?: MergeOptions): Promise<T> {
+
+        const {
+            resourceResolverRelNameStrategy = this.resourceResolverRelNameStrategy,
+            resourceResolver
+        } = { ...options };
+        const relName = resourceResolverRelNameStrategy(fieldValue as LinkedRepresentation);
+
+        if (relName) {
+            const item = formItem.items?.find(x => x.name === relName);
+            if (item) {
+                if (item.id) {
+                    if (resourceResolver) {
+                        log.debug('matching items collection with resolver relName \'%s\' on %s', relName, formItem.id);
+                        return await resourceResolver(relName)(fieldValue as LinkedRepresentation, options) as T;
+                    } // else no resolver
+                } else {
+                    log.debug('form item might expected \id\ attribute of resource')
+                }
+            } // else no matching relName in form item
+        } else {
+            log.bind('rel name strategy did not return name on %s', LinkUtil.getUri(fieldValue as LinkedRepresentation, LinkRelation.Self))
+        }
+
+        return fieldValue as T;
+    }
+
+    /**
+     *
+     * Strategy is to resolve the lookup key as the title from the canonical link relation
+     * @param resource field resource being resolved
+     */
+    public static resourceResolverRelNameStrategy(resource: LinkedRepresentation): string | undefined {
+        return LinkUtil.getTitle(resource, LinkRelation.Canonical);
     }
 
     /**
@@ -213,9 +264,10 @@ export default class FieldResolverUtil {
      * requiring resolution
      *
      * @param fieldValue
+     * @param item
      * @param options contains the resolver to be used
      */
-    private static resolvePooled<T extends FieldValue>(fieldValue: T, options?: MergeOptions): FieldValue {
+    private static async resolvePooled<T extends FieldValue>(fieldValue: T, item: FormItem, options?: MergeOptions): Promise<FieldValue> {
         const { resolver = undefined } = { ...options };
 
         if (resolver) {
@@ -224,47 +276,20 @@ export default class FieldResolverUtil {
             } else if (instanceOfUriListValue(fieldValue)) {
                 return fieldValue.map(uri => resolver.resolve(uri)) as T;
             } else if (instanceOfLinkedRepresentation(fieldValue)) {
-                // no resolution
-                return fieldValue;
+                const resource = await this.resolveResource(fieldValue, item, options);
+                if (resource) {
+                    // resource was found in a pooled collection and return uri (resolved)
+                    const uri = LinkUtil.getUri(resource, LinkRelation.Self);
+                    if (uri) {
+                        return await this.resolvePooled(uri, item, options);
+                    }
+                }
             } else {
                 log.warn('Field type unknown - returning default');
             }
         } // else return itself
         return fieldValue;
     }
-
-    /**
-     * Resolves any {@link FormItem.id} as a {@link LinkedRepresentation} when there is a {@link MergeOptions.resourceResolver}.
-     *
-     * Note:
-     *  - current strategy to resolve on the title of the canonical on the field value.
-     *  - there is no placement of the resolution onto the item
-     *
-     * @param item form item to process for resolution
-     * @param fieldValue
-     * @param options
-     */
-    private static async resolveResource<T extends ResourceValue>(item: FormItem, fieldValue: T, options?: MergeOptions): Promise<T> {
-
-        if (item?.id) {
-            //
-            const { resourceResolver = undefined } = { ...options };
-            if (resourceResolver) {
-                /*
-                 * Current strategy is to default looking up a title on canonical
-                 *
-                 * TODO: make injectable
-                 */
-                const type = LinkUtil.getTitle(fieldValue as LinkedRepresentation, LinkRelation.Canonical);
-
-                log.debug('matching items collection with resolver type \'%s\' on %s', type, item.id);
-                const resource = await resourceResolver(type)(fieldValue as LinkedRepresentation, options);
-                return resource as T;
-            } // else no resolver
-        }
-        return fieldValue as T;
-    }
-
 
     /**
      *

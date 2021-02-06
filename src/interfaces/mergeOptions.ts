@@ -4,6 +4,7 @@ import { FieldResolver } from './fieldResolver';
 import { LinkedRepresentation, RelationshipType } from 'semantic-link';
 
 export type IsTrackedResolver = <T extends LinkedRepresentation | Partial<T>>(resource: T, field: keyof T) => boolean;
+export type RelNameResolver = (resource: LinkedRepresentation) => string | undefined;
 
 /**
  * Options available when merging resource via a three-way merger
@@ -18,6 +19,10 @@ export interface MergeOptions {
     readonly defaultFields?: string[];
     readonly resolver?: Resolver;
     readonly resourceResolver?: ResourceResolver;
+    /**
+     * Default strategy {@see FieldResolverUtil.resourceResolverRelNameStrategy}
+     */
+    readonly resourceResolverRelNameStrategy?: RelNameResolver;
     readonly fieldResolver?: FieldResolver;
     /**
      * On resource state, there are fields that are added by the cache - these are tracked fields. This overrides the

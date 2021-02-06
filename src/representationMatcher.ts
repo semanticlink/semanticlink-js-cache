@@ -9,3 +9,4 @@ export type RepresentationMatcher = (predicate: (v: any) => boolean, description
 export const singletonRepresentation: RepresentationMatcher = match.predicate(v => instanceOfSingleton(v));
 export const collectionRepresentation: RepresentationMatcher = match.predicate(v => instanceOfCollection(v));
 export const linkedRepresentation: RepresentationMatcher = match.predicate(v => instanceOfLinkedRepresentation(v));
+export const collectionIsEmpty: RepresentationMatcher = match.predicate(v => instanceOfCollection(v) && v.items.length === 0);

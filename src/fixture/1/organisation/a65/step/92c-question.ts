@@ -21,5 +21,5 @@ export const resource = {
     description: 'Instructions',
     order: 2,
     type: '//enum/step/question',
-    // value: questionUri,
+    // field: questionUri,
 };

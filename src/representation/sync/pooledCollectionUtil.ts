@@ -66,6 +66,7 @@ export default class PooledCollectionUtil {
 
         const { rel, resolver = noopResolver } = { ...options };
 
+        // selected nested by rel when present
         const resource = rel ?
             await ApiUtil.get(parentOrCollection as TrackedRepresentation<T>, options) :
             parentOrCollection;

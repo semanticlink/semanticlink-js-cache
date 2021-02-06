@@ -74,6 +74,5 @@ export interface SyncOptions extends Partial<SyncResolverOptions> {
 
     readonly fieldResolver?: FieldResolver;
     readonly resolver?: Resolver;
-    readonly pooledResolver?: PooledResolver
 
 }

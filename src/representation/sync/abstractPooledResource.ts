@@ -2,30 +2,39 @@ import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link'
 import anylogger from 'anylogger';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
 import { ResourceResolver } from '../../interfaces/resourceResolver';
-import { SyncOptions } from '../../interfaces/sync/syncOptions';
 import LinkRelation from '../../linkRelation';
 import PooledCollectionUtil from './pooledCollectionUtil';
 
 const log = anylogger('AbstractPooledResource');
 
+/**
+ * On locating a sub resource, a select on a form provides the 'name' with a value which is the key of the sub resource
+ * that is used to resolve the resource itself via a known link relation
+ */
+export type RelName = string;
 export type PooledResourceResolver = <T extends LinkedRepresentation>(resource: T, options?: PooledCollectionOptions) => Promise<T | undefined>;
 const noopUndefined = async () => undefined;
-
 
 export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
     /**
      * the home resource (or starting point) of the sub collections
      */
-    protected collection: T | undefined;
+    protected contextResource: T | undefined;
 
-    protected resolvers: Record<string, PooledResourceResolver>;
+    /**
+     * A set of resolvers that map between the originating resource (eg a singleton item) to its containing resource
+     * (eg a collection) in order to sync inside its containing resource on the pooled collection.
+     *
+     * Note: these resolvers are set in the implementing class via {@link makeResolvers}
+     */
+    protected resolvers: Record<RelName, PooledResourceResolver>;
 
     public constructor(resource: T) {
         if (!resource) {
             log.error('empty resource for pooled resources');
         }
 
-        this.collection = resource;
+        this.contextResource = resource;
 
         this.resolvers = this.makeResolvers();
     }
@@ -34,21 +43,26 @@ export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
         return this.pooledResource.bind(this);
     }
 
+    /**
+     *
+     * @param rel known link relation of the resource resolved on the pooled resource context
+     * @param options
+     */
+    protected resolve(rel: RelationshipType, options?: PooledCollectionOptions): PooledResourceResolver {
 
-    protected resolve(rel: RelationshipType, options?: SyncOptions): PooledResourceResolver {
-
+        // initialise on entry as resolver is not scoped on inner function
         const { pooledResolver } = { ...options };
 
         return async <T extends LinkedRepresentation>(document: T, options?: PooledCollectionOptions): Promise<T | undefined> => {
             log.debug('resolve pooled %s %s', rel, LinkUtil.getUri(document, LinkRelation.Self));
-            if (this.collection) {
+            if (this.contextResource) {
                 const resource = await PooledCollectionUtil.sync(
-                    this.collection,
+                    this.contextResource,
                     document as LinkedRepresentation,
                     { ...options, rel });
 
                 /*
-                 * If a pooled collection has linked representations, process here as a nest sync
+                 * process nested sync
                  */
                 if (resource) {
                     pooledResolver?.(resource, document, options);

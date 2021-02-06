@@ -11,6 +11,7 @@ export const resource = {
         {
             rel: 'canonical',
             href: self,
+            // pooled resources are keyed off this title
             title: 'question',
         },
         {
