@@ -31,7 +31,7 @@ import { assertThat } from 'mismatched';
  */
 const makeFromFixture = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
     // note: clone the document for multiple uses
-    SparseRepresentationFactory.make({ on: <T>() => ({ ...document } as unknown as T) });
+    SparseRepresentationFactory.make({ on: { ...document } });
 
 describe('Steps', () => {
     it('helper with json fixture returns object with state attached', () => {
@@ -94,7 +94,7 @@ describe('Steps', () => {
                 ["self", "https://api.example.com/question/cf6c4b9c7f/choice"],
                 ["self", "https://api.example.com/choice/881e3ed135"],
             ];
-            
+
             const actualCalls = get.mock.calls.map((x: any) => [x[1], LinkUtil.getUri(x[0], x[1])]);
             assertThat(actualCalls).is(calls);
         });

@@ -42,11 +42,11 @@ describe('Synchroniser', () => {
      */
     const makeHydratedResource = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
         // note: clone the document for multiple uses
-        SparseRepresentationFactory.make({ on: <T>() => ({ ...document } as unknown as T) });
+        SparseRepresentationFactory.make({ on: { ...document } });
 
     const makeUnknownResource = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
         // note: clone the document for multiple uses
-        SparseRepresentationFactory.make({ status: Status.unknown, on: <T>() => ({ ...document } as unknown as T) });
+        SparseRepresentationFactory.make({ status: Status.unknown, on: { ...document } });
 
     const successPut: AxiosResponse = {
         data: undefined,

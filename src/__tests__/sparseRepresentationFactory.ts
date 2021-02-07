@@ -33,16 +33,12 @@ describe('Sparse Representation Factory', () => {
                 uri: 'http://example.com/1',
                 on: undefined,
             }, singletonRepresentation, Status.locationOnly, true],
-            ['sparse, singleton, on (returns undefined)', {
-                uri: 'http://example.com/1',
-                on: () => undefined,
-            }, singletonRepresentation, Status.locationOnly, true],
             ['hydrated, singleton', {
-                on: () => ({ links: [] }),
+                on: { links: [] },
             } as ResourceFactoryOptions, singletonRepresentation, Status.hydrated, false],
             ['hydrated, collection', {
                 sparseType: 'collection',
-                on: () => ({ links: [], items: [] }),
+                on: { links: [], items: [] },
             } as ResourceFactoryOptions, collectionRepresentation, Status.hydrated, false],
         ])
             .describe(

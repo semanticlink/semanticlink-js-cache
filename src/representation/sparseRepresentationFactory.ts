@@ -27,7 +27,7 @@ export default class SparseRepresentationFactory {
             return SparseRepresentationFactory.makeSparse(options);
         }
 
-        const existingResource = on<T>();
+        const existingResource = on;
         // attach state to existing representation
         if (!existingResource) {
             // still need to create a sparse resource!

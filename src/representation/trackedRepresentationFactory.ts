@@ -377,7 +377,7 @@ export default class TrackedRepresentationFactory {
         const fromFeed = SparseRepresentationFactory.make({
             uri,
             sparseType: 'collection',
-            on: <T>() => representation as unknown as T,
+            on: representation,
         });
 
         // merge the existing and the response such that

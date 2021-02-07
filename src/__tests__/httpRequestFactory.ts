@@ -13,7 +13,7 @@ import { HttpRequestFactory } from '../http/httpRequestFactory';
  */
 const makeFromFixture = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
     // note: clone the document for multiple uses
-    SparseRepresentationFactory.make({ on: <T>() => ({ ...document } as unknown as T) });
+    SparseRepresentationFactory.make({ on: { ...document } });
 
 describe('get', () => {
 

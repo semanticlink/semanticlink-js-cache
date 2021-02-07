@@ -52,18 +52,12 @@ export default async function create<U extends LinkedRepresentation = LinkedRepr
 
 
     if (on) {
-        const existingResource = on<T>();
-        if (existingResource) {
-            if (instanceOfCollection(existingResource)) {
-                return await createCollectionItem(existingResource, document as DocumentRepresentation, options) as unknown as T;
-            } else {
-                log.warn('option \'on\' options cannot be used outside of a collection, skipping');
-                // fall through to return context resource
-            }
+        if (instanceOfCollection(on)) {
+            return await createCollectionItem(on, document as DocumentRepresentation, options) as unknown as T;
         } else {
-            log.warn('option \'on\' did not return collection, skipping');
+            log.warn('option \'on\' options cannot be used outside of a collection, skipping');
+            // fall through and keep processing
         }
-        return undefined;
     }
 
     if (!instanceOfLinkedRepresentation(document)) {
@@ -92,7 +86,10 @@ async function createCollectionItem<T extends LinkedRepresentation>(
         formRel = [LinkRelation.CreateForm, LinkRelation.SearchForm] as RelationshipType,
     } = { ...options };
 
-    const form = await ApiUtil.get(resource as unknown as TrackedRepresentation<T>, { ...options, rel: formRel }) as FormRepresentation;
+    const form = await ApiUtil.get(resource as unknown as TrackedRepresentation<T>, {
+        ...options,
+        rel: formRel
+    }) as FormRepresentation;
 
     if (form) {
         try {

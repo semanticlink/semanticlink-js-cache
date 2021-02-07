@@ -12,7 +12,7 @@ import RepresentationUtil from '../utils/representationUtil';
 
 const makeHydratedResource = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
     // note: clone the document for multiple uses
-    SparseRepresentationFactory.make({ on: <T>() => ({ ...document } as unknown as T) });
+    SparseRepresentationFactory.make({ on: { ...document } });
 
 describe('Named Representation Factory', () => {
 
@@ -89,7 +89,7 @@ describe('Named Representation Factory', () => {
             const actual = await NamedRepresentationFactory.load(api, { rel });
 
             if (returns) {
-                verifyMocks(1,0,0,0)
+                verifyMocks(1, 0, 0, 0)
                 expect(get).toHaveBeenCalled();
                 expect(actual).toBeDefined();
                 // the inside load "fails" returning the location only
@@ -102,7 +102,7 @@ describe('Named Representation Factory', () => {
                     assertThat(TrackedRepresentationUtil.isTracked(api, name)).is(true);
                 }
             } else {
-                verifyMocks(0,0,0,0)
+                verifyMocks(0, 0, 0, 0)
                 expect(get).not.toHaveBeenCalled();
                 expect(actual).toBeUndefined();
             }

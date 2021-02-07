@@ -1,6 +1,6 @@
 import { Status } from '../models/status';
 import { Representation } from 'src/types/types';
-import { LinkType, Uri } from 'semantic-link';
+import { LinkedRepresentation, LinkType, Uri } from 'semantic-link';
 import { FeedItemRepresentation } from 'semantic-link/lib/interfaces';
 
 export type ResourceType = 'singleton' | 'collection' | 'feed';
@@ -45,7 +45,7 @@ export interface ResourceFactoryOptions {
      *
      * TODO: this isn't right and often requires `<T>on: () => x as unknown as T`
      */
-    on?: <T extends Representation | LinkType>() => T;
+    on?: LinkedRepresentation;
 
     /**
      * Internally used, to generate a items on a collection. Used in conjunction with {@link sparseType} 'feed'.

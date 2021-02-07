@@ -33,20 +33,9 @@ describe('resource, create', () => {
 
     test.each([
         [
-            'collection, no on return nothing',
-            {
-                on: () => {
-                    return undefined;
-                },
-            } as ResourceFactoryOptions,
-            trackedRepresentationFactory.create,
-            0,
-            0,
-        ],
-        [
             'collection, on creates',
             {
-                on: () => SparseRepresentationFactory.make({ uri, sparseType: 'collection' }),
+                on: SparseRepresentationFactory.make({ uri, sparseType: 'collection' }),
             } as ResourceFactoryOptions,
             trackedRepresentationFactory.create,
             1,

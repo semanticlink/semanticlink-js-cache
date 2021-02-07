@@ -129,7 +129,7 @@ async function syncResourceInCollection<T extends LinkedRepresentation>(
         }
     } else {
         // add the document to the collection a
-        const result = await ApiUtil.create(document, { ...options, on: <T>() => (resource as unknown as T) });
+        const result = await ApiUtil.create(document, { ...options, on: resource });
         if (result) {
             const resource = await ApiUtil.get(result, options);
             if (resource) {
@@ -168,7 +168,7 @@ async function synchroniseCollection<T extends LinkedRepresentation>(
     const deleteResourceAndUpdateResolver: DeleteStrategy = async <T extends LinkedRepresentation>(deleteResource: T) => {
         const result = await ApiUtil.delete(deleteResource as TrackedRepresentation<T>, {
             ...options,
-            on: <T>() => collectionResource as unknown as T
+            on: collectionResource
         });
         if (result) {
             const uri = LinkUtil.getUri(deleteResource, LinkRelation.Self);
@@ -204,10 +204,7 @@ async function synchroniseCollection<T extends LinkedRepresentation>(
      */
     const createResourceAndUpdateResolver: CreateStrategy = async <T extends LinkedRepresentation>(createDataDocument: T) => {
 
-        const result = await ApiUtil.create(createDataDocument, {
-            ...options,
-            on: <T>() => collectionResource as unknown as T
-        });
+        const result = await ApiUtil.create(createDataDocument, { ...options, on: collectionResource });
         if (result) {
             const uri = LinkUtil.getUri(createDataDocument, LinkRelation.Self);
             const uri1 = LinkUtil.getUri(result, LinkRelation.Self);

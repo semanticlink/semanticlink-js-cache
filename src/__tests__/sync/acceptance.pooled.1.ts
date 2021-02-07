@@ -29,7 +29,7 @@ const log = anylogger('Steps Test');
  * Helper to create a {@link LinkedRepresentation} with {@link State}
  */
 const makeHydratedResource = <T extends LinkedRepresentation>(document: T): T | TrackedRepresentation<T> =>
-    SparseRepresentationFactory.make({ on: <T>() => (document as unknown as T) });
+    SparseRepresentationFactory.make({ on: document  });
 
 describe('Steps with pooled resources', () => {
     let options: ResourceQueryOptions;
