@@ -83,16 +83,11 @@ describe('Resource Merger', () => {
             assertThat(actual).is({
                 name: match.ofType.string,
                 order: 3,
-                questionItems: match.array.length(0),
-                /*
-                question items are empty because they are a select and not specified in the form item or resolved (via id)
-                questionItems: match.array.([
+                questionItems: match.array.match([
                     'http://api.example.com/question/item/627801',
                     'http://api.example.com/question/item/627802',
                     'http://api.example.com/question/item/627803',
                 ]),
-                */
-
             });
         });
 
@@ -201,7 +196,16 @@ describe('Resource Merger', () => {
                         return {
                             links: [],
                             items: [
-                                { links: [{ rel: LinkRelation.Self, href: 'http://example.com/role/2' }] },
+                                {
+                                    links: [
+                                        { rel: LinkRelation.Self, href: 'http://example.com/role/2' },
+                                        {
+                                            rel: LinkRelation.Canonical,
+                                            href: 'http://example.com/role/2',
+                                            title: 'role'
+                                        }
+                                    ],
+                                },
                             ],
                         } as CollectionRepresentation;
                     }) as ResourceResolver,
@@ -373,9 +377,12 @@ describe('Resource Merger', () => {
         describe('fields http://types/group', () => {
 
             test.each([
-                ['single to multiple', { singleMultiple: [] }],
-                ['multiple to multiple', { questionItem: [] }],
-                ['single to single', { question: undefined }],
+                ['single to multiple', { singleMultiple: 'http://api.example.com/question/item/55555' }],
+                ['multiple to multiple', {
+                    questionItem: [
+                        'http://api.example.com/question/item/572444', 'http://api.example.com/question/item/572445']
+                }],
+                ['single to single', { question: 'http://api.example.com/question/87869' }],
             ])('http://types/select, value not in form, %s', async (test: string, expected: any) => {
 
                 const document = {

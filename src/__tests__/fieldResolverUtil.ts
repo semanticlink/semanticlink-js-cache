@@ -2,10 +2,11 @@ import { assertThat } from 'mismatched';
 import { FormItem } from '../interfaces/formItem';
 import FieldResolverUtil, { FieldValue } from '../utils/fieldResolverUtil';
 import { FieldType } from '../types/formTypes';
+import { MergeOptions } from '../interfaces/mergeOptions';
 
 describe('Form util, resolve', () => {
 
-    describe('no resolvers', () => {
+    describe('resolve by type', () => {
 
         test.each([
             ['undefined, empty form items', undefined as FieldValue, {} as FormItem, undefined as FieldValue],
@@ -85,7 +86,7 @@ describe('Form util, resolve', () => {
                 ['a', 'b'],
             ],
             [
-                'multiple (select), multi select, no values in form returns empty array',
+                'multiple (select), multi select, no values in form returns empty array (1)',
                 ['a', 'b'],
                 {
                     name: '',
@@ -96,7 +97,7 @@ describe('Form util, resolve', () => {
                 [],
             ],
             [
-                'multiple (select), multi select, no values in form returns empty array',
+                'multiple (select), multi select, no values in form returns empty array (2)',
                 'a',
                 {
                     name: '',
@@ -106,30 +107,102 @@ describe('Form util, resolve', () => {
                 } as FormItem,
                 [],
             ],
-            [
-                'multiple (select), multi select, no values in form returns empty array',
-                'a',
-                {
-                    name: '',
-                    type: FieldType.Select,
-                    // multiple: false,
-                    // items: [],
-                } as FormItem,
-                undefined,
-            ],
-            // resource
         ])('%s', async (title: string, fieldValue: FieldValue, formItem: FormItem, expected: FieldValue) => {
-            const actual = await FieldResolverUtil.resolve(fieldValue, formItem);
+            const actual = await FieldResolverUtil.resolveByType(fieldValue, formItem);
             assertThat(actual).is(expected);
         });
     });
 
-    xdescribe('throws error', () => {
+    describe('resolve by pooled', () => {
 
-        test.each([])
-        ('%s', async (title: string, fieldValue: FieldValue, formItem: FormItem, message: string | RegExp) => {
-            await expect(() => FieldResolverUtil.resolve(fieldValue, formItem)).rejects.toThrow(message);
+        test.each([
+            [
+                'no options returns field',
+                ['a'],
+                {
+                    name: '',
+                    type: FieldType.Select,
+                    multiple: true,
+                    items: [{ value: 'a' }, { value: 'b' }, { value: 'c' }],
+                } as FormItem,
+                ['a'],
+            ]
+        ])('%s', async (title: string, fieldValue: FieldValue, formItem: FormItem, expected: FieldValue) => {
+            const actual = await FieldResolverUtil.resolveByPooled(fieldValue, formItem);
+            assertThat(actual).is(expected);
+        });
+
+        test.each([
+            [
+                'no options returns field',
+                ['a'],
+                {
+                    name: '',
+                    type: FieldType.Select,
+                    multiple: true,
+                    items: [{ value: 'a' }, { value: 'b' }, { value: 'c' }],
+                } as FormItem,
+                ['a'],
+            ]
+        ])('%s', async (title: string, fieldValue: FieldValue, formItem: FormItem, expected: FieldValue) => {
+            const actual = await FieldResolverUtil.resolveByPooled(fieldValue, formItem);
+            assertThat(actual).is(expected);
         });
 
     });
+
+
+    it('resolve resource', async () => {
+
+        const relName = 'question';
+        /** this resource requires a canonical relation with title to resolve against */
+        const fieldValue = {
+            'links': [
+                {
+                    'rel': 'self',
+                    'href': 'https://api.example.com/question/cf6c4b9c7f'
+                },
+                {
+                    'rel': 'canonical', // <<-- resolves to this link rel
+                    'href': 'https://api.example.com/question/cf6c4b9c7f',
+                    'title': relName
+                },
+            ],
+            'name': 'Please tell me about yourself (AgainXXXXX)',
+            'type': '//enum/question/text',
+        }
+
+        const formItem = {
+            'type': '//types/select',
+            'name': 'field',
+            'label': 'Type',
+            'items': [
+                {
+                    'id': 'https://api.example.com/organisation/a656927b0f/question',
+                    'type': '//types/collection',
+                    'multiple': true,
+                    'name': relName,  // <-- this field is matched against
+                    'label': 'Questions',
+                    'items': null
+                },
+            ]
+        } as unknown as FormItem;
+
+        const mockResolverRelName = jest.fn();
+        const mockResolverResource = jest.fn();
+        const options = {
+            resourceResolver: relName => {
+                mockResolverRelName(relName);
+                return async resource => {
+                    mockResolverResource(resource);
+                    return 'resolved resource';
+                }
+            }
+        } as MergeOptions;
+        const actual = await FieldResolverUtil.resolveResource(fieldValue, formItem, options);
+        expect(mockResolverRelName).toHaveBeenCalledWith(relName);
+        expect(mockResolverResource).toHaveBeenCalledWith(fieldValue);
+        assertThat(actual).is('resolved resource');
+    });
+
 });

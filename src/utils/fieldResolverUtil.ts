@@ -8,6 +8,7 @@ import anylogger from 'anylogger';
 import { FormUtil } from './formUtil';
 import { instanceOfCollection } from './instanceOf';
 import { FormRepresentation } from '../interfaces/formRepresentation';
+import { noopResolver } from '../representation/resourceMergeFactory';
 
 const log = anylogger('FieldResolverUtil');
 
@@ -152,11 +153,29 @@ export default class FieldResolverUtil {
         item: FormItem,
         options?: MergeOptions): Promise<T | undefined> {
 
+        const { resolver = noopResolver } = { ...options };
+
         const field = await this.resolveByType(fieldValue, item, options);
-        if (field) {
-            return field;
+        if (field && instanceOfSimpleValue(field)) {
+            return resolver.resolve(field as Uri) as T;
+        } else if (instanceOfUriListValue(field)) {
+            return field.map(uri => resolver.resolve(uri)) as T;
         }
-        return await this.resolvePooled(fieldValue, item, options) as T;
+
+        // else field was not resolved by type because it is resource
+        if (instanceOfLinkedRepresentation(fieldValue)) {
+            const resource = await this.resolveResource(fieldValue, item, options);
+            if (resource) {
+                // resource was found in a pooled collection and return uri (resolved)
+                const uri = LinkUtil.getUri(resource, LinkRelation.Self);
+                if (uri) {
+                    return resolver.resolve(uri) as T;
+                }
+            }
+        }
+
+        log.warn('Field type unknown - returning default');
+        return fieldValue;
     }
 
     /**
@@ -207,59 +226,6 @@ export default class FieldResolverUtil {
     }
 
     /**
-     * Matches a field value against the form items switching across {@link FieldValue} type.
-     *
-     *  - {@link SimpleValue} - look through the list by value
-     *  - {@link UriListValue} - look across the list by value
-     *  - {@link ResourceValue} - look into the resource's {@link LinkRelation.Canonical} to locate the 'title'
-     *
-     * @param formItem a form item (with items eager loaded)
-     * @param fieldValue
-     * @param options
-     */
-    private static async findValueInItems(formItem: FormItem, fieldValue: FieldValue, options?: MergeOptions): Promise<FieldValue | undefined> {
-
-        // design here to load items outside of this function
-        if (fieldValue && formItem?.items) {
-            if (instanceOfSimpleValue(fieldValue)) {
-                if (formItem.items.some(item => item.value === fieldValue)) {
-                    return fieldValue;
-                }
-            } else if (instanceOfUriListValue(fieldValue)) {
-                return await Promise.all(fieldValue.map(async val => await this.findValueInItems(formItem, val, options)) as unknown as UriListValue);
-            } else if (instanceOfDocumentRepresentation(fieldValue)) {
-
-                // a lazy-loaded set of items is currently loaded from a collection
-                if (instanceOfCollection(formItem.items)) {
-                    if (instanceOfLinkedRepresentation(fieldValue)) {
-                        const uri = LinkUtil.getUri(fieldValue as LinkedRepresentation, LinkRelation.Self);
-                        if (uri) {
-                            if (formItem.items.items.some(item => LinkUtil.getUri(item, LinkRelation.Self) === uri)) {
-                                return uri; // return type Uri
-                            } // else fall through to return undefined
-                        } else {
-                            log.warn('Field value not a linked representation');
-                        }
-                    } // else fall through to return undefined
-                } else {
-                    throw new Error('Not implemented object to match against form items');
-                    /*
-                    if (formItem.items.some(item => item.value === fieldValue.name)) {
-                        return fieldValue;
-                    } // else fall through to return undefined
-                    */
-                }
-            } else {
-                log.error('Field value type not found \'%s\'', typeof fieldValue);
-            }
-        } else {
-            log.warn('No items on form \'%s\'', formItem.name);
-        }
-        log.warn('Value \'%s\' is not found on \'%s\' - still allowing value', fieldValue, formItem.name);
-        return undefined;
-    }
-
-    /**
      * If a {@link MergeOptions.resolver} has been provided then there is potentially a pooled resource available
      * requiring resolution
      *
@@ -267,27 +233,25 @@ export default class FieldResolverUtil {
      * @param item
      * @param options contains the resolver to be used
      */
-    private static async resolvePooled<T extends FieldValue>(fieldValue: T, item: FormItem, options?: MergeOptions): Promise<FieldValue> {
-        const { resolver = undefined } = { ...options };
+    public static async resolveByPooled<T extends FieldValue>(fieldValue: T, item: FormItem, options?: MergeOptions): Promise<FieldValue> {
+        const { resolver = noopResolver } = { ...options };
 
-        if (resolver) {
-            if (instanceOfSimpleValue(fieldValue)) {
-                return resolver.resolve(fieldValue as Uri) as T;
-            } else if (instanceOfUriListValue(fieldValue)) {
-                return fieldValue.map(uri => resolver.resolve(uri)) as T;
-            } else if (instanceOfLinkedRepresentation(fieldValue)) {
-                const resource = await this.resolveResource(fieldValue, item, options);
-                if (resource) {
-                    // resource was found in a pooled collection and return uri (resolved)
-                    const uri = LinkUtil.getUri(resource, LinkRelation.Self);
-                    if (uri) {
-                        return await this.resolvePooled(uri, item, options);
-                    }
+        if (instanceOfSimpleValue(fieldValue)) {
+            return resolver.resolve(fieldValue as Uri) as T;
+        } else if (instanceOfUriListValue(fieldValue)) {
+            return fieldValue.map(uri => resolver.resolve(uri)) as T;
+        } else if (instanceOfLinkedRepresentation(fieldValue)) {
+            const resource = await this.resolveResource(fieldValue, item, options);
+            if (resource) {
+                // resource was found in a pooled collection and return uri (resolved)
+                const uri = LinkUtil.getUri(resource, LinkRelation.Self);
+                if (uri) {
+                    return await this.resolveByPooled(uri, item, options);
                 }
-            } else {
-                log.warn('Field type unknown - returning default');
             }
-        } // else return itself
+        }
+
+        log.warn('Field type unknown - returning default');
         return fieldValue;
     }
 
@@ -297,7 +261,7 @@ export default class FieldResolverUtil {
      * @param formItem
      * @param options
      */
-    private static async resolveByType<T extends FieldValue>(
+    public static async resolveByType<T extends FieldValue>(
         fieldValue: T,
         formItem: FormItem,
         options?: MergeOptions): Promise<T | undefined> {
@@ -374,6 +338,59 @@ export default class FieldResolverUtil {
                 log.warn('Unknown form type \'%s\' on \'%s\'', formItem.type, formItem.name);
                 return undefined;
         }
+    }
+
+    /**
+     * Matches a field value against the form items switching across {@link FieldValue} type.
+     *
+     *  - {@link SimpleValue} - look through the list by value
+     *  - {@link UriListValue} - look across the list by value
+     *  - {@link ResourceValue} - look into the resource's {@link LinkRelation.Canonical} to locate the 'title'
+     *
+     * @param formItem a form item (with items eager loaded)
+     * @param fieldValue
+     * @param options
+     */
+    private static async findValueInItems(formItem: FormItem, fieldValue: FieldValue, options?: MergeOptions): Promise<FieldValue | undefined> {
+
+        // design here to load items outside of this function
+        if (fieldValue && formItem?.items) {
+            if (instanceOfSimpleValue(fieldValue)) {
+                if (formItem.items.some(item => item.value === fieldValue)) {
+                    return fieldValue;
+                }
+            } else if (instanceOfUriListValue(fieldValue)) {
+                return await Promise.all(fieldValue.map(async val => await this.findValueInItems(formItem, val, options)) as unknown as UriListValue);
+            } else if (instanceOfDocumentRepresentation(fieldValue)) {
+
+                // a lazy-loaded set of items is currently loaded from a collection
+                if (instanceOfCollection(formItem.items)) {
+                    if (instanceOfLinkedRepresentation(fieldValue)) {
+                        const uri = LinkUtil.getUri(fieldValue as LinkedRepresentation, LinkRelation.Self);
+                        if (uri) {
+                            if (formItem.items.items.some(item => LinkUtil.getUri(item, LinkRelation.Self) === uri)) {
+                                return uri; // return type Uri
+                            } // else fall through to return undefined
+                        } else {
+                            log.warn('Field value not a linked representation');
+                        }
+                    } // else fall through to return undefined
+                } else {
+                    throw new Error('Not implemented object to match against form items');
+                    /*
+                    if (formItem.items.some(item => item.value === fieldValue.name)) {
+                        return fieldValue;
+                    } // else fall through to return undefined
+                    */
+                }
+            } else {
+                log.error('Field value type not found \'%s\'', typeof fieldValue);
+            }
+        } else {
+            log.warn('No items on form \'%s\'', formItem.name);
+        }
+        log.warn('Value \'%s\' is not found on \'%s\' - still allowing value', fieldValue, formItem.name);
+        return undefined;
     }
 
 }
