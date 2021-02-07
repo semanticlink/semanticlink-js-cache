@@ -321,7 +321,7 @@ async function synchroniseCollection<T extends LinkedRepresentation>(
         }
     };
 
-    return await Differencer.diffCollection(collectionResource, collectionDocument, { ...options, ...makeOptions() });
+    return await Differencer.difference(collectionResource, collectionDocument, { ...options, ...makeOptions() });
 }
 
 /*
@@ -389,13 +389,6 @@ export async function getResource<T extends LinkedRepresentation>(
     return resource;
 }
 
-/*
-    return cache
-        .getResource(resource, options)
-        .then(resource => cache.updateResource(resource, resourceDocument, options))
-        .then(syncResources(resource, resourceDocument, strategies, options))
-        .then(() => resource);
-*/
 
 /**
  * Retrieves a singleton resource on a parent resource and updates (its
@@ -451,7 +444,7 @@ export async function getSingleton<T extends LinkedRepresentation>(
 
     const namedResource = await get(parentResource as TrackedRepresentation<T>, { ...options, rel: rel });
     if (namedResource) {
-        const document = RepresentationUtil.getProperty(parentDocument, name as any) as DocumentRepresentation<T>;
+        const document = RepresentationUtil.getProperty(parentDocument, name) as DocumentRepresentation<T>;
         const updated = await update(namedResource, document, options);
         if (updated) {
             await (await syncResources(updated, document as T, strategies, options))();
@@ -633,26 +626,6 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
         await tailRecursionThroughStrategies(strategies, info, options);
     }
     return collectionResource;
-    /*
-        return (
-            synchroniseCollection(collectionResource, collectionDocument, options)
-                // returns [infos, createResults, updateItems, deleteItems], we'll just have 'infos'
-                .then(([syncInfos]) => {
-                    return (
-                        cache
-                            // populate the potentially sparse collection - we need to ensure that
-                            // any existing ones (old) are not stale and that any just created (sparse)
-                            // are hydrated
-                            .tryGetCollectionItems(collectionResource, options)
-                            .then(() => {
-                                // each item in the collection perform the strategy
-                                return tailRecursionThroughStrategies(strategies, syncInfos, options);
-                            })
-                    );
-                })
-                .then(() => collectionResource)
-        );
-    */
 }
 
 /**
@@ -688,13 +661,13 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
     parentResource: T | TrackedRepresentation<T>,
     collectionName: string,
     collectionRel: RelationshipType,
-    collectionDocument: DocumentRepresentation<T>,
+    collectionDocument: DocumentRepresentation<T> | CollectionRepresentation,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
     log.debug('[Sync] collection (in named collection) \'%s\' on %s', collectionName, LinkUtil.getUri(parentResource, LinkRelation.Self));
 
-    const result = await get(parentResource as TrackedRepresentation<T>, { ...options, rel: collectionRel });
+    const result = await ApiUtil.get(parentResource as TrackedRepresentation<T>, { ...options, rel: collectionRel });
     if (result) {
         // in the context of the collection, synchronise the collection part of the document
         await getCollectionInCollection(result, collectionDocument, strategies, options);
@@ -702,17 +675,6 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
         log.info('[Sync] No \'%s\' on resource %s', collectionName, LinkUtil.getUri(parentResource, LinkRelation.Self));
     }
     return parentResource;
-    /*
-        return cache.getNamedCollection(parentResource, collectionName, collectionRel, options)
-            .then(collectionResource => {
-                if (!collectionResource) {
-                    log.info(`[Sync] No '${collectionName}' on resource ${LinkUtil.getUri(parentResource, LinkRelation.Self)}`);
-                    return Promise.resolve(parentResource);
-                }
-                // in the context of the collection, synchronise the collection part of the document
-                return getCollectionInCollection(collectionResource, collectionDocument, strategies, options);
-            });
-    */
 }
 
 /**

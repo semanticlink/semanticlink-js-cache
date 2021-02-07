@@ -72,7 +72,7 @@ export default class Differencer {
      * @param options a document with a collection CollectionRepresentation
      * format that describes the state of the resources.
      */
-    static async diffCollection(
+    static async difference(
         resource: CollectionRepresentation,
         document: CollectionRepresentation,
         options?: SyncOptions): Promise<SyncResultItem> {

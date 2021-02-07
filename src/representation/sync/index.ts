@@ -6,7 +6,7 @@ import {
     getResourceInNamedCollection,
     getSingleton,
 } from './syncLinkedRepresentation';
-import { LinkedRepresentation, LinkType, LinkUtil } from 'semantic-link';
+import { CollectionRepresentation, LinkedRepresentation, LinkType, LinkUtil } from 'semantic-link';
 import { instanceOfResourceSync } from './instanceOfResourceSync';
 import { SyncType } from '../../interfaces/sync/types';
 import { ResourceSync } from '../../interfaces/sync/resourceSync';
@@ -15,6 +15,8 @@ import { NamedResourceSync } from '../../interfaces/sync/namedResourceSync';
 import LinkRelConvertUtil from '../../utils/linkRelConvertUtil';
 import { instanceOfCollection, instanceOfUriList } from '../../utils/instanceOf';
 import anylogger from 'anylogger';
+import RepresentationUtil from '../../utils/representationUtil';
+import { DocumentRepresentation } from '../../interfaces/document';
 
 const log = anylogger('Sync');
 
@@ -180,7 +182,6 @@ export async function sync<T extends LinkedRepresentation>(syncAction: SyncType<
             log.warn('Strategies not available for uri-list');
         }
         throw new Error('Not implemented');
-        // return await getUriListOnNamedCollection(resource, name, rel, document, options);
     }
 
     if (!document) {
@@ -188,8 +189,9 @@ export async function sync<T extends LinkedRepresentation>(syncAction: SyncType<
         return;
     }
 
-    if (instanceOfCollection((document as any)[name])) {
-        await getCollectionInNamedCollection(resource, name, rel, (document as any)[name], strategies, options);
+    const collection = RepresentationUtil.getProperty(document, name);
+    if (instanceOfCollection(collection)) {
+        await getCollectionInNamedCollection(resource, name, rel, collection, strategies, options);
         return;
     }
 

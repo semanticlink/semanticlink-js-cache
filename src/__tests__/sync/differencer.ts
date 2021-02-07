@@ -50,7 +50,7 @@ describe('Differencer', () => {
                     ],
                 } as TestCollection;
 
-                const actual = await Differencer.diffCollection(collection as any, collection as any, options);
+                const actual = await Differencer.difference(collection as any, collection as any, options);
                 verifySync(actual, 0, 1, 0);
             });
 
@@ -74,7 +74,7 @@ describe('Differencer', () => {
                         },
                     ],
                 };
-                const actual = await Differencer.diffCollection(collection as any, document as any, options);
+                const actual = await Differencer.difference(collection as any, document as any, options);
                 verifySync(actual, 0, 1, 0);
             });
 
@@ -94,7 +94,7 @@ describe('Differencer', () => {
                     items: [],
                 };
 
-                const actual = await Differencer.diffCollection(collection as any, document as any, options);
+                const actual = await Differencer.difference(collection as any, document as any, options);
                 verifySync(actual, 0, 0, 1);
             });
 
@@ -114,7 +114,7 @@ describe('Differencer', () => {
                     ],
                 };
 
-                const actual = await Differencer.diffCollection(collection as any, document as any, options);
+                const actual = await Differencer.difference(collection as any, document as any, options);
                 verifySync(actual, 1, 0, 0);
             });
         });
@@ -159,7 +159,7 @@ describe('Differencer', () => {
                     ],
                 };
 
-                const actual = await Differencer.diffCollection(collection as any, document as any, options);
+                const actual = await Differencer.difference(collection as any, document as any, options);
                 verifySync(actual, 1, 2, 1);
             });
         });

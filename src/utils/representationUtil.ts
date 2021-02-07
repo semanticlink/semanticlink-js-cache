@@ -45,8 +45,8 @@ export function properties<T extends LinkedRepresentation | Partial<T>, P extend
         .filter(x => x !== 'links');
 }
 
-export function getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
-    return o[propertyName];
+export function getProperty<T, K extends keyof T>(o: T, propertyName: K | string): T[K] {
+    return o[propertyName as K];
 }
 
 

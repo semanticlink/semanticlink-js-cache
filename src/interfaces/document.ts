@@ -16,7 +16,7 @@ type IndexType = { [key: string]: unknown };
  *
  * Document is a specific version for representations of {@link Pick} based on a {@link FormRepresentation}. However,
  */
-export type DocumentRepresentation<T extends LinkedRepresentation | Partial<T> = LinkedRepresentation> =
+export type DocumentRepresentation<T extends LinkedRepresentation | Partial<T> | Extract<T, T> = LinkedRepresentation> =
     (T & IndexType) |
     IndexType;
 

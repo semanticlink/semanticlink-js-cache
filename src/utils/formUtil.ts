@@ -128,7 +128,7 @@ export class FormUtil {
         TForm extends FormRepresentation,
         P extends keyof T = keyof T>(
         resource: T,
-        document: DocumentRepresentation<T>,
+        document: T | DocumentRepresentation<T>,
         form: TForm,
         defaultFields: (P | string)[] = []): P[] {
 
@@ -139,7 +139,7 @@ export class FormUtil {
             .filter(field => {
                 // omit any fields that match
                 // WARNING: This might have problems if the field is a 'multiple'    <<<<<<<<<<<<<<<< ---- please review
-                return !(RepresentationUtil.getProperty(resource, field) === RepresentationUtil.getProperty(document, field as string));
+                return !(RepresentationUtil.getProperty(resource, field) === RepresentationUtil.getProperty(document as Extract<T, T>, field));
             }) as P[];
     }
 

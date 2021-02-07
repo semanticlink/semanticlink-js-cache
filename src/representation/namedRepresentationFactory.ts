@@ -59,7 +59,7 @@ export default class NamedRepresentationFactory {
 
         if (rel && name) {
             if (TrackedRepresentationUtil.isTracked(resource, name)) {
-                const namedResource = RepresentationUtil.getProperty(resource, name as keyof T);
+                const namedResource = RepresentationUtil.getProperty(resource, name);
                 if (namedResource) {
                     // don't just return value but ensure it has loading rules respected (eg expires)
                     return await TrackedRepresentationFactory.load<T, TResult>(
