@@ -23,7 +23,7 @@ describe('Resource', () => {
         } as TestRepresentation;
 
         const trackedSingleton = {
-            ...{ [state]: {} },
+            [state]: {},
             ...singleton,
         } as TrackedRepresentation<TestRepresentation>;
 
@@ -43,9 +43,7 @@ describe('Resource', () => {
         } as TestCollection;
 
         const trackedCollection = {
-            ...({
-                [state]: {},
-            }),
+            [state]: {},
             ...collection,
         } as TrackedRepresentation<TestCollection>;
 
@@ -89,7 +87,7 @@ describe('Resource', () => {
             form);
         const j = await yy(singleton, { version: 'fred' }, form);
 
-        if (j){
+        if (j) {
             j.version;
         }
 

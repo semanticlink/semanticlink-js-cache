@@ -1,11 +1,12 @@
 import anylogger from 'anylogger';
-import { CollectionRepresentation, LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
+import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import ApiUtil from '../../apiUtil';
 import LinkRelation from '../../linkRelation';
 import { TrackedRepresentation } from '../../types/types';
 import RepresentationUtil from '../../utils/representationUtil';
 import { noopResolver } from '../resourceMergeFactory';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
+import { instanceOfCollection } from '../../utils/instanceOf';
 
 const log = anylogger('PooledCollectionUtil');
 
@@ -49,10 +50,10 @@ async function makeAndResolveResource<T extends LinkedRepresentation>(collection
     return undefined;
 }
 
-export default class PooledCollectionUtil {
+export default class PooledResourceUtil {
 
     /**
-     * Used for provisioning a pooled collection (network of data) based on providing a document (resources). Based on
+     * Used for provisioning a pooled resource. Based on
      * the differences it will resolve a resource and may create one in the process.
      *
      * A pooled collection lives outside of the current context that needs to be resolved. Examples similar to this
@@ -62,49 +63,61 @@ export default class PooledCollectionUtil {
      * When pooled collection is read-only then no resources may be added from other contexts.
      *
      */
-    static async sync<T extends LinkedRepresentation>(parentOrCollection: T, resourceDocument: T, options?: PooledCollectionOptions): Promise<T | undefined> {
+    static async sync<T extends LinkedRepresentation>(context: T, aDocument: T, options?: PooledCollectionOptions): Promise<T | undefined> {
 
         const { rel, resolver = noopResolver } = { ...options };
 
-        // selected nested by rel when present
+        // step 1: generate the context as a collection
         const resource = rel ?
-            await ApiUtil.get(parentOrCollection as TrackedRepresentation<T>, options) :
-            parentOrCollection;
+            await ApiUtil.get(context as TrackedRepresentation<T>, options) :
+            context;
 
-        const uri = LinkUtil.getUri(resource as TrackedRepresentation<T>, LinkRelation.Self);
+        // step 2: process
+        if (resource && instanceOfCollection(resource)) {
 
-        // strategy one & two: it is simply found map it based on self and/or mappedTitle
-        const existing = RepresentationUtil.findInCollection(resource as unknown as CollectionRepresentation, { where: resourceDocument });
+            const uri = LinkUtil.getUri(resource, LinkRelation.Self);
 
-        if (existing) {
-            return addToResolver(resourceDocument, existing, options) as T;
-        } else if (LinkUtil.getUri(resourceDocument, LinkRelation.Self)) {
-            // strategy three: check to see if self is an actual resource anyway and map it if it is, otherwise make
-            const documentURI = LinkUtil.getUri(resourceDocument, LinkRelation.Self);
-            if (documentURI) {
-                const resolvedUri = resolver.resolve(documentURI);
-                if (resolvedUri !== documentURI) {
-                    const tryGetResource = RepresentationUtil.findInCollection(resource as unknown as CollectionRepresentation, { where: resolvedUri });
-                    if (tryGetResource) {
-                        return tryGetResource as T;
+            //
+            // strategy one & two: it is simply found map it based on self and/or mappedTitle
+            //
+            const existing = RepresentationUtil.findInCollection(resource, { where: aDocument });
+
+            if (existing) {
+                return addToResolver(aDocument, existing, options) as T;
+            } else if (LinkUtil.getUri(aDocument, LinkRelation.Self)) {
+                //
+                // strategy three: check to see if self is an actual resource anyway and map it if it is, otherwise make
+                //
+                const documentURI = LinkUtil.getUri(aDocument, LinkRelation.Self);
+                if (documentURI) {
+                    const resolvedUri = resolver.resolve(documentURI);
+                    if (resolvedUri !== documentURI) {
+                        const foundResource = RepresentationUtil.findInCollection(resource, { where: resolvedUri });
+                        if (foundResource) {
+                            return foundResource as T;
+                        } else {
+                            log.error('Unexpected error: resource \'%s\' is not found on %s', resolvedUri, uri);
+                        }
                     } else {
-                        log.error('Unexpected error: resource \'%s\' is not found on %s', resolvedUri, uri);
+                        return await makeAndResolveResource(resource, aDocument, options) as T;
                     }
-                } else {
-                    return await makeAndResolveResource(resource as T, resourceDocument, options) as T;
                 }
-            }
 
-        } else {
-            // strategy four: make if we can because we at least might have the attributes
-            return await makeAndResolveResource(resource as T, resourceDocument, options) as T;
+            } else {
+                // strategy four: make if we can because we at least might have the attributes
+                return await makeAndResolveResource(resource, aDocument, options) as T;
+            }
+        }
+
+        if (resource && !instanceOfCollection(resource)) {
+            log.error('resource of collection must be found at %s', LinkUtil.getUri(resource, LinkRelation.Self));
         }
 
         return undefined;
     }
 
     /**
-     * Retrieves a resource from a named collection from the context of a given resource.
+     * Retrieves a resource from a named resource from the context of a given resource.
      *
      * @return {Promise<string>} containing the uri resource {@link LinkedRepresentation}
      */

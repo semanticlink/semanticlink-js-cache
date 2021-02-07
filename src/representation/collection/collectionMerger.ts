@@ -66,17 +66,6 @@ export default class CollectionMerger {
         }
         return lvalue;
     }
-
-    public static omitItems22<T extends CollectionRepresentation>(lvalue: T, rvalue: T): T {
-        const coll = { ...lvalue };
-
-        if (lvalue.items && rvalue.items) {
-            coll.items = lvalue.items
-                .filter(l => rvalue.items.findIndex(r => canonicalOrSelf(l, r)) >= 0);
-        }
-        return coll;
-    }
-
     /**
      * Extract items in the rvalue that are not in the lvalue to extend the lvalue.
      * Returns the lvalue (mutated).
@@ -113,20 +102,6 @@ export default class CollectionMerger {
         }
         return lvalue;
     }
-
-    public static pickItems22<T extends CollectionRepresentation>(lvalue: T, rvalue: T): T {
-        if (rvalue.items) {
-            if (!lvalue?.items || lvalue.items.length == 0) {
-                lvalue.items = rvalue.items || [];
-            } else {
-                const newItems = rvalue.items
-                    .filter(r => !lvalue.items.find(l => canonicalOrSelf(l, r)) || r);
-                lvalue.items = [...lvalue.items, ...newItems];
-            }
-        }
-        return lvalue;
-    }
-
     /**
      * Return a lvalue
      *  1. items that
@@ -154,7 +129,6 @@ export default class CollectionMerger {
         }
 
         const omitted = this.omitItems(lvalue, rvalue);
-        const picked = this.extractItems(omitted, rvalue);
-        return picked;
+        return this.extractItems(omitted, rvalue);
     }
 }

@@ -3,7 +3,7 @@ import anylogger from 'anylogger';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
 import { ResourceResolver } from '../../interfaces/resourceResolver';
 import LinkRelation from '../../linkRelation';
-import PooledCollectionUtil from './pooledCollectionUtil';
+import PooledResourceUtil from './pooledResourceUtil';
 
 const log = anylogger('AbstractPooledResource');
 
@@ -56,7 +56,7 @@ export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
         return async <T extends LinkedRepresentation>(document: T, options?: PooledCollectionOptions): Promise<T | undefined> => {
             log.debug('resolve pooled %s %s', rel, LinkUtil.getUri(document, LinkRelation.Self));
             if (this.contextResource) {
-                const resource = await PooledCollectionUtil.sync(
+                const resource = await PooledResourceUtil.sync(
                     this.contextResource,
                     document as LinkedRepresentation,
                     { ...options, rel });

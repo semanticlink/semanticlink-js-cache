@@ -1,4 +1,4 @@
-import PooledCollectionUtil from '../../representation/sync/pooledCollectionUtil';
+import PooledResourceUtil from '../../representation/sync/pooledResourceUtil';
 import { assertThat } from 'mismatched';
 import ApiUtil from '../../apiUtil';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
@@ -39,7 +39,7 @@ describe('Pooled collection', () => {
         };
 
         it('returns document based on uri/name matching', async () => {
-            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource);
+            const result = await PooledResourceUtil.get(parentCollection, 'roles', /roles/, resource);
             assertThat(result).is(document);
             expect(spy).toHaveBeenCalled();
         });
@@ -64,7 +64,7 @@ describe('Pooled collection', () => {
                     },
                 },
             } as PooledCollectionOptions;
-            await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+            await PooledResourceUtil.get(parentCollection, 'roles', /roles/, resource, options);
 
             assertThat(documentUriResolved).is('http://api.example.com/role/2');
             assertThat(nodUriResolved).is('http://api.example.com/role/1');
@@ -92,7 +92,7 @@ describe('Pooled collection', () => {
                     },
                 },
             } as PooledCollectionOptions;
-            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+            const result = await PooledResourceUtil.get(parentCollection, 'roles', /roles/, resource, options);
             assertThat(result).is(document);
 
         });
@@ -117,7 +117,7 @@ describe('Pooled collection', () => {
 
             // sinon.stub(cache, 'createCollectionItem').callsFake(() => Promise.resolve(createdResource));
             const spy = jest.spyOn(ApiUtil, 'create').mockResolvedValue(createdResource);
-            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+            const result = await PooledResourceUtil.get(parentCollection, 'roles', /roles/, resource, options);
 
             assertThat(result).is(createdResource);
             expect(mock).toHaveBeenCalled();
@@ -156,7 +156,7 @@ describe('Pooled collection', () => {
             // sinon.stub(cache, 'createCollectionItem').callsFake(() => Promise.resolve(createdResource));
             const spy = jest.spyOn(ApiUtil, 'get').mockResolvedValue(createdResource);
 
-            const result = await PooledCollectionUtil.get(parentCollection, 'roles', /roles/, resource, options);
+            const result = await PooledResourceUtil.get(parentCollection, 'roles', /roles/, resource, options);
 
             if (result) {
                 assertThat(result).is(createdResource);

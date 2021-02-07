@@ -182,8 +182,6 @@ export class FormUtil {
             log.warn('Only selects form type should be called but have called %s', item.type);
         }
 
-        // const { id, items = [], name } = item;
-
         if (item.id) {
             //
             const { resourceResolver = undefined, resolver = noopResolver } = { ...options };
