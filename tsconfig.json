@@ -35,6 +35,7 @@
     "lib",
     "docs",
     "node_modules",
+    "**/__fixtures__/*",
     "**/__tests__/*"
   ]
 }

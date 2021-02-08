@@ -1,27 +1,27 @@
 import {
     resource as page1Feed,
     self as page1FeedUri,
-} from '../../fixture/1/organisation/a65/step/ac5-page-1/step-page-1-feed';
-import { resource as page1 } from '../../fixture/1/organisation/a65/step/ac5-page-1';
-import { resource as questionStep, self as questionStepUri } from '../../fixture/1/organisation/a65/step/92c-question';
-import { resource as question } from '../../fixture/1/question/cf6-question';
-import { resource as organisation } from '../../fixture/1/organisation/a65';
+} from '../../__fixtures__/1/organisation/a65/step/ac5-page-1/step-page-1-feed';
+import { resource as page1 } from '../../__fixtures__/1/organisation/a65/step/ac5-page-1';
+import { resource as questionStep, self as questionStepUri } from '../../__fixtures__/1/organisation/a65/step/92c-question';
+import { resource as question } from '../../__fixtures__/1/question/cf6-question';
+import { resource as organisation } from '../../__fixtures__/1/organisation/a65';
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
-import { fakeResponseFactory } from '../../fixture/1/fakeResponseFactory';
+import { fakeResponseFactory } from '../../__fixtures__/1/fakeResponseFactory';
 import anylogger from 'anylogger';
 import { AxiosResponse } from 'axios';
 import { TrackedRepresentation } from '../../types/types';
 import SparseRepresentationFactory from '../../representation/sparseRepresentationFactory';
 import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
-import StepRepresentation from '../../fixture/domain/interfaces/stepRepresentation';
+import StepRepresentation from '../../__fixtures__/domain/interfaces/stepRepresentation';
 import LinkRelation from '../../linkRelation';
-import Step from '../../fixture/domain/step';
+import Step from '../../__fixtures__/domain/step';
 import { uriMappingResolver } from '../../sync/uriMappingResolver';
 import { sync } from '../../sync';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
-import PooledOrganisation from '../../fixture/domain/pooledOrganisation';
-import CustomLinkRelation from '../../fixture/domain/CustomLinkRelation';
+import PooledOrganisation from '../../__fixtures__/domain/pooledOrganisation';
+import CustomLinkRelation from '../../__fixtures__/domain/CustomLinkRelation';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
 
 const log = anylogger('Steps Test');

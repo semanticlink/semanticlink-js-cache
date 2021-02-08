@@ -5,7 +5,7 @@ import {
     linkedRepresentation,
     RepresentationMatcher,
     singletonRepresentation,
-} from '../utils/representationMatcher';
+} from '../__fixtures__/representationMatcher';
 import { Status } from '../models/status';
 import each from 'jest-each';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
