@@ -88,7 +88,7 @@ async function createCollectionItem<T extends LinkedRepresentation>(
 
     const form = await ApiUtil.get(resource as unknown as TrackedRepresentation<T>, {
         ...options,
-        rel: formRel
+        rel: formRel,
     }) as FormRepresentation;
 
     if (form) {

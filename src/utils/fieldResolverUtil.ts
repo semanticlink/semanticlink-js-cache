@@ -162,7 +162,7 @@ export default class FieldResolverUtil {
 
         const {
             resourceResolverRelNameStrategy = this.resourceResolverRelNameStrategy,
-            resourceResolver
+            resourceResolver,
         } = { ...options };
         const relName = resourceResolverRelNameStrategy(fieldValue as LinkedRepresentation);
 
@@ -175,11 +175,11 @@ export default class FieldResolverUtil {
                         return await resourceResolver(relName)(fieldValue as LinkedRepresentation, options) as T;
                     } // else no resolver
                 } else {
-                    log.debug('form item might expected \id\ attribute of resource')
+                    log.debug('form item might expected \id\ attribute of resource');
                 }
             } // else no matching relName in form item
         } else {
-            log.bind('rel name strategy did not return name on %s', LinkUtil.getUri(fieldValue as LinkedRepresentation, LinkRelation.Self))
+            log.bind('rel name strategy did not return name on %s', LinkUtil.getUri(fieldValue as LinkedRepresentation, LinkRelation.Self));
         }
 
         return fieldValue as T;

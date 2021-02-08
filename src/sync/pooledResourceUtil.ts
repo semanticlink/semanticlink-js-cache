@@ -41,7 +41,7 @@ function addToResolver<T extends LinkedRepresentation>(document: T, resource: T,
 async function makeAndResolveResource<T extends LinkedRepresentation>(collectionResource: T, resourceDocument: T, options?: PooledCollectionOptions): Promise<T | undefined> {
     const result = await ApiUtil.create(resourceDocument, {
         ...options,
-        on: collectionResource
+        on: collectionResource,
     });
     if (result) {
         log.info('Pooled resource created: created %s', LinkUtil.getUri(result as unknown as LinkedRepresentation, LinkRelation.Self));

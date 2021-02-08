@@ -2,7 +2,7 @@ import { LinkedRepresentation } from 'semantic-link';
 import {
     PooledResource,
     PooledResourceResolver,
-    RelName
+    RelName,
 } from '../../sync/pooledResource';
 import CustomLinkRelation from './CustomLinkRelation';
 import { Question } from './question';

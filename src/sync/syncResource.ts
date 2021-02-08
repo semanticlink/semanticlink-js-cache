@@ -168,7 +168,7 @@ async function synchroniseCollection<T extends LinkedRepresentation>(
     const deleteResourceAndUpdateResolver: DeleteStrategy = async <T extends LinkedRepresentation>(deleteResource: T) => {
         const result = await ApiUtil.delete(deleteResource as TrackedRepresentation<T>, {
             ...options,
-            on: collectionResource
+            on: collectionResource,
         });
         if (result) {
             const uri = LinkUtil.getUri(deleteResource, LinkRelation.Self);

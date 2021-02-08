@@ -89,7 +89,7 @@ describe('Named Representation Factory', () => {
             const actual = await NamedRepresentationFactory.load(api, { rel });
 
             if (returns) {
-                verifyMocks(1, 0, 0, 0)
+                verifyMocks(1, 0, 0, 0);
                 expect(get).toHaveBeenCalled();
                 expect(actual).toBeDefined();
                 // the inside load "fails" returning the location only
@@ -102,7 +102,7 @@ describe('Named Representation Factory', () => {
                     assertThat(TrackedRepresentationUtil.isTracked(api, name)).is(true);
                 }
             } else {
-                verifyMocks(0, 0, 0, 0)
+                verifyMocks(0, 0, 0, 0);
                 expect(get).not.toHaveBeenCalled();
                 expect(actual).toBeUndefined();
             }

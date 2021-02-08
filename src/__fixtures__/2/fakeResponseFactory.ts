@@ -1,8 +1,8 @@
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import { resource as workflow, self as workflowUri } from './organisation/a65/step/314-workflow';
 import { resource as pageOne, self as pageOneUri } from './organisation/a65/step/ac5-page-1';
-import { resource as pagesFeed, self as pagesFeedUri, } from './organisation/a65/step/314-workflow/step-pages-feed';
-import { resource as pageFeed, self as pageFeedUri, } from './organisation/a65/step/ac5-page-1/step-page-1-feed';
+import { resource as pagesFeed, self as pagesFeedUri } from './organisation/a65/step/314-workflow/step-pages-feed';
+import { resource as pageFeed, self as pageFeedUri } from './organisation/a65/step/ac5-page-1/step-page-1-feed';
 import { resource as createForm, self as createFormUri } from './organisation/a65/step/form/create';
 import { resource as questionStep, self as questionStepUri } from './organisation/a65/step/92c-question';
 import { resource as question, self as questionUri } from './question/1-question';

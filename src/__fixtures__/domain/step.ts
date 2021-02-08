@@ -53,10 +53,10 @@ export default class Step {
             case StepType.question:
                 await this.loadQuestionWithChoices(step, options);
                 return;
-             case StepType.page:
+            case StepType.page:
                 await this.loadStep(step, options);
                 return;
-           case StepType.image:
+            case StepType.image:
             case StepType.video:
             case StepType.heading:
                 return;

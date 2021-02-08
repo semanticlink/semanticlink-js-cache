@@ -202,8 +202,8 @@ describe('Resource Merger', () => {
                                         {
                                             rel: LinkRelation.Canonical,
                                             href: 'http://example.com/role/2',
-                                            title: 'role'
-                                        }
+                                            title: 'role',
+                                        },
                                     ],
                                 },
                             ],
@@ -380,7 +380,7 @@ describe('Resource Merger', () => {
                 ['single to multiple', { singleMultiple: 'http://api.example.com/question/item/55555' }],
                 ['multiple to multiple', {
                     questionItem: [
-                        'http://api.example.com/question/item/572444', 'http://api.example.com/question/item/572445']
+                        'http://api.example.com/question/item/572444', 'http://api.example.com/question/item/572445'],
                 }],
                 ['single to single', { question: 'http://api.example.com/question/87869' }],
             ])('http://types/select, value not in form, %s', async (test: string, expected: any) => {

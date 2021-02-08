@@ -2,7 +2,7 @@ import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link'
 import { resource as workflow, selfUri as workflowUri } from './organisation/a65/step/314-workflow';
 import { resource as pageOne, self as pageOneUri } from './organisation/a65/step/ac5-page-1';
 import { resource as heading, self as headingUri } from './organisation/a65/step/ec7-heading';
-import { resource as pagesFeed, self as pagesFeedUri, } from './organisation/a65/step/314-workflow/step-pages-feed';
+import { resource as pagesFeed, self as pagesFeedUri } from './organisation/a65/step/314-workflow/step-pages-feed';
 import { resource as pageFeed, self as pageFeedUri } from './organisation/a65/step/ac5-page-1/step-page-1-feed';
 import { resource as workflowStep, self as workflowStepUri } from './step/314-workflow';
 import { resource as editForm, self as editFormUri } from './organisation/a65/step/form/edit';

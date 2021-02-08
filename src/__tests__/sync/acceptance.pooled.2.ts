@@ -109,7 +109,7 @@ describe('Steps with pooled (new) resources', () => {
         post.mockReset();
         del.mockReset();
         put.mockReset();
-    })
+    });
 
     describe('sync', () => {
         it('strategy with page and question, 1 created step with existing pooled question', async () => {
@@ -164,16 +164,16 @@ describe('Steps with pooled (new) resources', () => {
 
             /* list of out the requests to aid understanding (rather than overwhelm!) */
             const uris = [
-                ["self", "https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step"],
-                ["self", "https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step"],
-                ["self", "https://api.example.com/organisation/a656927b0f/step/form/create"],
-                ["self", "https://api.example.com/organisation/a656927b0f/question"],
-                ["self", "https://api.example.com/question/form/create"],
-                ["self", "https://api.example.com/question/1"],
-                ["self", "https://api.example.com/question/1/choice"],
-                ["self", "https://api.example.com/choice/881e3ed135"],
-                ["self", "https://api.example.com/organisation/a656927b0f/step/92c28454b7"],
-                ["self", "https://api.example.com/choice/form/edit"]
+                ['self', 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step'],
+                ['self', 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff/step'],
+                ['self', 'https://api.example.com/organisation/a656927b0f/step/form/create'],
+                ['self', 'https://api.example.com/organisation/a656927b0f/question'],
+                ['self', 'https://api.example.com/question/form/create'],
+                ['self', 'https://api.example.com/question/1'],
+                ['self', 'https://api.example.com/question/1/choice'],
+                ['self', 'https://api.example.com/choice/881e3ed135'],
+                ['self', 'https://api.example.com/organisation/a656927b0f/step/92c28454b7'],
+                ['self', 'https://api.example.com/choice/form/edit'],
             ];
 
             verifyMocks(10, 2, 0, 0);

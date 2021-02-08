@@ -162,7 +162,7 @@ describe('Steps with pooled resources', () => {
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/92c28454b7'],
                 ['self', 'https://api.example.com/organisation/a656927b0f/step/form/edit'],
                 ['self', 'https://api.example.com/question/cf6c4b9c7f'],
-                ['self', 'https://api.example.com/question/form/edit']
+                ['self', 'https://api.example.com/question/form/edit'],
             ];
 
             const actualUris = get.mock.calls.map(x => [x[1], LinkUtil.getUri(x[0], x[1])]);

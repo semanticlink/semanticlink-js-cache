@@ -127,7 +127,7 @@ describe('Form util, resolve', () => {
                     items: [{ value: 'a' }, { value: 'b' }, { value: 'c' }],
                 } as FormItem,
                 ['a'],
-            ]
+            ],
         ])('%s', async (title: string, fieldValue: FieldValue, formItem: FormItem, expected: FieldValue) => {
             const actual = await FieldResolverUtil.resolveByPooled(fieldValue, formItem);
             assertThat(actual).is(expected);
@@ -144,7 +144,7 @@ describe('Form util, resolve', () => {
                     items: [{ value: 'a' }, { value: 'b' }, { value: 'c' }],
                 } as FormItem,
                 ['a'],
-            ]
+            ],
         ])('%s', async (title: string, fieldValue: FieldValue, formItem: FormItem, expected: FieldValue) => {
             const actual = await FieldResolverUtil.resolveByPooled(fieldValue, formItem);
             assertThat(actual).is(expected);
@@ -161,17 +161,17 @@ describe('Form util, resolve', () => {
             'links': [
                 {
                     'rel': 'self',
-                    'href': 'https://api.example.com/question/cf6c4b9c7f'
+                    'href': 'https://api.example.com/question/cf6c4b9c7f',
                 },
                 {
                     'rel': 'canonical', // <<-- resolves to this link rel
                     'href': 'https://api.example.com/question/cf6c4b9c7f',
-                    'title': relName
+                    'title': relName,
                 },
             ],
             'name': 'Please tell me about yourself (AgainXXXXX)',
             'type': '//enum/question/text',
-        }
+        };
 
         const formItem = {
             'type': '//types/select',
@@ -184,9 +184,9 @@ describe('Form util, resolve', () => {
                     'multiple': true,
                     'name': relName,  // <-- this field is matched against
                     'label': 'Questions',
-                    'items': null
+                    'items': null,
                 },
-            ]
+            ],
         } as unknown as FormItem;
 
         const mockResolverRelName = jest.fn();
@@ -197,8 +197,8 @@ describe('Form util, resolve', () => {
                 return async resource => {
                     mockResolverResource(resource);
                     return 'resolved resource';
-                }
-            }
+                };
+            },
         } as MergeOptions;
         const actual = await FieldResolverUtil.resolveResource(fieldValue, formItem, options);
         expect(mockResolverRelName).toHaveBeenCalledWith(relName);

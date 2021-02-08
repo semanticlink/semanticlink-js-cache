@@ -111,7 +111,7 @@ describe('Pooled collection', () => {
             } as PooledCollectionOptions;
 
             const createdResource = {
-                links: [{ rel: 'self', href: 'http://api.example.com/role/3', },],
+                links: [{ rel: 'self', href: 'http://api.example.com/role/3' }],
                 name: 'NewRole',
             };
 
