@@ -17,7 +17,7 @@ import LinkRelation from '../../linkRelation';
 import TrackedRepresentationUtil from '../../utils/trackedRepresentationUtil';
 import { Status } from '../../models/status';
 import StepRepresentation from '../domain/interfaces/stepRepresentation';
-import CustomLinkRelation from '../domain/CustomLinkRelation';
+import CustomLinkRelation from '../domain/customLinkRelation';
 import Step from '../domain/step';
 import { ApiOptions } from '../../interfaces/apiOptions';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';

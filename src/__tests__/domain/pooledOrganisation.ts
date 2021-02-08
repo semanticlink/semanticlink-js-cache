@@ -4,7 +4,7 @@ import {
     PooledResourceResolver,
     RelName,
 } from '../../sync/pooledResource';
-import CustomLinkRelation from './CustomLinkRelation';
+import CustomLinkRelation from './customLinkRelation';
 import { Question } from './question';
 
 

@@ -22,7 +22,7 @@ import Step from '../domain/step';
 import { uriMappingResolver } from '../../sync/uriMappingResolver';
 import PooledOrganisation from '../domain/pooledOrganisation';
 import { sync } from '../../sync';
-import CustomLinkRelation from '../domain/CustomLinkRelation';
+import CustomLinkRelation from '../domain/customLinkRelation';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
 import StepRepresentation from '../domain/interfaces/stepRepresentation';

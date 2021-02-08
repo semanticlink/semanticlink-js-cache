@@ -21,7 +21,7 @@ import { sync } from '../../sync';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
 import PooledOrganisation from '../domain/pooledOrganisation';
-import CustomLinkRelation from '../domain/CustomLinkRelation';
+import CustomLinkRelation from '../domain/customLinkRelation';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
 
 const log = anylogger('Steps Test');

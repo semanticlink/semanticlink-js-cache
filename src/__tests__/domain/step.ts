@@ -1,5 +1,5 @@
 import StepCollection from './interfaces/stepCollection';
-import CustomLinkRelation from './CustomLinkRelation';
+import CustomLinkRelation from './customLinkRelation';
 import anylogger from 'anylogger';
 import ApiUtil from '../../apiUtil';
 import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
