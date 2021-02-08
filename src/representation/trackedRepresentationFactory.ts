@@ -1,6 +1,6 @@
 import { CollectionRepresentation, FeedRepresentation, LinkedRepresentation, LinkUtil, Uri } from 'semantic-link';
 import { TrackedRepresentation } from '../types/types';
-import { Status } from '../models/status';
+import { Status } from './status';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import SingletonMerger from './singletonMerger';
@@ -18,7 +18,7 @@ import { DocumentRepresentation } from '../interfaces/document';
 import anylogger from 'anylogger';
 import RepresentationUtil from '../utils/representationUtil';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
-import { State } from '../models/state';
+import { State } from './state';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('TrackedRepresentationFactory');

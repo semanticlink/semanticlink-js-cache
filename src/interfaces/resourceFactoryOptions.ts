@@ -1,4 +1,4 @@
-import { Status } from '../models/status';
+import { Status } from '../representation/status';
 import { Representation } from 'src/types/types';
 import { LinkedRepresentation, LinkType, Uri } from 'semantic-link';
 import { FeedItemRepresentation } from 'semantic-link/lib/interfaces';

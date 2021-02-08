@@ -1,5 +1,5 @@
 import SparseRepresentationFactory from '../../representation/sparseRepresentationFactory';
-import { Status } from '../../models/status';
+import { Status } from '../../representation/status';
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import { TrackedRepresentation } from '../../types/types';
 import { assertThat } from 'mismatched';

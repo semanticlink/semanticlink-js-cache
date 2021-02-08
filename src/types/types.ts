@@ -1,5 +1,5 @@
 import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
-import { State } from '../models/state';
+import { State } from '../representation/state';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 
 /**

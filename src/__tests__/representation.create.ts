@@ -3,7 +3,7 @@ import TrackedRepresentationFactory from '../representation/trackedRepresentatio
 import RepresentationUtil from '../utils/representationUtil';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import create from '../representation/create';
-import { Status } from '../models/status';
+import { Status } from '../representation/status';
 import { DocumentRepresentation } from '../interfaces/document';
 import { CollectionRepresentation, LinkType } from 'semantic-link';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';

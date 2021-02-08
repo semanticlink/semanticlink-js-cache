@@ -1,7 +1,7 @@
 import { FeedRepresentation, LinkedRepresentation } from 'semantic-link';
 import { SingletonRepresentation, state, TrackedRepresentation } from '../types/types';
-import { State } from '../models/state';
-import { Status } from '../models/status';
+import { State } from './state';
+import { Status } from './status';
 import anylogger from 'anylogger';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { instanceOfFeed } from '../utils/instanceOf/instanceOfFeed';

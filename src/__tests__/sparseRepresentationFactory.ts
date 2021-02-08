@@ -6,7 +6,7 @@ import {
     RepresentationMatcher,
     singletonRepresentation,
 } from './helpers/representationMatcher';
-import { Status } from '../models/status';
+import { Status } from '../representation/status';
 import each from 'jest-each';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';

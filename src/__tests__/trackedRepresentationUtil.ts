@@ -1,6 +1,6 @@
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
 import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
-import { Status } from '../models/status';
+import { Status } from '../representation/status';
 import TrackedRepresentationFactory from '../representation/sparseRepresentationFactory';
 import { TrackedRepresentation } from '../types/types';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';

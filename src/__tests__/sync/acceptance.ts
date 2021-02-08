@@ -15,7 +15,7 @@ import SparseRepresentationFactory from '../../representation/sparseRepresentati
 import { TrackedRepresentation } from '../../types/types';
 import LinkRelation from '../../linkRelation';
 import TrackedRepresentationUtil from '../../utils/trackedRepresentationUtil';
-import { Status } from '../../models/status';
+import { Status } from '../../representation/status';
 import StepRepresentation from '../domain/interfaces/stepRepresentation';
 import CustomLinkRelation from '../domain/customLinkRelation';
 import Step from '../domain/step';

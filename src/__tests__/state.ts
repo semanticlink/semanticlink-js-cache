@@ -1,5 +1,5 @@
-import { State } from '../models/state';
-import { Status } from '../models/status';
+import { State } from '../representation/state';
+import { Status } from '../representation/status';
 
 describe('State', () => {
     it('should be defined as unknown', () => {
