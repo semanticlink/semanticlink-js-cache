@@ -1,7 +1,7 @@
 import { match } from 'mismatched';
 import { instanceOfLinkedRepresentation } from 'semantic-link';
-import { instanceOfSingleton } from '../utils/instanceOf/instanceOfSingleton';
-import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import { instanceOfSingleton } from '../../utils/instanceOf/instanceOfSingleton';
+import { instanceOfCollection } from '../../utils/instanceOf/instanceOfCollection';
 
 /**
  * Test helpers

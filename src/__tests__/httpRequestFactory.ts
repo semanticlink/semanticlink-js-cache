@@ -1,6 +1,6 @@
-import { resource, selfUri as workflowUri } from '../__fixtures__/1/organisation/a65/step/314-workflow';
+import { resource, selfUri as workflowUri } from './fixtures/1/organisation/a65/step/314-workflow';
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
-import { fakeResponseFactory } from '../__fixtures__/1/fakeResponseFactory';
+import { fakeResponseFactory } from './fixtures/1/fakeResponseFactory';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import { TrackedRepresentation } from '../types/types';
 import LinkRelation from '../linkRelation';

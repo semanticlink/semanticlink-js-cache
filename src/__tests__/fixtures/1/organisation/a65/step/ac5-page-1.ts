@@ -1,7 +1,7 @@
 import { self as editUri } from './form/edit';
 import { self as stepsUri } from './ac5-page-1/step-page-1-feed';
 import { self as parentStepsUri } from './314-workflow/step-pages-feed';
-import StepType from '../../../../domain/interfaces/stepType';
+import StepType from '../../../../../domain/interfaces/stepType';
 
 export const self = 'https://api.example.com/organisation/a656927b0f/step/ac50e024ff';
 export const resource = {

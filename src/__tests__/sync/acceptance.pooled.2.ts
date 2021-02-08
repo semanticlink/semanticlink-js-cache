@@ -1,33 +1,33 @@
 import {
     resource as page1Feed,
     self as page1FeedUri,
-} from '../../__fixtures__/1/organisation/a65/step/ac5-page-1/step-page-1-feed';
-import { resource as page1 } from '../../__fixtures__/1/organisation/a65/step/ac5-page-1';
-import { resource as questionStep, self as questionStepUri } from '../../__fixtures__/1/organisation/a65/step/92c-question';
-import { resource as question } from '../../__fixtures__/1/question/cf6-question';
-import { resource as organisation } from '../../__fixtures__/1/organisation/a65';
-import { resource as choiceFeed } from '../../__fixtures__/1/question/cf6/choice-feed';
-import { resource as choice } from '../../__fixtures__/1/choice/881-name';
-import { self as questionFeedUri } from '../../__fixtures__/2/organisation/a65/question-feed';
-import { self as newQuestionUri } from '../../__fixtures__/2/question/1-question';
+} from '../fixtures/1/organisation/a65/step/ac5-page-1/step-page-1-feed';
+import { resource as page1 } from '../fixtures/1/organisation/a65/step/ac5-page-1';
+import { resource as questionStep, self as questionStepUri } from '../fixtures/1/organisation/a65/step/92c-question';
+import { resource as question } from '../fixtures/1/question/cf6-question';
+import { resource as organisation } from '../fixtures/1/organisation/a65';
+import { resource as choiceFeed } from '../fixtures/1/question/cf6/choice-feed';
+import { resource as choice } from '../fixtures/1/choice/881-name';
+import { self as questionFeedUri } from '../fixtures/2/organisation/a65/question-feed';
+import { self as newQuestionUri } from '../fixtures/2/question/1-question';
 import { LinkedRepresentation, LinkUtil, Uri } from 'semantic-link';
 import anylogger from 'anylogger';
 import { AxiosResponse } from 'axios';
-import { fakeResponseFactory } from '../../__fixtures__/2/fakeResponseFactory';
+import { fakeResponseFactory } from '../fixtures/2/fakeResponseFactory';
 import { TrackedRepresentation } from '../../types/types';
 import SparseRepresentationFactory from '../../representation/sparseRepresentationFactory';
 import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
 import LinkRelation from '../../linkRelation';
-import Step from '../../__fixtures__/domain/step';
+import Step from '../domain/step';
 import { uriMappingResolver } from '../../sync/uriMappingResolver';
-import PooledOrganisation from '../../__fixtures__/domain/pooledOrganisation';
+import PooledOrganisation from '../domain/pooledOrganisation';
 import { sync } from '../../sync';
-import CustomLinkRelation from '../../__fixtures__/domain/CustomLinkRelation';
+import CustomLinkRelation from '../domain/CustomLinkRelation';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
-import StepRepresentation from '../../__fixtures__/domain/interfaces/stepRepresentation';
+import StepRepresentation from '../domain/interfaces/stepRepresentation';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
-import { collectionIsEmpty } from '../../__fixtures__/representationMatcher';
+import { collectionIsEmpty } from '../helpers/representationMatcher';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
 
 const log = anylogger('Steps Test');

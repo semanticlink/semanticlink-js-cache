@@ -2,7 +2,7 @@ import { LinkedRepresentation } from 'semantic-link';
 import { assertThat } from 'mismatched';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
-import { singletonRepresentation } from '../__fixtures__/representationMatcher';
+import { singletonRepresentation } from './helpers/representationMatcher';
 import { Status } from '../models/status';
 import { TrackedRepresentation } from '../types/types';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
