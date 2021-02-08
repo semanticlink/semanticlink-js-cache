@@ -5,8 +5,8 @@ import {
     getResourceInCollection,
     getResourceInNamedCollection,
     getSingleton,
-} from './syncLinkedRepresentation';
-import { CollectionRepresentation, LinkedRepresentation, LinkType, LinkUtil } from 'semantic-link';
+} from './syncResource';
+import { LinkedRepresentation, LinkType, LinkUtil } from 'semantic-link';
 import { instanceOfResourceSync } from './instanceOfResourceSync';
 import { SyncType } from '../../interfaces/sync/types';
 import { ResourceSync } from '../../interfaces/sync/resourceSync';
@@ -16,7 +16,6 @@ import LinkRelConvertUtil from '../../utils/linkRelConvertUtil';
 import { instanceOfCollection, instanceOfUriList } from '../../utils/instanceOf';
 import anylogger from 'anylogger';
 import RepresentationUtil from '../../utils/representationUtil';
-import { DocumentRepresentation } from '../../interfaces/document';
 
 const log = anylogger('Sync');
 

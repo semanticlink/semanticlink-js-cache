@@ -10,7 +10,7 @@ import {
     getResourceInCollection,
     getResourceInNamedCollection,
     getSingleton,
-} from '../../representation/sync/syncLinkedRepresentation';
+} from '../../representation/sync/syncResource';
 import { HttpRequestOptions } from '../../interfaces/httpRequestOptions';
 import LinkRelation from '../../linkRelation';
 import { AxiosResponse } from 'axios';
