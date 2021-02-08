@@ -1,14 +1,14 @@
 import { LinkedRepresentation } from 'semantic-link';
 import {
-    AbstractPooledResource,
+    PooledResource,
     PooledResourceResolver,
     RelName
-} from '../../representation/sync/abstractPooledResource';
+} from '../../representation/sync/pooledResource';
 import CustomLinkRelation from './CustomLinkRelation';
 import { Question } from './question';
 
 
-export default class PooledOrganisation<T extends LinkedRepresentation> extends AbstractPooledResource<T> {
+export default class PooledOrganisation<T extends LinkedRepresentation> extends PooledResource<T> {
 
     protected makeResolvers(): Record<RelName, PooledResourceResolver> {
         return {

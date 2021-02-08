@@ -5,7 +5,7 @@ import { ResourceResolver } from '../../interfaces/resourceResolver';
 import LinkRelation from '../../linkRelation';
 import PooledResourceUtil from './pooledResourceUtil';
 
-const log = anylogger('AbstractPooledResource');
+const log = anylogger('PooledResource');
 
 /**
  * On locating a sub resource, a select on a form provides the 'name' with a value which is the key of the sub resource
@@ -15,7 +15,7 @@ export type RelName = string;
 export type PooledResourceResolver = <T extends LinkedRepresentation>(resource: T, options?: PooledCollectionOptions) => Promise<T | undefined>;
 const noopUndefined = async () => undefined;
 
-export abstract class AbstractPooledResource<T extends LinkedRepresentation> {
+export abstract class PooledResource<T extends LinkedRepresentation> {
     /**
      * the home resource (or starting point) of the sub collections
      */
