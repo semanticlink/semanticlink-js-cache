@@ -1,5 +1,5 @@
 import { CollectionRepresentation, Uri } from 'semantic-link';
-import CollectionMerger from '../representation/collection/collectionMerger';
+import CollectionMerger from '../representation/collectionMerger';
 import TrackedRepresentationFactory from '../representation/sparseRepresentationFactory';
 
 /**

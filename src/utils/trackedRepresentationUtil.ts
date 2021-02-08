@@ -7,7 +7,7 @@ import { Status } from '../models/status';
 import { instanceOfCollection } from './instanceOf';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { ResourceAssignOptions } from '../interfaces/resourceAssignOptions';
-import SingletonMerger from '../representation/singleton/singletonMerger';
+import SingletonMerger from '../representation/singletonMerger';
 
 const log = anylogger('TrackedRepresentationUtil');
 

@@ -1,4 +1,4 @@
-import { ResourceAssignOptions, ResourceMergeOptions } from '../../interfaces/resourceAssignOptions';
+import { ResourceAssignOptions, ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 
 export const defaultOptions: ResourceMergeOptions = {};
 

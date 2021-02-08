@@ -1,7 +1,7 @@
-import ResourceMergeFactory from '../resourceMergeFactory';
-import { MergeOptions } from '../../interfaces/mergeOptions';
+import ResourceMergeFactory from './resourceMergeFactory';
+import { MergeOptions } from '../interfaces/mergeOptions';
 import anylogger from 'anylogger';
-import { CreateFormMergeStrategy } from '../../interfaces/createFormMergeStrategy';
+import { CreateFormMergeStrategy } from '../interfaces/createFormMergeStrategy';
 
 const log = anylogger('defaultCreateFormStrategy');
 

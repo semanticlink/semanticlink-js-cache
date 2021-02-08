@@ -22,7 +22,7 @@ import { DocumentRepresentation } from '../interfaces/document';
 import ResourceUpdateOptions from '../interfaces/resourceUpdateOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { FormRepresentation } from '../interfaces/formRepresentation';
-import { defaultCreateFormStrategy } from './form/createFormMergeStrategy';
+import { defaultCreateFormStrategy } from './createFormMergeStrategy';
 import ApiUtil from '../apiUtil';
 
 const log = anylogger('create');

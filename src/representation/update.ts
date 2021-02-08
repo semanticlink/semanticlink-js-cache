@@ -2,7 +2,7 @@ import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import ResourceUpdateOptions from '../interfaces/ResourceUpdateOptions';
 import anylogger from 'anylogger';
 import LinkRelation from '../linkRelation';
-import { defaultEditFormStrategy } from './form/editFormMergeStrategy';
+import { defaultEditFormStrategy } from './editFormMergeStrategy';
 import get from './get';
 import { TrackedRepresentation } from '../types/types';
 import { FormRepresentation } from '../interfaces/formRepresentation';
