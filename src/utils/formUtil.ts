@@ -10,7 +10,7 @@ import LinkRelation from '../linkRelation';
 import anylogger from 'anylogger';
 import LinkRelConvertUtil from './linkRelConvertUtil';
 import { FieldType } from '../types/formTypes';
-import { instanceOfCollection } from './instanceOf';
+import { instanceOfCollection } from './instanceOf/instanceOfCollection';
 
 const log = anylogger('FormUtil');
 

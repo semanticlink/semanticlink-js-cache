@@ -3,7 +3,7 @@ import { IanaLinkRelation } from '../ianaLinkRelation';
 import { assertThat } from 'mismatched';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
-import { singletonRepresentation } from '../representationMatcher';
+import { singletonRepresentation } from '../utils/representationMatcher';
 import { Status } from '../models/status';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import NamedRepresentationFactory from '../representation/namedRepresentationFactory';

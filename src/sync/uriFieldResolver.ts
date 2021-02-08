@@ -1,5 +1,5 @@
 import anylogger from 'anylogger';
-import { Resolver } from '../../interfaces/resolver';
+import { Resolver } from '../interfaces/resolver';
 
 const log = anylogger('UriFieldResolver');
 

@@ -1,26 +1,26 @@
 import { CollectionRepresentation, LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import anylogger from 'anylogger';
 import Differencer from './differencer';
-import RepresentationUtil from '../../utils/representationUtil';
-import { StrategyType, SyncResultItem } from '../../interfaces/sync/types';
-import { SyncOptions } from '../../interfaces/sync/syncOptions';
-import { SyncInfo } from '../../interfaces/sync/syncInfo';
-import ApiUtil from '../../apiUtil';
-import { TrackedRepresentation } from '../../types/types';
-import { DocumentRepresentation } from '../../interfaces/document';
-import { noopResolver } from '../resourceMergeFactory';
-import LinkRelation from '../../linkRelation';
+import RepresentationUtil from '../utils/representationUtil';
+import { StrategyType, SyncResultItem } from '../interfaces/sync/types';
+import { SyncOptions } from '../interfaces/sync/syncOptions';
+import { SyncInfo } from '../interfaces/sync/syncInfo';
+import ApiUtil from '../apiUtil';
+import { TrackedRepresentation } from '../types/types';
+import { DocumentRepresentation } from '../interfaces/document';
+import { noopResolver } from '../representation/resourceMergeFactory';
+import LinkRelation from '../linkRelation';
 import {
     CreateStrategy,
     DeleteStrategy,
     SyncResolverOptions,
     UpdateStrategy,
-} from '../../interfaces/sync/syncResolverOptions';
-import get from '../get';
-import update from '../update';
-import NamedRepresentationFactory from '../namedRepresentationFactory';
-import { ResourceFetchOptions } from '../../interfaces/resourceFetchOptions';
-import { HttpRequestOptions } from '../../interfaces/httpRequestOptions';
+} from '../interfaces/sync/syncResolverOptions';
+import get from '../representation/get';
+import update from '../representation/update';
+import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
+import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
+import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 
 const log = anylogger('SyncLinkedRepresentation');
 

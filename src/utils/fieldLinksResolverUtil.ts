@@ -1,13 +1,13 @@
 import { LinkedRepresentation, LinkUtil, Uri } from 'semantic-link';
 import { FormItem } from '../interfaces/formItem';
 import { MergeOptions } from '../interfaces/mergeOptions';
-import { FieldValue } from './fieldResolverUtil';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import LinkRelation from '../linkRelation';
 import { FormUtil } from './formUtil';
 import LinkRelConvertUtil from './linkRelConvertUtil';
 import { noopResolver } from '../representation/resourceMergeFactory';
 import anylogger from 'anylogger';
+import { FieldValue } from '../interfaces/fieldResolver';
 
 const log = anylogger('FieldLinksResolverUtil');
 

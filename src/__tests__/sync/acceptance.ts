@@ -21,8 +21,8 @@ import CustomLinkRelation from '../../fixture/domain/CustomLinkRelation';
 import Step from '../../fixture/domain/step';
 import { ApiOptions } from '../../interfaces/apiOptions';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
-import { uriMappingResolver } from '../../representation/sync/uriMappingResolver';
-import { sync } from '../../representation/sync';
+import { uriMappingResolver } from '../../sync/uriMappingResolver';
+import { sync } from '../../sync';
 import { assertThat } from 'mismatched';
 
 

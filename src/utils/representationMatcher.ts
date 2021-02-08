@@ -1,8 +1,11 @@
 import { match } from 'mismatched';
-import {
-    instanceOfCollection, instanceOfSingleton,
-} from './utils/instanceOf';
 import { instanceOfLinkedRepresentation } from 'semantic-link';
+import { instanceOfSingleton } from './instanceOf/instanceOfSingleton';
+import { instanceOfCollection } from './instanceOf/instanceOfCollection';
+
+/**
+ * Test helpers
+ */
 
 export type RepresentationMatcher = (predicate: (v: any) => boolean, description?: any) => any;
 

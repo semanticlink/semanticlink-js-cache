@@ -1,12 +1,12 @@
 import anylogger from 'anylogger';
 import { CollectionRepresentation, LinkedRepresentation, LinkUtil } from 'semantic-link';
-import { defaultEqualityOperators } from '../../utils/comparators';
-import LinkRelation from '../../linkRelation';
-import { ComparableRepresentation, Comparator } from '../../interfaces/comparator';
-import { SyncOptions } from '../../interfaces/sync/syncOptions';
-import { CreateType, DeleteType, SyncResultItem, UpdateType } from '../../interfaces/sync/types';
-import { SyncInfo } from '../../interfaces/sync/syncInfo';
-import { instanceOfCollection } from '../../utils/instanceOf';
+import { defaultEqualityOperators } from '../utils/comparators';
+import LinkRelation from '../linkRelation';
+import { ComparableRepresentation, Comparator } from '../interfaces/comparator';
+import { SyncOptions } from '../interfaces/sync/syncOptions';
+import { CreateType, DeleteType, SyncResultItem, UpdateType } from '../interfaces/sync/types';
+import { SyncInfo } from '../interfaces/sync/syncInfo';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('test');
 

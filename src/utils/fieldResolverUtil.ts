@@ -6,30 +6,16 @@ import { FieldType } from '../types/formTypes';
 import LinkRelation from '../linkRelation';
 import anylogger from 'anylogger';
 import { FormUtil } from './formUtil';
-import { instanceOfCollection } from './instanceOf';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { noopResolver } from '../representation/resourceMergeFactory';
+import { instanceOfCollection } from './instanceOf/instanceOfCollection';
+import { instanceOfDocumentRepresentationGroup } from './instanceOf/instanceOfDocumentRepresentationGroup';
+import { instanceOfDocumentRepresentation } from './instanceOf/instanceOfDocumentRepresentation';
+import { instanceOfUriListValue } from './instanceOf/instanceOfUriListValue';
+import { instanceOfSimpleValue } from './instanceOf/instanceOfSimpleValue';
+import { FieldValue, ResourceValue, UriListValue } from '../interfaces/fieldResolver';
 
 const log = anylogger('FieldResolverUtil');
-
-/**
- * A single value of a field like text, string, date, password, url.
- */
-type SimpleValue = string | number | Uri | undefined;
-/**
- * Multiple values that are contained in a field (and passed as an array) like a list of uris. Currently, only
- * uri lists are implemented.
- */
-type UriListValue = Uri[];
-/**
- * A complex value that is stored as an object. In practice this is a linked representation or a nested objected
- */
-type ResourceValue = LinkedRepresentation | DocumentRepresentation | DocumentRepresentation[];
-
-/**
- * All types of field values available for processing across a  form
- */
-export type FieldValue = SimpleValue | UriListValue | ResourceValue | undefined;
 
 /**
  * An enumeration across the return type from a form field
@@ -50,7 +36,6 @@ enum FieldValueType {
      */
     group
 }
-
 /**
  * Mapping strategy between the across-the-wire field types and internal types
  *
@@ -81,22 +66,6 @@ function formType(formItem: FormItem): FieldValueType {
         default:
             return FieldValueType.single;
     }
-}
-
-function instanceOfSimpleValue(obj: any): obj is string | number {
-    return typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'undefined';
-}
-
-function instanceOfUriListValue(obj: any): obj is Uri[] {
-    return Array.isArray(obj) && obj[0] && typeof obj[0] === 'string';
-}
-
-function instanceOfDocumentRepresentation(obj: any): obj is DocumentRepresentation {
-    return typeof obj === 'object';
-}
-
-function instanceOfDocumentRepresentationGroup(obj: any): obj is DocumentRepresentation[] {
-    return Array.isArray(obj) && obj[0] && typeof obj[0] === 'object';
 }
 
 export default class FieldResolverUtil {
@@ -334,6 +303,7 @@ export default class FieldResolverUtil {
                     // throw new Error('Group not implemented');
                     return await this.resolveFields(fieldValue as DocumentRepresentation, formItem as unknown as FormRepresentation, options) as T;
                 }
+                break;
             default:
                 log.warn('Unknown form type \'%s\' on \'%s\'', formItem.type, formItem.name);
                 return undefined;

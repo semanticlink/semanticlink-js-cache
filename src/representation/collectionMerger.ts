@@ -1,7 +1,7 @@
 import { CollectionRepresentation } from 'semantic-link';
-import { canonicalOrSelf } from '../utils/comparators';
 import { ResourceAssignOptions } from '../interfaces/resourceAssignOptions';
 import anylogger from 'anylogger';
+import { canonicalOrSelf } from '../utils/comparators/canonicalOrSelf';
 
 const log = anylogger('CollectionMerger');
 /**

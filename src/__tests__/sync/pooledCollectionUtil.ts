@@ -1,4 +1,4 @@
-import PooledResourceUtil from '../../representation/sync/pooledResourceUtil';
+import PooledResourceUtil from '../../sync/pooledResourceUtil';
 import { assertThat } from 'mismatched';
 import ApiUtil from '../../apiUtil';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';

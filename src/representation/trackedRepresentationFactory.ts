@@ -9,7 +9,6 @@ import { HttpRequestFactory } from '../http/httpRequestFactory';
 import { HttpRequestError } from '../interfaces/httpRequestError';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
-import { instanceOfCollection } from '../utils/instanceOf';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { parallelWaitAll, sequentialWaitAll } from '../utils/promiseWaitAll';
 import CollectionMerger from './collectionMerger';
@@ -20,6 +19,7 @@ import anylogger from 'anylogger';
 import RepresentationUtil from '../utils/representationUtil';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { State } from '../models/state';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('TrackedRepresentationFactory');
 

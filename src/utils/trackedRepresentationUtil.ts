@@ -4,10 +4,10 @@ import { State } from '../models/state';
 import anylogger from 'anylogger';
 import LinkRelation from '../linkRelation';
 import { Status } from '../models/status';
-import { instanceOfCollection } from './instanceOf';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { ResourceAssignOptions } from '../interfaces/resourceAssignOptions';
 import SingletonMerger from '../representation/singletonMerger';
+import { instanceOfCollection } from './instanceOf/instanceOfCollection';
 
 const log = anylogger('TrackedRepresentationUtil');
 

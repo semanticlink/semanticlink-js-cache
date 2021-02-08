@@ -9,8 +9,8 @@ import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import LinkRelation from '../linkRelation';
 import anylogger from 'anylogger';
-import { instanceOfCollection } from './instanceOf';
 import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
+import { instanceOfCollection } from './instanceOf/instanceOfCollection';
 
 const log = anylogger('RepresentationUtil');
 /**

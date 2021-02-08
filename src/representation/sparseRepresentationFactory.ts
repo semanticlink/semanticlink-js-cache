@@ -2,10 +2,11 @@ import { FeedRepresentation, LinkedRepresentation } from 'semantic-link';
 import { SingletonRepresentation, state, TrackedRepresentation } from '../types/types';
 import { State } from '../models/state';
 import { Status } from '../models/status';
-import { instanceOfCollection, instanceOfFeed } from '../utils/instanceOf';
 import { IanaLinkRelation } from '../ianaLinkRelation';
 import anylogger from 'anylogger';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
+import { instanceOfFeed } from '../utils/instanceOf/instanceOfFeed';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('SparseRepresentationFactory');
 

@@ -7,15 +7,16 @@ import {
     getSingleton,
 } from './syncResource';
 import { LinkedRepresentation, LinkType, LinkUtil } from 'semantic-link';
-import { instanceOfResourceSync } from './instanceOfResourceSync';
-import { SyncType } from '../../interfaces/sync/types';
-import { ResourceSync } from '../../interfaces/sync/resourceSync';
-import { SyncOptions } from '../../interfaces/sync/syncOptions';
-import { NamedResourceSync } from '../../interfaces/sync/namedResourceSync';
-import LinkRelConvertUtil from '../../utils/linkRelConvertUtil';
-import { instanceOfCollection, instanceOfUriList } from '../../utils/instanceOf';
+import { instanceOfResourceSync } from '../utils/instanceOf/instanceOfResourceSync';
+import { SyncType } from '../interfaces/sync/types';
+import { ResourceSync } from '../interfaces/sync/resourceSync';
+import { SyncOptions } from '../interfaces/sync/syncOptions';
+import { NamedResourceSync } from '../interfaces/sync/namedResourceSync';
+import LinkRelConvertUtil from '../utils/linkRelConvertUtil';
 import anylogger from 'anylogger';
-import RepresentationUtil from '../../utils/representationUtil';
+import RepresentationUtil from '../utils/representationUtil';
+import { instanceOfUriList } from '../utils/instanceOf/instanceOfUriList';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('Sync');
 

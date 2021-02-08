@@ -19,15 +19,15 @@ import SparseRepresentationFactory from '../../representation/sparseRepresentati
 import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
 import LinkRelation from '../../linkRelation';
 import Step from '../../fixture/domain/step';
-import { uriMappingResolver } from '../../representation/sync/uriMappingResolver';
+import { uriMappingResolver } from '../../sync/uriMappingResolver';
 import PooledOrganisation from '../../fixture/domain/pooledOrganisation';
-import { sync } from '../../representation/sync';
+import { sync } from '../../sync';
 import CustomLinkRelation from '../../fixture/domain/CustomLinkRelation';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
 import StepRepresentation from '../../fixture/domain/interfaces/stepRepresentation';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
-import { collectionIsEmpty } from '../../representationMatcher';
+import { collectionIsEmpty } from '../../utils/representationMatcher';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
 
 const log = anylogger('Steps Test');

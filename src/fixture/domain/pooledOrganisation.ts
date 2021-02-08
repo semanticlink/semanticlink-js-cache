@@ -3,7 +3,7 @@ import {
     PooledResource,
     PooledResourceResolver,
     RelName
-} from '../../representation/sync/pooledResource';
+} from '../../sync/pooledResource';
 import CustomLinkRelation from './CustomLinkRelation';
 import { Question } from './question';
 

@@ -2,7 +2,7 @@ import { LinkedRepresentation } from 'semantic-link';
 import { IanaLinkRelation } from '../ianaLinkRelation';
 import { assertThat } from 'mismatched';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
-import { singletonRepresentation } from '../representationMatcher';
+import { singletonRepresentation } from '../utils/representationMatcher';
 import { Status } from '../models/status';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import TrackedRepresentationFactory from '../representation/trackedRepresentationFactory';

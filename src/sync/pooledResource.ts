@@ -1,8 +1,8 @@
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import anylogger from 'anylogger';
-import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
-import { ResourceResolver } from '../../interfaces/resourceResolver';
-import LinkRelation from '../../linkRelation';
+import { PooledCollectionOptions } from '../interfaces/pooledCollectionOptions';
+import { ResourceResolver } from '../interfaces/resourceResolver';
+import LinkRelation from '../linkRelation';
 import PooledResourceUtil from './pooledResourceUtil';
 
 const log = anylogger('PooledResource');

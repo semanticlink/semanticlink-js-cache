@@ -2,10 +2,10 @@ import { CollectionRepresentation, LinkedRepresentation, LinkUtil } from 'semant
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
 import LinkRelation from '../../linkRelation';
 import CustomLinkRelation from './CustomLinkRelation';
-import { emptyName } from '../../utils/comparators';
-import Differencer from '../../representation/sync/differencer';
-import { sync } from '../../representation/sync';
+import Differencer from '../../sync/differencer';
+import { sync } from '../../sync';
 import anylogger from 'anylogger';
+import { emptyName } from '../../utils/comparators/emptyName';
 
 const log = anylogger('Question');
 

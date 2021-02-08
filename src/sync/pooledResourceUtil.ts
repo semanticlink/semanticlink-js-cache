@@ -1,12 +1,12 @@
 import anylogger from 'anylogger';
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
-import ApiUtil from '../../apiUtil';
-import LinkRelation from '../../linkRelation';
-import { TrackedRepresentation } from '../../types/types';
-import RepresentationUtil from '../../utils/representationUtil';
-import { noopResolver } from '../resourceMergeFactory';
-import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
-import { instanceOfCollection } from '../../utils/instanceOf';
+import ApiUtil from '../apiUtil';
+import LinkRelation from '../linkRelation';
+import { TrackedRepresentation } from '../types/types';
+import RepresentationUtil from '../utils/representationUtil';
+import { noopResolver } from '../representation/resourceMergeFactory';
+import { PooledCollectionOptions } from '../interfaces/pooledCollectionOptions';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('PooledCollectionUtil');
 

@@ -13,7 +13,6 @@ import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
-import { instanceOfCollection } from '../utils/instanceOf';
 import anylogger from 'anylogger';
 import RepresentationUtil from '../utils/representationUtil';
 import SparseRepresentationFactory from './sparseRepresentationFactory';
@@ -24,6 +23,7 @@ import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { defaultCreateFormStrategy } from './createFormMergeStrategy';
 import ApiUtil from '../apiUtil';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('create');
 

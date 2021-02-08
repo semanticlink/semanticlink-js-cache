@@ -8,10 +8,10 @@ import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
-import { instanceOfCollection } from '../utils/instanceOf';
 import RepresentationUtil from '../utils/representationUtil';
 import anylogger from 'anylogger';
 import ResourceUpdateOptions from '../interfaces/resourceUpdateOptions';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('get');
 

@@ -1,5 +1,5 @@
 import { Uri } from 'semantic-link';
-import { Resolver } from '../../interfaces/resolver';
+import { Resolver } from '../interfaces/resolver';
 
 /**
  * A resolving cache of key/value mapping to/from a network of data (NOD) URI to/from a document URI.

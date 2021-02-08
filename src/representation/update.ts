@@ -12,7 +12,8 @@ import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
-import { instanceOfCollection, instanceOfUriList } from '../utils/instanceOf';
+import { instanceOfUriList } from '../utils/instanceOf/instanceOfUriList';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('update');
 
