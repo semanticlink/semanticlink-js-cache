@@ -282,7 +282,7 @@ export default class TrackedRepresentationFactory {
     }
 
     /**
-     * Removes the item from the collection by matching its self link. If not found, it returns undefined.
+     * Removes the item from the collection by matching its Self link. If not found, it returns undefined.
      * If an items is removed from a collection, it is marked as 'stale'
      */
     public static removeCollectionItem<U extends LinkedRepresentation,

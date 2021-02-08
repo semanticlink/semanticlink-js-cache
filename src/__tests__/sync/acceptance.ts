@@ -126,7 +126,7 @@ describe('Steps', () => {
                     expect(put).toHaveBeenCalledTimes(1);
                 });
 
-                it('sync, strategy with canonical not exists, no failure', async () => {
+                it('sync, strategy with Canonical not exists, no failure', async () => {
                     await sync({
                         resource,
                         document: { ...workflow } as LinkedRepresentation,

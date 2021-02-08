@@ -85,7 +85,7 @@ export function omit<T extends LinkedRepresentation, P extends keyof T>(represen
  *
  * It looks for items:
  *
- *   1. matching link relation (default: self) by uri
+ *   1. matching link relation (default: Self) by uri
  *   2. field attribute (default: name ({@link TrackedRepresentationFactory.mappedTitleAttributeName}) on a resource by string
  *
  */
@@ -133,7 +133,7 @@ export function findInCollection<T extends LinkedRepresentation>(
     return collection
         .items
         .find(item =>
-            // strategy 1: self link of item matches
+            // strategy 1: Self link of item matches
             LinkUtil.getUri(item, LinkRelation.Self) === resourceIdentifier ||
             // strategy 2: the attribute on the resource is a uri that matches
             (name && getResourceTitle(item, name) === resourceIdentifier) ||
@@ -152,7 +152,7 @@ export default class RepresentationUtil {
     public static findInCollection = findInCollection;
 
     /**
-     * Removes the item from the collection by matching its self link. If not found, it returns undefined.
+     * Removes the item from the collection by matching its Self link. If not found, it returns undefined.
      */
     public static removeItemFromCollection<T extends LinkedRepresentation>(
         collection: CollectionRepresentation<T>,
@@ -170,7 +170,7 @@ export default class RepresentationUtil {
     }
 
     /**
-     * Removes the item from the collection by matching its self link. If not found, it returns undefined.
+     * Removes the item from the collection by matching its Self link. If not found, it returns undefined.
      */
     public static addItemToCollection<T extends LinkedRepresentation>(
         collection: CollectionRepresentation<T>,

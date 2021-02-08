@@ -2,7 +2,7 @@ import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link'
 import LinkRelation from '../../linkRelation';
 
 /**
- * Match on the canonical or self link relation on the resources
+ * Match on the Canonical or Self link relation on the resources
  */
 export function canonicalOrSelf(lvalue: LinkedRepresentation, rvalue: LinkedRepresentation) {
     const lUri = LinkUtil.getUri(lvalue, [LinkRelation.Canonical, LinkRelation.Self] as RelationshipType);

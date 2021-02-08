@@ -28,7 +28,7 @@ function addToResolver<T extends LinkedRepresentation>(document: T, resource: T,
             resolver.add(key, value);
         } else {
             log.debug('no resolution for %s on %s', value, key);
-        } // key will resolve to self if not found
+        } // key will resolve to Self if not found
     }
     return resource;
 }
@@ -78,7 +78,7 @@ export default class PooledResourceUtil {
             const uri = LinkUtil.getUri(resource, LinkRelation.Self);
 
             //
-            // strategy one & two: it is simply found map it based on self and/or mappedTitle
+            // strategy one & two: it is simply found map it based on Self and/or mappedTitle
             //
             const existing = RepresentationUtil.findInCollection(resource, { where: aDocument });
 
@@ -86,7 +86,7 @@ export default class PooledResourceUtil {
                 return addToResolver(aDocument, existing, options) as T;
             } else if (LinkUtil.getUri(aDocument, LinkRelation.Self)) {
                 //
-                // strategy three: check to see if self is an actual resource anyway and map it if it is, otherwise make
+                // strategy three: check to see if Self is an actual resource anyway and map it if it is, otherwise make
                 //
                 const documentURI = LinkUtil.getUri(aDocument, LinkRelation.Self);
                 if (documentURI) {

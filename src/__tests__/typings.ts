@@ -1,9 +1,9 @@
 import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
 import { state, TrackedRepresentation } from '../types/types';
 import { EditFormMergeStrategy } from '../interfaces/editFormMergeStrategy';
-import { IanaLinkRelation } from '../ianaLinkRelation';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { DocumentRepresentation } from '../interfaces/document';
+import LinkRelation from '../linkRelation';
 
 // "domain" classes
 interface TestRepresentation extends LinkedRepresentation {
@@ -17,7 +17,7 @@ describe('Resource', () => {
 
         const singleton = {
             links: [
-                { rel: IanaLinkRelation.self, href: '' },
+                { rel: LinkRelation.Self, href: '' },
             ],
             version: 'value',
         } as TestRepresentation;
@@ -36,7 +36,7 @@ describe('Resource', () => {
         const collection = {
             ...{
                 links: [
-                    { rel: IanaLinkRelation.self, href: '' },
+                    { rel: LinkRelation.Self, href: '' },
                 ],
             },
             items: [],

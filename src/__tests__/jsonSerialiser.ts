@@ -1,7 +1,7 @@
 import JsonSerialiser from '../utils/jsonSerialiser';
 import { assertThat, match } from 'mismatched';
-import { IanaLinkRelation } from '../ianaLinkRelation';
 import TrackedRepresentationFactory from '../representation/sparseRepresentationFactory';
+import LinkRelation from '../linkRelation';
 
 describe('Resource', () => {
     it('should be defined', () => {
@@ -10,7 +10,7 @@ describe('Resource', () => {
         assertThat(JSON.parse(JsonSerialiser.toJson(resource)))
             .is({
                 links: [
-                    { rel: match.itIs(IanaLinkRelation.self), href: match.any() },
+                    { rel: match.itIs(LinkRelation.Self), href: match.any() },
                 ],
             });
 

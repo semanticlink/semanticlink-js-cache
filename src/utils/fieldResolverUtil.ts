@@ -151,7 +151,7 @@ export default class FieldResolverUtil {
      * Resolves any {@link FormItem.id} as a {@link LinkedRepresentation} when there is a {@link MergeOptions.resourceResolver}.
      *
      * Note:
-     *  - current strategy to resolve on the title of the canonical on the field value.
+     *  - current strategy to resolve on the title of the Canonical on the field value.
      *  - there is no placement of the resolution onto the item
      *
      * @param formItem form item to process for resolution
@@ -187,7 +187,7 @@ export default class FieldResolverUtil {
 
     /**
      *
-     * Strategy is to resolve the lookup key as the title from the canonical link relation
+     * Strategy is to resolve the lookup key as the title from the Canonical link relation
      * @param resource field resource being resolved
      */
     public static resourceResolverRelNameStrategy(resource: LinkedRepresentation): string | undefined {

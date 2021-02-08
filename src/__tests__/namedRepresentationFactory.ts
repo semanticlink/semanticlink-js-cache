@@ -1,5 +1,4 @@
 import { LinkedRepresentation } from 'semantic-link';
-import { IanaLinkRelation } from '../ianaLinkRelation';
 import { assertThat } from 'mismatched';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
@@ -9,6 +8,7 @@ import SparseRepresentationFactory from '../representation/sparseRepresentationF
 import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
 import { TrackedRepresentation } from '../types/types';
 import RepresentationUtil from '../utils/representationUtil';
+import LinkRelation from '../linkRelation';
 
 const makeHydratedResource = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
     // note: clone the document for multiple uses
@@ -68,11 +68,11 @@ describe('Named Representation Factory', () => {
         ])('on rel, \'%s\'', async (rel: string, returns: boolean | undefined) => {
 
             const api = makeHydratedResource<ApiRepresentation>({
-                links: [{ rel: IanaLinkRelation.self, href: uri }, { rel: 'me', href: 'http://example.com/me' }],
+                links: [{ rel: LinkRelation.Self, href: uri }, { rel: 'me', href: 'http://example.com/me' }],
                 version: '1.0.0',
             });
             const me = {
-                links: [{ rel: IanaLinkRelation.self, href: 'http://example.com/me' }],
+                links: [{ rel: LinkRelation.Self, href: 'http://example.com/me' }],
                 data: 'XXX',
             };
             get

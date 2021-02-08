@@ -117,7 +117,7 @@ export default class ResourceMergeFactory {
      * resource:
      * {
      *    links: [
-     *      { rel: 'self', href: 'http://example.com/item/1' },
+     *      { rel: 'Self', href: 'http://example.com/item/1' },
      *      { rel: 'relates', href: 'http://example.com/job/1' },
      *    ],
      *    name: 'this',
@@ -143,7 +143,7 @@ export default class ResourceMergeFactory {
      *
      *    "links": [
      *        {
-     *            "rel": "self",
+     *            "rel": "Self",
      *            "href": "http://localhost:1080/page/form/edit"
      *        }
      *    ],
@@ -164,7 +164,7 @@ export default class ResourceMergeFactory {
      * resource:
      * {
      *    links: [
-     *      { rel: 'self', href: 'http://example.com/item/1' },
+     *      { rel: 'Self', href: 'http://example.com/item/1' },
      *      { rel: 'role', href: 'http://example.com/role/1' },
      *      { rel: 'role', href: 'http://example.com/role/2' },
      *    ],
@@ -183,7 +183,7 @@ export default class ResourceMergeFactory {
      *
      *    "links": [
      *        {
-     *            "rel": "self",
+     *            "rel": "Self",
      *            "href": "http://localhost:1080/page/form/edit"
      *        }
      *    ],
@@ -216,7 +216,7 @@ export default class ResourceMergeFactory {
      * resource:
      * {
      *    links: [
-     *      { rel: 'self', href: 'http://example.com/item/1' },
+     *      { rel: 'Self', href: 'http://example.com/item/1' },
      *    ],
      *    textBox: {
      *      height: 5,

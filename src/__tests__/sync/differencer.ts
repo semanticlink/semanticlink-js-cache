@@ -38,7 +38,7 @@ describe('Differencer', () => {
     };
 
     describe('collections', () => {
-        describe('Match on default comparator of link relation self', () => {
+        describe('Match on default comparator of link relation Self', () => {
             it('should have one update/match when identical', async () => {
                 const collection = {
                     links: [],
@@ -54,7 +54,7 @@ describe('Differencer', () => {
                 verifySync(actual, 0, 1, 0);
             });
 
-            it('should match rel=self and update based on name', async () => {
+            it('should match rel=Self and update based on name', async () => {
                 const collection = {
                     links: [],
                     items: [

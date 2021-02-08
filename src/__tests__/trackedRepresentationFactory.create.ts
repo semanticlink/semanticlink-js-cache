@@ -1,5 +1,4 @@
 import { LinkedRepresentation } from 'semantic-link';
-import { IanaLinkRelation } from '../ianaLinkRelation';
 import { assertThat } from 'mismatched';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
 import { singletonRepresentation } from '../utils/representationMatcher';
@@ -7,6 +6,7 @@ import { Status } from '../models/status';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import TrackedRepresentationFactory from '../representation/trackedRepresentationFactory';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
+import LinkRelation from '../linkRelation';
 
 describe('Tracked Representation Factory', () => {
 
@@ -72,7 +72,7 @@ describe('Tracked Representation Factory', () => {
                     data: {
                         links: [
                             {
-                                rel: IanaLinkRelation.self,
+                                rel: LinkRelation.Self,
                                 href: uri,
                             }],
                     } as LinkedRepresentation,

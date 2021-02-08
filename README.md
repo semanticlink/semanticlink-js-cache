@@ -19,7 +19,7 @@ Some key features:
 * on-demand authentication
 * eager and lazy relations
 * breadth vs depth-first collection retrieval
-* uni-directional, bi-directional and self-referenced relations
+* uni-directional, bi-directional and Self-referenced relations
 * content negotiation aware (eg micro-formats)
 * application cache expiration and refresh
 * application cache persistence across sessions
@@ -76,7 +76,7 @@ const log = anylogger('Todos');
 // $api as a sparsely populated root
 const $api: ApiRepresentation = {
     links: [
-        { rel: 'self', href: 'https://api.example.com'}
+        { rel: 'Self', href: 'https://api.example.com'}
     ]   
 }
 
@@ -88,8 +88,8 @@ const todos: TodoCollection = await ApiUtil.get($api, { rel:  'todos' })
 // option three
 const todos = await ApiUtil.get($api).$get<TodoCollection>({ rel:  'todos' })
 
-log.debug(LinkUtil.get(todos, LinkRelation.self))
-todos.items.forEach(item => log.debug(LinkUtil.get(item, LinkRelation.self)));
+log.debug(LinkUtil.get(todos, LinkRelation.Self))
+todos.items.forEach(item => log.debug(LinkUtil.get(item, LinkRelation.Self)));
 
 // hydrated collections
 await ApiUtil.get<ApiRepresentation, TodoCollection>($api, { rel:  'todos', includeItems: true })

@@ -8,7 +8,7 @@ export type ResourceType = 'singleton' | 'collection' | 'feed';
 export interface ResourceFactoryOptions {
 
     /**
-     * The href set on the 'self' link relation
+     * The href set on the 'Self' link relation
      */
     readonly uri?: Uri;
 

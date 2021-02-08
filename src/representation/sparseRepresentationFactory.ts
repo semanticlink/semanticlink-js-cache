@@ -2,11 +2,11 @@ import { FeedRepresentation, LinkedRepresentation } from 'semantic-link';
 import { SingletonRepresentation, state, TrackedRepresentation } from '../types/types';
 import { State } from '../models/state';
 import { Status } from '../models/status';
-import { IanaLinkRelation } from '../ianaLinkRelation';
 import anylogger from 'anylogger';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { instanceOfFeed } from '../utils/instanceOf/instanceOfFeed';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import LinkRelation from '../linkRelation';
 
 const log = anylogger('SparseRepresentationFactory');
 
@@ -108,7 +108,7 @@ export default class SparseRepresentationFactory {
         const sparseResource = {
             [state]: new State(status),
             links: [{
-                rel: IanaLinkRelation.self,
+                rel: LinkRelation.Self,
                 href: uri,
             }],
         } as TrackedRepresentation<T>;

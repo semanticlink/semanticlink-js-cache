@@ -14,7 +14,7 @@ import { Representation } from '../../types/types';
  *
  *    "links": [
  *        {
- *            "rel": "self",
+ *            "rel": "Self",
  *            "href": "http://localhost:1080/role/filter/408"
  *        },
  *        {

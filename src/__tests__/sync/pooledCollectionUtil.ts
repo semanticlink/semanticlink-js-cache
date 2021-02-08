@@ -27,7 +27,7 @@ describe('Pooled collection', () => {
     const spy = jest.spyOn(ApiUtil, 'get').mockResolvedValue(pooledCollection);
     // sinon.stub(cache, 'getNamedCollection').callsFake(() => Promise.resolve(pooledCollection));
 
-    describe('strategy one & two: it is simply found map it based on self and/or mappedTitle', () => {
+    describe('strategy one & two: it is simply found map it based on Self and/or mappedTitle', () => {
         const resource = {
             links: [
                 {
@@ -71,7 +71,7 @@ describe('Pooled collection', () => {
         });
     });
 
-    describe('strategy three: check to see if self is an actual resource anyway and map it if it is, otherwise make', () => {
+    describe('strategy three: check to see if Self is an actual resource anyway and map it if it is, otherwise make', () => {
         const resource = {
             links: [
                 {
@@ -82,7 +82,7 @@ describe('Pooled collection', () => {
             name: 'NewRole',
         };
 
-        it('should find self, resolve uri and then return resource', async () => {
+        it('should find Self, resolve uri and then return resource', async () => {
             const options = {
                 resolver: {
                     resolve: resolving => {
@@ -97,7 +97,7 @@ describe('Pooled collection', () => {
 
         });
 
-        it('should find self and then make resource with add mapping', async () => {
+        it('should find Self and then make resource with add mapping', async () => {
             const mock = jest.fn();
             const options = {
                 resolver: {

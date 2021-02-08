@@ -6,7 +6,7 @@ export interface ResourceQueryOptions {
      */
     defaultValues?: Partial<LinkedRepresentation>;
     /**
-     * Identifies the child resource in a collection by its identity (either as 'self' link rel or a `Uri`)
+     * Identifies the child resource in a collection by its identity (either as 'Self' link rel or a `Uri`)
      */
     where?: LinkedRepresentation | Uri | (<T extends LinkedRepresentation>() => T);
     /**

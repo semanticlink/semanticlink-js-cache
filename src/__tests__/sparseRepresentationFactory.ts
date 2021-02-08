@@ -1,5 +1,4 @@
 import { CollectionRepresentation, LinkUtil } from 'semantic-link';
-import { IanaLinkRelation } from '../ianaLinkRelation';
 import { assertThat } from 'mismatched';
 import {
     collectionRepresentation,
@@ -12,6 +11,7 @@ import each from 'jest-each';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
+import LinkRelation from '../linkRelation';
 
 describe('Sparse Representation Factory', () => {
 
@@ -55,8 +55,8 @@ describe('Sparse Representation Factory', () => {
                         assertThat(resource).is(type);
                     });
 
-                    it('should have self link', () => {
-                        assertThat(LinkUtil.matches(resource, IanaLinkRelation.self)).is(matchesSelf);
+                    it('should have Self link', () => {
+                        assertThat(LinkUtil.matches(resource, LinkRelation.Self)).is(matchesSelf);
                     });
 
                     it('has status', () => {

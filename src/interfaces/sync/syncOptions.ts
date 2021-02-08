@@ -50,7 +50,7 @@ export interface SyncOptions extends Partial<SyncResolverOptions> {
 
     /**
      * Change the strategy to locate a resource in a collection when syncing eg the resource in the collection
-     * will be searched by only on link relation (default: canonical|self)
+     * will be searched by only on link relation (default: Canonical|Self)
      *
      * @see {@link defaultFindResourceInCollectionStrategy}
      */

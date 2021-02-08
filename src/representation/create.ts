@@ -100,7 +100,7 @@ async function createCollectionItem<T extends LinkedRepresentation>(
                 /*
                  * Choose where to get the uri from in cascading order:
                  *  - form with submit, use submit href on the form
-                 *  - otherwise, self link on the collection itself
+                 *  - otherwise, Self link on the collection itself
                  */
                 const hasSubmitRel = LinkUtil.matches(form, LinkRelation.Submit);
                 const contextResource = hasSubmitRel ? form : resource;

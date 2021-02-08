@@ -1,8 +1,9 @@
 import { assertThat } from 'mismatched';
 import { FormItem } from '../interfaces/formItem';
-import FieldResolverUtil, { FieldValue } from '../utils/fieldResolverUtil';
+import FieldResolverUtil from '../utils/fieldResolverUtil';
 import { FieldType } from '../types/formTypes';
 import { MergeOptions } from '../interfaces/mergeOptions';
+import { FieldValue } from 'src/interfaces/fieldResolver';
 
 describe('Form util, resolve', () => {
 
@@ -155,7 +156,7 @@ describe('Form util, resolve', () => {
     it('resolve resource', async () => {
 
         const relName = 'question';
-        /** this resource requires a canonical relation with title to resolve against */
+        /** this resource requires a Canonical relation with title to resolve against */
         const fieldValue = {
             'links': [
                 {

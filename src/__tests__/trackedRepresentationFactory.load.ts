@@ -1,5 +1,4 @@
 import { LinkedRepresentation } from 'semantic-link';
-import { IanaLinkRelation } from '../ianaLinkRelation';
 import { assertThat } from 'mismatched';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
 import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
@@ -8,6 +7,7 @@ import { Status } from '../models/status';
 import { TrackedRepresentation } from '../types/types';
 import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
 import TrackedRepresentationFactory from '../representation/trackedRepresentationFactory';
+import LinkRelation from '../linkRelation';
 
 describe('Tracked Representation Factory', () => {
 
@@ -35,7 +35,7 @@ describe('Tracked Representation Factory', () => {
             [{} as TrackedRepresentation<ApiRepresentation>, 'No state on \'undefined\''],
             [{
                 links: [{
-                    rel: IanaLinkRelation.self,
+                    rel: LinkRelation.Self,
                     href: uri,
                 }],
             } as TrackedRepresentation<ApiRepresentation>, `No state on '${uri}'`],
@@ -75,7 +75,7 @@ describe('Tracked Representation Factory', () => {
                             data: {
                                 links: [
                                     {
-                                        rel: IanaLinkRelation.self,
+                                        rel: LinkRelation.Self,
                                         href: uri,
                                     }],
                                 version: '56',

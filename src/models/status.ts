@@ -12,14 +12,14 @@ export enum Status {
      */
         unknown,
     /**
-     * The resource only has a link relation 'self' with the URI
+     * The resource only has a link relation 'Self' with the URI
      * of the resource. None of the attribute values will be known.
      *
      * @example
      *
      * {
      *   links: {
-     *      self: 'http://example.com/item/1'
+     *      Self: 'http://example.com/item/1'
      *   }
      * }
      */
@@ -37,7 +37,7 @@ export enum Status {
      *
      * {
      *   links: {
-     *      self: 'http://example.com/collection/'
+     *      Self: 'http://example.com/collection/'
      *   }
      *   items: [
      *      { id: 'http://example.com/item/1', title: 'First item' }
@@ -49,12 +49,12 @@ export enum Status {
      *
      * {
      *   links: {
-     *      self: 'http://example.com/collection/'
+     *      Self: 'http://example.com/collection/'
      *   }
      *   items: [
      *      {                      **<-- this resource state is `feedOnly`**
      *          links: {
-     *           self: 'http://example.com/item/1'
+     *           Self: 'http://example.com/item/1'
      *           }
      *           title: 'First item'
      *      }
