@@ -17,9 +17,19 @@ import anylogger from 'anylogger';
 import RepresentationUtil from '../utils/representationUtil';
 import { instanceOfUriList } from '../utils/instanceOf/instanceOfUriList';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import { TrackedRepresentation } from '../types/types';
+import { DocumentRepresentation } from '../interfaces/document';
 
 const log = anylogger('Sync');
 
+
+async function processSync<T extends LinkedRepresentation>(resource: TrackedRepresentation<T> | T, document: DocumentRepresentation<T> | T, strategies: any[], options: SyncOptions) {
+    if (instanceOfCollection(document)) {
+        await getCollectionInCollection(resource, document, strategies, options) as T;
+    } else {
+        await getResourceInCollection(resource, document, strategies, options);
+    }
+}
 
 /**
  * Retrieves a resource (singleton or collection, either directly or through a link relation) and synchronises from
@@ -154,11 +164,7 @@ export async function sync<T extends LinkedRepresentation>(syncAction: SyncType<
     // resource or collection (directly). This means that no rel is specified
     if (instanceOfResourceSync(syncAction)) {
         if (instanceOfCollection(resource)) {
-            if (instanceOfCollection(document)) {
-                await getCollectionInCollection(resource, document, strategies, options) as T;
-            } else {
-                await getResourceInCollection(resource, document, strategies, options);
-            }
+            await processSync(resource, document, strategies, options);
         } else {
             if (instanceOfCollection(document)) {
                 throw new Error('Not Implement: a document collection cannot be synchronised onto a singleton');
@@ -197,5 +203,5 @@ export async function sync<T extends LinkedRepresentation>(syncAction: SyncType<
 
     instanceOfCollection(resource) ?
         await getResourceInNamedCollection(resource, document, strategies, { ...options, rel }) :
-        await getSingleton(resource, document, strategies, { ...options, rel });
+        await getSingleton(resource, document, strategies, { ...options, rel, relOnDocument: rel });
 }

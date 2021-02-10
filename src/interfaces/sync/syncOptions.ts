@@ -77,6 +77,18 @@ export interface SyncOptions extends Partial<SyncResolverOptions> {
     readonly resolver?: Resolver;
 
     readonly rel?: RelationshipType;
+    readonly relOnDocument?: RelationshipType;
     readonly name?: string;
+    readonly nameOnDocument?: string;
+
+    /**
+     * The containing document is a collection and ensure that all the items are synced.
+     */
+    readonly includeItems?: boolean;
+
+    /**
+     * The document is
+     */
+    readonly where?: LinkedRepresentation;
 
 }
