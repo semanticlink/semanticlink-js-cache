@@ -374,7 +374,7 @@ export async function getResource<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
-    return await get(resource, document, strategies, options);
+    return await syncResource(resource, document, strategies, options);
 }
 
 
@@ -418,7 +418,7 @@ export async function getSingleton<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
-    return await get(resource, document, strategies, options);
+    return await syncResource(resource, document, strategies, options);
 }
 
 /**
@@ -457,7 +457,7 @@ export async function getResourceInCollection<T extends LinkedRepresentation>(
     document: T | DocumentRepresentation<T>,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
-    return await get(resource, document, strategies, options);
+    return await syncResource(resource, document, strategies, options);
 }
 
 /**
@@ -493,7 +493,7 @@ export async function getResourceInNamedCollection<T extends LinkedRepresentatio
     options?: SyncOptions & HttpRequestOptions
 ): Promise<T> {
 
-    return await get(resource, document, strategies, options);
+    return await syncResource(resource, document, strategies, options);
 }
 
 /**
@@ -527,7 +527,7 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
-    return await get(resource, document, strategies, options);
+    return await syncResource(resource, document, strategies, options);
 }
 
 /**
@@ -563,7 +563,7 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
-    return await get(resource, document, strategies, options);
+    return await syncResource(resource, document, strategies, options);
 }
 
 /**
@@ -786,7 +786,7 @@ export async function getNamedCollectionInNamedCollection<T extends LinkedRepres
  * @param strategies
  * @param options
  */
-export async function get<T extends LinkedRepresentation>(
+export async function syncResource<T extends LinkedRepresentation>(
     resource: TrackedRepresentation<T> | T,
     document: DocumentRepresentation<T> | T,
     strategies: StrategyType[] = [],
