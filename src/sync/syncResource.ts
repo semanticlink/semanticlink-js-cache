@@ -16,8 +16,6 @@ import {
     SyncResolverOptions,
     UpdateStrategy,
 } from '../interfaces/sync/syncResolverOptions';
-import get from '../representation/get';
-import update from '../representation/update';
 import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
@@ -413,38 +411,40 @@ export async function getResource<T extends LinkedRepresentation>(
  *                                        looks for
  *
  * @param parentResource
- * @param singletonName
- * @param rel
  * @param parentDocument
  * @param strategies
- * @param options
+ * @param options?
  * @return {Promise} containing the parent {@link LinkedRepresentation}
  */
 export async function getSingleton<T extends LinkedRepresentation>(
-    parentResource: T | TrackedRepresentation<T>,
-    singletonName: string,
-    rel: RelationshipType,
-    parentDocument: T | DocumentRepresentation<T>,
+    parentResource: TrackedRepresentation<T> | T,
+    parentDocument: DocumentRepresentation<T> | T,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
-    log.debug('[Sync] resource (named singleton) \'%s\' on %s', singletonName, LinkUtil.getUri(parentResource, LinkRelation.Self));
+
+    const {
+        rel = undefined,
+        name = NamedRepresentationFactory.defaultNameStrategy(rel, parentResource),
+    } = { ...options };
+
+    // do not pass down
+    options = { ...options, rel: undefined, name: undefined };
 
     if (!parentDocument) {
         throw new Error('Parent document must exist');
     }
+    const namedResource = await ApiUtil.get(parentResource, { ...options, rel });
 
-    const name = NamedRepresentationFactory.defaultNameStrategy(rel);
-
-    const namedResource = await ApiUtil.get(parentResource, { ...options, rel: rel });
     if (namedResource) {
+        log.debug('[Sync] resource (named singleton) \'%s\' on %s', name, LinkUtil.getUri(parentResource, LinkRelation.Self));
         const document = RepresentationUtil.getProperty(parentDocument, name) as DocumentRepresentation<T>;
-        const updated = await update(namedResource, document, options);
+        const updated = await ApiUtil.update(namedResource, document, options);
         if (updated) {
             await (await syncResources(updated, document as T, strategies, options))();
         }
     } else {
-        log.debug('[Sync] No update: singleton \'%s\' not found on %s', singletonName, LinkUtil.getUri(parentResource, LinkRelation.Self));
+        log.debug('[Sync] No update: singleton \'%s\' not found on %s', name, LinkUtil.getUri(parentResource, LinkRelation.Self));
     }
     return parentResource;
 }
@@ -520,24 +520,29 @@ export async function getResourceInCollection<T extends LinkedRepresentation>(
  *                       items
  *
  * @param {LinkedRepresentation} parentResource
- * @param {string} collectionName
- * @param {string|RegExp|RelationshipType} collectionRel
  * @param {*} resourceDocument
  * @param strategies
- * @param options
+ * @param options?
  * @return {Promise} containing the resource {@link LinkedRepresentation}
  */
 export async function getResourceInNamedCollection<T extends LinkedRepresentation>(
-    parentResource: T | TrackedRepresentation<T>,
-    collectionName: string,
-    collectionRel: RelationshipType,
-    resourceDocument: T | DocumentRepresentation<T>,
+    parentResource: TrackedRepresentation<T> | T,
+    resourceDocument: DocumentRepresentation<T> | T,
     strategies: StrategyType[] = [],
-    options ?: SyncOptions & HttpRequestOptions
+    options?: SyncOptions & HttpRequestOptions
 ): Promise<T> {
-    log.debug('[Sync] resource (named collection) \'%s\' on %s', collectionName, LinkUtil.getUri(parentResource, LinkRelation.Self));
 
-    const result = await get(parentResource, { ...options, rel: collectionRel });
+    const {
+        rel = undefined,
+        name = NamedRepresentationFactory.defaultNameStrategy(rel, parentResource),
+    } = { ...options };
+
+    // do not pass down
+    options = { ...options, rel: undefined, name: undefined };
+
+    log.debug('[Sync] resource (named collection) \'%s\' on %s', name, LinkUtil.getUri(parentResource, LinkRelation.Self));
+
+    const result = await ApiUtil.get(parentResource, { ...options, rel });
     if (instanceOfCollection(result)) {
         const syncInfo = await syncResourceInCollection(result, resourceDocument, options);
         if (syncInfo) {
@@ -585,7 +590,7 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
             // populate the potentially sparse collection - we need to ensure that
             // any existing ones (old) are not stale and that any just created (sparse)
             // are hydrated
-            await get(collectionResource, { ...options, includeItems: true });
+            await ApiUtil.get(collectionResource, { ...options, includeItems: true });
             await tailRecursionThroughStrategies(strategies, info, options);
         }
     } else {
@@ -616,29 +621,34 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
  *     +----------+   X                     X
  *
  * @param parentResource
- * @param collectionName
- * @param collectionRel
  * @param collectionDocument
  * @param strategies
- * @param options
+ * @param options?
  * @return {Promise} containing the {@link CollectionRepresentation}
  */
 export async function getCollectionInNamedCollection<T extends LinkedRepresentation>(
-    parentResource: T | TrackedRepresentation<T>,
-    collectionName: string,
-    collectionRel: RelationshipType,
+    parentResource: TrackedRepresentation<T> | T,
     collectionDocument: DocumentRepresentation<T> | CollectionRepresentation,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
-    log.debug('[Sync] collection (in named collection) \'%s\' on %s', collectionName, LinkUtil.getUri(parentResource, LinkRelation.Self));
 
-    const result = await ApiUtil.get(parentResource, { ...options, rel: collectionRel });
+    const {
+        rel = undefined,
+        name = NamedRepresentationFactory.defaultNameStrategy(rel, parentResource),
+    } = { ...options };
+
+    // do not pass down
+    options = { ...options, rel: undefined, name: undefined };
+
+    log.debug('[Sync] collection (in named collection) \'%s\' on %s', name, LinkUtil.getUri(parentResource, LinkRelation.Self));
+
+    const result = await ApiUtil.get(parentResource, { ...options, rel });
     if (instanceOfCollection(result) && instanceOfCollection(collectionDocument)) {
         // in the context of the collection, synchronise the collection part of the document
         await getCollectionInCollection(result, collectionDocument, strategies, options);
     } else {
-        log.info('[Sync] No \'%s\' on resource %s', collectionName, LinkUtil.getUri(parentResource, LinkRelation.Self));
+        log.info('[Sync] No \'%s\' on resource %s', name, LinkUtil.getUri(parentResource, LinkRelation.Self));
     }
     return parentResource;
 }
@@ -666,30 +676,29 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
  *     +----------+   X                     X  +----------+
  *
  * @param {LinkedRepresentation} parentResource
- * @param {string} collectionName
- * @param {RelationshipType} collectionRel
  * @param {*} parentDocument
  * @param strategies
- * @param options
+ * @param options?
  * @return {Promise} containing the collection {@link CollectionRepresentation}
  */
 export async function getNamedCollectionInNamedCollection<T extends LinkedRepresentation>(
-    parentResource: T | TrackedRepresentation<T>,
-    collectionName: string,
-    collectionRel: RelationshipType,
+    parentResource: TrackedRepresentation<T> | T,
     parentDocument: DocumentRepresentation<T>,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<CollectionRepresentation<T>> {
 
-    const name = NamedRepresentationFactory.defaultNameStrategy(collectionRel);
+    const {
+        rel = undefined,
+        name = NamedRepresentationFactory.defaultNameStrategy(rel, parentResource),
+    } = { ...options };
 
-    return await getCollectionInNamedCollection(
-        parentResource,
-        collectionName,
-        collectionRel,
-        RepresentationUtil.getProperty(parentDocument, name) as DocumentRepresentation,
-        strategies,
-        options
-    ) as unknown as CollectionRepresentation<T>;
+    // do not pass down
+    options = { ...options, rel: undefined, name: undefined };
+
+    return await getCollectionInNamedCollection(parentResource, RepresentationUtil.getProperty(parentDocument, name) as DocumentRepresentation, strategies, {
+        ...options,
+        rel,
+        name
+    }) as unknown as CollectionRepresentation<T>;
 }

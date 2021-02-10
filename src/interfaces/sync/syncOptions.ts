@@ -1,5 +1,5 @@
 import { Representation } from '../../types/types';
-import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
+import { CollectionRepresentation, LinkedRepresentation, RelationshipType } from 'semantic-link';
 import { Comparator } from './comparator';
 import { UriListResolver } from './uriListResolver';
 import { SyncResolverOptions } from './syncResolverOptions';
@@ -75,5 +75,8 @@ export interface SyncOptions extends Partial<SyncResolverOptions> {
 
     readonly fieldResolver?: FieldResolver;
     readonly resolver?: Resolver;
+
+    readonly rel?: RelationshipType;
+    readonly name?: string;
 
 }

@@ -191,11 +191,11 @@ export async function sync<T extends LinkedRepresentation>(syncAction: SyncType<
 
     const collection = RepresentationUtil.getProperty(document, name);
     if (instanceOfCollection(collection)) {
-        await getCollectionInNamedCollection(resource, name, rel, collection, strategies, options);
+        await getCollectionInNamedCollection(resource, collection, strategies, { ...options, rel });
         return;
     }
 
     instanceOfCollection(resource) ?
-        await getResourceInNamedCollection(resource, name, rel, document, strategies, options) :
-        await getSingleton(resource, name, rel, document, strategies, options);
+        await getResourceInNamedCollection(resource, document, strategies, { ...options, rel }) :
+        await getSingleton(resource, document, strategies, { ...options, rel });
 }

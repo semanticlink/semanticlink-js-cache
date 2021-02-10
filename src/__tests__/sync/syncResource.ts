@@ -368,13 +368,10 @@ describe('Synchroniser', () => {
                     .mockResolvedValueOnce({ data: { ...editForm } });
 
                 // put.mockResolvedValueOnce({ status: 200 });
-                const result = await getResourceInNamedCollection(
-                    makeHydratedResource(parent),
-                    'todos',
-                    /todos/,
-                    noChangeDocument,
-                    [],
-                    options);
+                const result = await getResourceInNamedCollection(makeHydratedResource(parent), noChangeDocument, [], {
+                    ...options,
+                    rel: 'todos'
+                });
 
                 expect(result).toBeDefined();
                 verifyMocks(3, 0, 0, 0);
@@ -407,13 +404,10 @@ describe('Synchroniser', () => {
 
                 put.mockResolvedValue(successPut);
 
-                const result = await getResourceInNamedCollection(
-                    makeHydratedResource(parent),
-                    'todos',
-                    /todos/,
-                    changedDocument,
-                    [],
-                    options);
+                const result = await getResourceInNamedCollection(makeHydratedResource(parent), changedDocument, [], {
+                    ...options,
+                    rel: 'todos'
+                });
 
                 expect(result).toBeDefined();
                 verifyMocks(3, 0, 1, 0);
@@ -432,13 +426,10 @@ describe('Synchroniser', () => {
 
                 post.mockResolvedValueOnce(() => ({ headers: { location: 'https://api.example.com/todo/new' } }));
 
-                const result = await getResourceInNamedCollection(
-                    makeHydratedResource(parent),
-                    'todos',
-                    /todos/,
-                    newDocument,
-                    [],
-                    options);
+                const result = await getResourceInNamedCollection(makeHydratedResource(parent), newDocument, [], {
+                    ...options,
+                    rel: 'todos'
+                });
 
                 expect(result).toBeDefined();
                 verifyMocks(2, 1, 0, 0);
@@ -459,7 +450,10 @@ describe('Synchroniser', () => {
                     .mockResolvedValueOnce({ data: todo2 })
                     .mockResolvedValueOnce({ data: editForm });
 
-                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), 'todos', /todos/, noChangeCollection, [], options);
+                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), noChangeCollection, [], {
+                    ...options,
+                    rel: 'todos'
+                });
 
                 expect(result).toBeDefined();
                 verifyMocks(4, 0, 0, 0);
@@ -487,13 +481,10 @@ describe('Synchroniser', () => {
                 get.mockImplementation(fakeResponseFactory);
                 put.mockResolvedValueOnce({ status: 200 });
 
-                const result = await getCollectionInNamedCollection(
-                    makeHydratedResource(parent),
-                    'todos',
-                    /todos/,
-                    oneItemChangedInCollection,
-                    [],
-                    options);
+                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), oneItemChangedInCollection, [], {
+                    ...options,
+                    rel: 'todos'
+                });
 
                 expect(result).toBeDefined();
                 verifyMocks(5, 0, 1, 0);
@@ -514,13 +505,10 @@ describe('Synchroniser', () => {
                 get.mockImplementation(fakeResponseFactory);
                 post.mockResolvedValueOnce({ headers: { location: 'https://api.example.com/todo/newOne934875' } });
 
-                const result = await getCollectionInNamedCollection(
-                    makeHydratedResource(parent),
-                    'todos',
-                    /todos/,
-                    oneItemAddedInCollection,
-                    [],
-                    options);
+                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), oneItemAddedInCollection, [], {
+                    ...options,
+                    rel: 'todos'
+                });
 
                 expect(result).toBeDefined();
                 verifyMocks(7, 1, 0, 0);
@@ -540,7 +528,10 @@ describe('Synchroniser', () => {
                 del.mockResolvedValueOnce(() => ({}));
 
 
-                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), 'todos', /todos/, oneItemRemovedInCollection, [], options);
+                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), oneItemRemovedInCollection, [], {
+                    ...options,
+                    rel: 'todos'
+                });
 
                 expect(result).toBeDefined();
                 verifyMocks(3, 0, 0, 1);
@@ -567,13 +558,7 @@ describe('Synchroniser', () => {
                     .mockResolvedValueOnce({ data: todo2 })
                     .mockResolvedValueOnce({ data: editForm });
 
-                const result = await getNamedCollectionInNamedCollection(
-                    makeHydratedResource(parent),
-                    'todos',
-                    /todos/,
-                    noChangeParentCollection,
-                    [],
-                    options);
+                const result = await getNamedCollectionInNamedCollection(makeHydratedResource(parent), noChangeParentCollection, [], { ...options, rel: 'todos' });
 
                 expect(result).toBeDefined();
                 verifyMocks(4, 0, 0, 0);
@@ -641,7 +626,10 @@ describe('Synchroniser', () => {
                     .mockResolvedValueOnce({ data: editForm });
 
 
-                const result = await getSingleton(hydratedParent, 'user', /user/, noChangeParent, [], options);
+                const result = await getSingleton(hydratedParent, noChangeParent, [], {
+                    ...options,
+                    rel: 'user'
+                });
                 expect(result).toBeDefined();
                 verifyMocks(2, 0, 0, 0);
                 assertThat(result).is(hydratedParent);
@@ -665,7 +653,10 @@ describe('Synchroniser', () => {
                 put.mockResolvedValueOnce(() => ({}));
 
 
-                const result = await getSingleton(hydratedParent, 'user', /user/, changedSingletonOnParent, [], options);
+                const result = await getSingleton(hydratedParent, changedSingletonOnParent, [], {
+                    ...options,
+                    rel: 'user'
+                });
                 expect(result).toBeDefined();
                 verifyMocks(2, 0, 1, 0);
                 assertThat(result).is(hydratedParent);
@@ -697,14 +688,10 @@ describe('Synchroniser', () => {
                             expect(options).toBeDefined();
                         });
 
-                    const result = await getSingleton(
-                        hydratedParent,
-                        'user',
-                        /user/,
-                        changedSingletonOnParent,
-                        [opts => strategy({ ...opts })],
-                        options
-                    );
+                    const result = await getSingleton(hydratedParent, changedSingletonOnParent, [opts => strategy({ ...opts })], {
+                        ...options,
+                        rel: 'user'
+                    });
 
                     expect(result).toBeDefined();
                     verifyMocks(2, 0, 1, 0);
