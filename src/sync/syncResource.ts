@@ -374,26 +374,7 @@ export async function getResource<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
-    const {
-        rel = undefined,
-        relOnDocument = undefined,
-        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
-    } = { ...options };
-    // do not pass down
-    options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
-
-    if (!rel && !relOnDocument && instanceOfSingleton(resource) && instanceOfSingleton(document)) {
-        log.debug('sync resource %s', LinkUtil.getUri(resource, LinkRelation.Self));
-        const result = await ApiUtil.get(resource, options);
-        if (result) {
-            const update = await ApiUtil.update(resource, document, options);
-            if (update) {
-                await (await syncResources(resource, document, strategies, options))();
-            }
-        }
-    }
-    return resource;
+    return await get(resource, document, strategies, options);
 }
 
 
@@ -437,36 +418,7 @@ export async function getSingleton<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
-
-    const {
-        rel = undefined,
-        relOnDocument = undefined,
-        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
-    } = { ...options };
-    // do not pass down
-    options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
-
-    if (rel && relOnDocument) {
-
-        if (!document) {
-            throw new Error('Parent document must exist');
-        }
-        const namedResource = await ApiUtil.get(resource, { ...options, rel });
-
-        if (namedResource) {
-            log.debug('[Sync] resource (named singleton) \'%s\' on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
-            const namedDocument = RepresentationUtil.getProperty(document, nameOnDocument) as DocumentRepresentation<T>;
-            const updated = await ApiUtil.update(namedResource, namedDocument, options);
-            if (updated) {
-                await (await syncResources(updated, namedDocument as T, strategies, options))();
-            }
-        } else {
-            log.debug('[Sync] No update: singleton \'%s\' not found on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
-        }
-    }
-
-    return resource;
+    return await get(resource, document, strategies, options);
 }
 
 /**
@@ -505,33 +457,7 @@ export async function getResourceInCollection<T extends LinkedRepresentation>(
     document: T | DocumentRepresentation<T>,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
-
-    const {
-        rel = undefined,
-        relOnDocument = undefined,
-        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
-    } = { ...options };
-    // do not pass down
-    options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
-
-    if (!rel && !relOnDocument && instanceOfCollection(resource) && instanceOfDocumentSingleton(document)) {
-
-        log.debug('[Sync] collection %s with \'%s\'', LinkUtil.getUri(resource, LinkRelation.Self));
-
-        const result = await ApiUtil.get(resource, options);
-        if (instanceOfCollection(result)) {
-            const syncInfo = await syncResourceInCollection(result, document as T, options);
-            if (syncInfo) {
-                return await syncInfos(strategies, options)(syncInfo) as T;
-            }
-        } else {
-            log.error('result is not a collection')
-        }
-        return result as T;
-    }
-
-    return resource;
+    return await get(resource, document, strategies, options);
 }
 
 /**
@@ -567,30 +493,7 @@ export async function getResourceInNamedCollection<T extends LinkedRepresentatio
     options?: SyncOptions & HttpRequestOptions
 ): Promise<T> {
 
-
-    const {
-        rel = undefined,
-        relOnDocument = undefined,
-        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
-    } = { ...options };
-    // do not pass down
-    options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
-
-    if (rel && !relOnDocument && instanceOfDocumentSingleton(document)) {
-
-        log.debug('[Sync] resource (named collection) \'%s\' on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
-
-        const namedResource = await ApiUtil.get(resource, { ...options, rel });
-        if (instanceOfCollection(namedResource)) {
-            const syncInfo = await syncResourceInCollection(namedResource, document, options);
-            if (syncInfo) {
-                return await syncInfos(strategies, options)(syncInfo) as T;
-            }
-        }
-        return namedResource as unknown as T;
-    }
-    return resource
+    return await get(resource, document, strategies, options);
 }
 
 /**
@@ -624,30 +527,7 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
-
-    const {
-        rel = undefined,
-        relOnDocument = undefined,
-        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
-    } = { ...options };
-    // do not pass down
-    options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
-
-    if (!rel && !relOnDocument && instanceOfCollection(resource) && instanceOfDocumentCollection(document)) {
-
-        const { info } = await synchroniseCollection(resource, document as unknown as CollectionRepresentation, options);
-        if (info) {
-            // populate the potentially sparse collection - we need to ensure that
-            // any existing ones (old) are not stale and that any just created (sparse)
-            // are hydrated
-            await ApiUtil.get(resource, { ...options, includeItems: true });
-            await tailRecursionThroughStrategies(strategies, info, options);
-        }
-    } else {
-        log.error('collection and document must both be collections %s', LinkUtil.getUri(resource, LinkRelation.Self))
-    }
-    return resource;
+    return await get(resource, document, strategies, options);
 }
 
 /**
@@ -683,27 +563,7 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
-
-    const {
-        rel = undefined,
-        relOnDocument = undefined,
-        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
-    } = { ...options };
-    // do not pass down
-    options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
-
-    log.debug('[Sync] collection (in named collection) \'%s\' on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
-    if (rel && !relOnDocument && instanceOfDocumentCollection(document)) {
-        const result = await ApiUtil.get(resource, { ...options, rel });
-        if (instanceOfCollection(result)) {
-            // in the context of the collection, synchronise the collection part of the document
-            await getCollectionInCollection(result, document, strategies, options);
-        } else {
-            log.info('[Sync] No \'%s\' on resource %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
-        }
-    }
-    return resource;
+    return await get(resource, document, strategies, options);
 }
 
 /**
@@ -733,6 +593,7 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
  * @param strategies
  * @param options
  * @return {Promise} containing the collection {@link CollectionRepresentation}
+ * @obsolete
  */
 export async function getNamedCollectionInNamedCollection<T extends LinkedRepresentation>(
     resource: TrackedRepresentation<T> | T,
@@ -759,4 +620,257 @@ export async function getNamedCollectionInNamedCollection<T extends LinkedRepres
         }) as T;
     }
     return resource;
+}
+
+/**
+ * Sync resources between two networks of data
+ *
+ * There six scenarios:
+ *
+ *  key:  x - undefined
+ *        + - specified
+ *  [empty] - not required
+ *
+ *                         options                    resource                 document
+ *                     rel    relOnDocument     singleton  collection   singleton  collection
+ *  1.                  x        x                 +                        +
+ *  2.                  +        +
+ *  3.                  x        x                 +                        +
+ *  4.                  +        x                                          +
+ *  5.                  x        x                             +                      +
+ *  6.                  +        x                                                    +
+ *
+ *
+ * Strategy One
+ * ============
+ *
+ * Retrieves a resource and synchronises (its attributes) from the document
+ *
+ * Note: this is used for syncing two documents through their parents see {@link getSingleton}
+ *
+ *
+ * @example
+ *
+ *     Resource               Document
+ *
+ *                  sync
+ *     +-----+                +-----+
+ *     |     |  <-----------+ |     |
+ *     |     |                |     |
+ *     +-----+                +-----+
+ *
+ *
+ * Strategy Two
+ * ============
+ *
+ * Retrieves a singleton resource on a parent resource and updates (its
+ * attributes) based on a singleton of the same name in the given parent document.
+ *
+ * The parent maybe either a collection resource or a singleton resource
+ *
+ * Note: this is used for syncing two documents through their parents
+ * (see {@link getResource} for non-parented)
+ *
+ * @example
+ *
+ *
+ *     parent     singleton           singleton   parent
+ *     Resource    Resource            Document   Document
+ *
+ *     +----------+                            +---------+
+ *     |          |            sync            |         |
+ *     |          +-----+                +-----+         |
+ *     |     Named|     |  <-----------+ |     |Named    |
+ *     |          |     |                |     |         |
+ *     |          +-----+                +-----+         |
+ *     |          |                            |         |
+ *     |          |                       ^    |         |
+ *     +----------+                       |    +---------+
+ *                                        |
+ *                                        +
+ *                                        looks for
+ *
+ * Strategy Three
+ * ==============
+ *
+ *
+ * Retrieves a resource item from a resource collection and synchronises (its attributes) from the document.
+ *
+ * @example
+ *
+ *     resource
+ *     Collection         Document
+ *
+ *     +-----+
+ *     |     |
+ *     |     |
+ *     +-----+    sync
+ *         X                +---+
+ *         X  <-----------+ | x |
+ *         X                +---+
+ *           items
+ *
+ * Strategy Four
+ * =============
+ *
+ *
+ * Retrieves a parent resource and its named collection with items (sparsely populated), finds the item in that
+ * collection and then synchronises (its attributes) with the document.
+ *
+ *  @example
+ *
+ *      parent      resource
+ *      Resource    Collection        Document
+ *
+ *      +----------+
+ *      |          |
+ *      |          +-----+
+ *      |     Named|     |
+ *      |          |     |
+ *      |          +-----+    sync
+ *      |          |   X                +---+
+ *      |          |   X  <-----------+ | x |
+ *      +----------+   X                +---+
+ *                       items
+ *
+ * Strategy Five
+ * =============
+ *
+ *
+ * Retrieves a collection resource with items (sparsely populated), then synchronises the
+ * collection items where each item may be updated (its attributes), a new item created or an item removed.
+ *
+ *  @example
+ *
+ *     resource              document
+ *     Collection            Collection
+ *
+ *
+ *                  sync
+ *     +-----+                +-----+
+ *     |     |  <-----------+ |     |
+ *     |     |                |     |
+ *     +-----+                +-----+
+ *         X                     X
+ *         X items               X items
+ *         X                     X
+ *
+ *
+ * Strategy Six
+ * ============
+ *
+ * Retrieves a parent resource and its named collection with items (sparsely populated), then synchronises the
+ * collection items where each item may be updated (its attributes), a new item created or an item removed.
+ *
+ * This method is used when you have context of one parent and the document collection  (see {@link getNamedCollectionInNamedCollection})
+ *
+ *  @example
+ *
+ *      parent     resource              document
+ *      Resource   Collection            Collection
+ *
+ *     +----------+
+ *     |          |            sync
+ *     |          +-----+                +-----+
+ *     |     Named|     |  <-----------+ |     |
+ *     |          |     |                |     |
+ *     |          +-----+                +-----+
+ *     |          |   X                     X
+ *     |          |   X items               X items
+ *     +----------+   X                     X
+ *
+ *
+ *
+ * @param resource
+ * @param document
+ * @param strategies
+ * @param options
+ */
+export async function get<T extends LinkedRepresentation>(
+    resource: TrackedRepresentation<T> | T,
+    document: DocumentRepresentation<T> | T,
+    strategies: StrategyType[] = [],
+    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
+): Promise<T> {
+
+    const {
+        rel = undefined,
+        relOnDocument = undefined,
+        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
+        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
+    } = { ...options };
+    // do not pass down
+    options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
+
+    if (!rel && !relOnDocument && instanceOfSingleton(resource) && instanceOfSingleton(document)) {
+        log.debug('sync resource %s', LinkUtil.getUri(resource, LinkRelation.Self));
+        const result = await ApiUtil.get(resource, options);
+        if (result) {
+            const update = await ApiUtil.update(resource, document, options);
+            if (update) {
+                await (await syncResources(resource, document, strategies, options))();
+            }
+        }
+    } else if (!rel && !relOnDocument && instanceOfCollection(resource) && instanceOfDocumentCollection(document)) {
+
+        const { info } = await synchroniseCollection(resource, document as unknown as CollectionRepresentation, options);
+        if (info) {
+            // populate the potentially sparse collection - we need to ensure that
+            // any existing ones (old) are not stale and that any just created (sparse)
+            // are hydrated
+            await ApiUtil.get(resource, { ...options, includeItems: true });
+            await tailRecursionThroughStrategies(strategies, info, options);
+        }
+    } else if (!rel && !relOnDocument && instanceOfCollection(resource) && instanceOfDocumentSingleton(document)) {
+
+        log.debug('[Sync] collection %s with \'%s\'', LinkUtil.getUri(resource, LinkRelation.Self));
+
+        const result = await ApiUtil.get(resource, options);
+        if (instanceOfCollection(result)) {
+            const syncInfo = await syncResourceInCollection(result, document as T, options);
+            if (syncInfo) {
+                return await syncInfos(strategies, options)(syncInfo) as T;
+            }
+        } else {
+            log.error('result is not a collection')
+        }
+        return result as T;
+    } else if (rel && !relOnDocument && instanceOfDocumentCollection(document)) {
+        log.debug('[Sync] collection (in named collection) \'%s\' on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
+        const result = await ApiUtil.get(resource, { ...options, rel });
+        if (instanceOfCollection(result)) {
+            // in the context of the collection, synchronise the collection part of the document
+            await getCollectionInCollection(result, document, strategies, options);
+        } else {
+            log.info('[Sync] No \'%s\' on resource %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
+        }
+    } else if (rel && !relOnDocument && instanceOfDocumentSingleton(document)) {
+
+        log.debug('[Sync] resource (named collection) \'%s\' on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
+
+        const namedResource = await ApiUtil.get(resource, { ...options, rel });
+        if (instanceOfCollection(namedResource)) {
+            const syncInfo = await syncResourceInCollection(namedResource, document, options);
+            if (syncInfo) {
+                return await syncInfos(strategies, options)(syncInfo) as T;
+            }
+        }
+        return namedResource as unknown as T;
+    } else if (rel && relOnDocument) {
+
+        const namedResource = await ApiUtil.get(resource, { ...options, rel });
+
+        if (namedResource) {
+            log.debug('[Sync] resource (named singleton) \'%s\' on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
+            const namedDocument = RepresentationUtil.getProperty(document, nameOnDocument) as DocumentRepresentation<T>;
+            const updated = await ApiUtil.update(namedResource, namedDocument, options);
+            if (updated) {
+                await (await syncResources(updated, namedDocument as T, strategies, options))();
+            }
+        } else {
+            log.debug('[Sync] No update: singleton \'%s\' not found on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
+        }
+    }
+    return resource;
+
 }
