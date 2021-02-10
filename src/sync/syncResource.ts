@@ -383,7 +383,7 @@ export async function getResource<T extends LinkedRepresentation>(
     // do not pass down
     options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
 
-    if (!rel && !nameOnDocument && instanceOfSingleton(resource) && instanceOfSingleton(document)) {
+    if (!rel && !relOnDocument && instanceOfSingleton(resource) && instanceOfSingleton(document)) {
         log.debug('sync resource %s', LinkUtil.getUri(resource, LinkRelation.Self));
         const result = await ApiUtil.get(resource, options);
         if (result) {
