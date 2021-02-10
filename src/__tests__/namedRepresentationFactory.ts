@@ -9,6 +9,7 @@ import NamedRepresentationFactory from '../representation/namedRepresentationFac
 import { TrackedRepresentation } from '../types/types';
 import RepresentationUtil from '../utils/representationUtil';
 import LinkRelation from '../linkRelation';
+import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
 
 const makeHydratedResource = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
     // note: clone the document for multiple uses
@@ -93,7 +94,7 @@ describe('Named Representation Factory', () => {
                 expect(get).toHaveBeenCalled();
                 expect(actual).toBeDefined();
                 // the inside load "fails" returning the location only
-                if (actual) {
+                if (instanceOfTrackedRepresentation(actual)) {
                     const { status } = TrackedRepresentationUtil.getState(actual);
                     assertThat(actual).is(singletonRepresentation);
                     assertThat(status).is(Status.hydrated);

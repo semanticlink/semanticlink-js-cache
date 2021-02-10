@@ -7,6 +7,8 @@ import SparseRepresentationFactory from '../representation/sparseRepresentationF
 import TrackedRepresentationFactory from '../representation/trackedRepresentationFactory';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
 import LinkRelation from '../linkRelation';
+import { TrackedRepresentation } from '../types/types';
+import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
 
 describe('Tracked Representation Factory', () => {
 
@@ -90,7 +92,7 @@ describe('Tracked Representation Factory', () => {
             if (returns) {
                 expect(actual).toBeDefined();
                 // the inside load "fails" returning the location only
-                if (actual) {
+                if (instanceOfTrackedRepresentation(actual)) {
                     const { status } = TrackedRepresentationUtil.getState(actual);
                     assertThat(actual).is(singletonRepresentation);
                     assertThat(status).is(Status.locationOnly);

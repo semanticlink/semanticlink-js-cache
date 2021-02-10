@@ -77,7 +77,7 @@ export type Representation = SingletonRepresentation | CollectionRepresentation 
  * A representation that has the state tracking object attached onto it. The state object allows for an application
  * cache of the network of data.
  */
-export type TrackedRepresentation<T extends LinkedRepresentation> = T & LocalState;
+export type TrackedRepresentation<T extends LinkedRepresentation = LinkedRepresentation> = T & LocalState;
 
 export type Unbox<T> = T extends TrackedRepresentation<CollectionRepresentation<infer U>> ?
     U :
