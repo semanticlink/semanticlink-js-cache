@@ -370,7 +370,7 @@ async function syncResources<T extends LinkedRepresentation>(
  */
 export async function getResource<T extends LinkedRepresentation>(
     resource: T | TrackedRepresentation<T>,
-    document: T,
+    document: DocumentRepresentation<T> | T,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
@@ -378,7 +378,7 @@ export async function getResource<T extends LinkedRepresentation>(
         rel = undefined,
         relOnDocument = undefined,
         name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document),
+        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
     } = { ...options };
     // do not pass down
     options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
@@ -425,15 +425,15 @@ export async function getResource<T extends LinkedRepresentation>(
  *                                        +
  *                                        looks for
  *
- * @param contextResource
- * @param contextDocument
+ * @param resource
+ * @param document
  * @param strategies
  * @param options
  * @return {Promise} containing the parent {@link LinkedRepresentation}
  */
 export async function getSingleton<T extends LinkedRepresentation>(
-    contextResource: TrackedRepresentation<T> | T,
-    contextDocument: DocumentRepresentation<T> | T,
+    resource: TrackedRepresentation<T> | T,
+    document: DocumentRepresentation<T> | T,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
@@ -441,32 +441,32 @@ export async function getSingleton<T extends LinkedRepresentation>(
     const {
         rel = undefined,
         relOnDocument = undefined,
-        name = NamedRepresentationFactory.defaultNameStrategy(rel, contextResource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, contextDocument as T),
+        name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
+        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
     } = { ...options };
     // do not pass down
     options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
 
     if (rel && relOnDocument) {
 
-        if (!contextDocument) {
+        if (!document) {
             throw new Error('Parent document must exist');
         }
-        const namedResource = await ApiUtil.get(contextResource, { ...options, rel });
+        const namedResource = await ApiUtil.get(resource, { ...options, rel });
 
         if (namedResource) {
-            log.debug('[Sync] resource (named singleton) \'%s\' on %s', name, LinkUtil.getUri(contextResource, LinkRelation.Self));
-            const namedDocument = RepresentationUtil.getProperty(contextDocument, nameOnDocument) as DocumentRepresentation<T>;
+            log.debug('[Sync] resource (named singleton) \'%s\' on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
+            const namedDocument = RepresentationUtil.getProperty(document, nameOnDocument) as DocumentRepresentation<T>;
             const updated = await ApiUtil.update(namedResource, namedDocument, options);
             if (updated) {
                 await (await syncResources(updated, namedDocument as T, strategies, options))();
             }
         } else {
-            log.debug('[Sync] No update: singleton \'%s\' not found on %s', name, LinkUtil.getUri(contextResource, LinkRelation.Self));
+            log.debug('[Sync] No update: singleton \'%s\' not found on %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
         }
     }
 
-    return contextResource;
+    return resource;
 }
 
 /**
@@ -504,7 +504,7 @@ export async function getResourceInCollection<T extends LinkedRepresentation>(
     resource: T | TrackedRepresentation<T>,
     document: T | DocumentRepresentation<T>,
     strategies: StrategyType[] = [],
-    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T | undefined> {
+    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
     const {
         rel = undefined,
@@ -528,8 +528,10 @@ export async function getResourceInCollection<T extends LinkedRepresentation>(
         } else {
             log.error('result is not a collection')
         }
-        return result;
+        return result as T;
     }
+
+    return resource;
 }
 
 /**
@@ -618,7 +620,7 @@ export async function getResourceInNamedCollection<T extends LinkedRepresentatio
  */
 export async function getCollectionInCollection<T extends LinkedRepresentation>(
     resource: T | TrackedRepresentation<T>,
-    document: T | DocumentRepresentation<CollectionRepresentation<T>>,
+    document: T | DocumentRepresentation<T>,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
@@ -634,7 +636,7 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
 
     if (!rel && !relOnDocument && instanceOfCollection(resource) && instanceOfDocumentCollection(document)) {
 
-        const { info } = await synchroniseCollection(resource, document as CollectionRepresentation, options);
+        const { info } = await synchroniseCollection(resource, document as unknown as CollectionRepresentation, options);
         if (info) {
             // populate the potentially sparse collection - we need to ensure that
             // any existing ones (old) are not stale and that any just created (sparse)
@@ -677,7 +679,7 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
  */
 export async function getCollectionInNamedCollection<T extends LinkedRepresentation>(
     resource: TrackedRepresentation<T> | T,
-    document: DocumentRepresentation<T> | CollectionRepresentation,
+    document: DocumentRepresentation<T> | T,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
 ): Promise<T> {
@@ -734,10 +736,10 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
  */
 export async function getNamedCollectionInNamedCollection<T extends LinkedRepresentation>(
     resource: TrackedRepresentation<T> | T,
-    document: DocumentRepresentation<T>,
+    document: DocumentRepresentation<T> | T,
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
-): Promise<CollectionRepresentation<T>> {
+): Promise<T> {
 
     const {
         rel = undefined,
@@ -754,8 +756,7 @@ export async function getNamedCollectionInNamedCollection<T extends LinkedRepres
             ...options,
             rel,
             name
-        }) as unknown as CollectionRepresentation<T>;
-    } else {
-        return resource as unknown as CollectionRepresentation<T>;
+        }) as T;
     }
+    return resource;
 }
