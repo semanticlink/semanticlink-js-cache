@@ -29,7 +29,7 @@ export default class HttpRequest {
 
     public async update<T extends LinkedRepresentation>(
         resource: T,
-        document: DocumentRepresentation<T>,
+        document: T | DocumentRepresentation<T>,
         options?: HttpRequestOptions & AxiosRequestConfig): Promise<AxiosResponse<T | undefined>> {
 
         const {
@@ -42,7 +42,7 @@ export default class HttpRequest {
 
     public async create<T extends LinkedRepresentation>(
         resource: T,
-        document: DocumentRepresentation<T>,
+        document: T | DocumentRepresentation<T>,
         options?: HttpRequestOptions & AxiosRequestConfig): Promise<AxiosResponse<T | undefined>> {
 
         const {

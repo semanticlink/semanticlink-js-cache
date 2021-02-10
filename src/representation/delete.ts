@@ -1,5 +1,4 @@
-import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
-import { TrackedRepresentation } from '../types/types';
+import { LinkedRepresentation } from 'semantic-link';
 import TrackedRepresentationFactory from './trackedRepresentationFactory';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
@@ -9,6 +8,7 @@ import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import RepresentationUtil from '../utils/representationUtil';
 import anylogger from 'anylogger';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import { TrackedRepresentation } from '../types/types';
 
 const log = anylogger('delete');
 
@@ -19,9 +19,8 @@ const log = anylogger('delete');
  * @param options
  * @returns removed representation or default
  */
-export default async function del<U extends LinkedRepresentation,
-    T extends LinkedRepresentation = TrackedRepresentation<U>>(
-    resource: TrackedRepresentation<U>,
+export default async function del<T extends LinkedRepresentation>(
+    resource: T | TrackedRepresentation<T>,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &
         ResourceLinkOptions &
@@ -35,23 +34,22 @@ export default async function del<U extends LinkedRepresentation,
         if (instanceOfCollection(resource)) {
             // refresh collection first
             const collection = await TrackedRepresentationFactory.load(resource, options);
-            // then check for existence
-            // TODO: needs to process collection<T & LocalState> rather than collection<T>
-            const item = RepresentationUtil.findInCollection(collection as unknown as CollectionRepresentation<U>, options) as TrackedRepresentation<U>;
-            if (item) {
-                const deletedResource = await TrackedRepresentationFactory.del(item, options);
-                if (deletedResource && removeOnDeleteItem) {
-                    const removeItemFromCollection = TrackedRepresentationFactory.removeCollectionItem(
-                        collection as unknown as TrackedRepresentation<CollectionRepresentation<TrackedRepresentation<U>>>,
-                        deletedResource);
-                    return removeItemFromCollection as unknown as T | undefined;
+            if (instanceOfCollection(collection)) {
+                // then check for existence
+                // TODO: needs to process collection<T & LocalState> rather than collection<T>
+                const item = RepresentationUtil.findInCollection(collection, options);
+                if (item) {
+                    const deletedResource = await TrackedRepresentationFactory.del(item, options);
+                    if (deletedResource && removeOnDeleteItem) {
+                        TrackedRepresentationFactory.removeCollectionItem(collection, deletedResource);
+                    }
+                    return deletedResource as T;
                 } else {
-                    return undefined;
+                    log.debug('Item not found in collection');
+                    return;
                 }
-            } else {
-                log.debug('Item not found in collection');
-                return;
             }
+
         } else {
             log.warn('Where options cannot be used outside of a collection, skipping where');
             // fall through to return context resource
@@ -62,5 +60,5 @@ export default async function del<U extends LinkedRepresentation,
         log.debug('Attempting to delete collection resource');
     }
 
-    return await TrackedRepresentationFactory.del(resource, options) as unknown as T;
+    return await TrackedRepresentationFactory.del(resource, options);
 }

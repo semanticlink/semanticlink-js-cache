@@ -11,13 +11,13 @@ export interface HttpRequestOptions {
     putFactory?: <T>(
         link: LinkType,
         rel: RelationshipType,
-        document: DocumentRepresentation<T>,
+        document: T | DocumentRepresentation<T>,
         options?: AxiosRequestConfig
     ) => Promise<AxiosResponse<T | undefined>>;
     postFactory?: <T>(
         link: LinkType,
         rel: RelationshipType,
-        document: DocumentRepresentation<T>,
+        document: T |DocumentRepresentation<T>,
         options?: AxiosRequestConfig
     ) => Promise<AxiosResponse<T>>;
     deleteFactory?: (link: LinkType, rel: RelationshipType) => Promise<AxiosResponse<void>>;

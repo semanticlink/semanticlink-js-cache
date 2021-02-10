@@ -12,6 +12,7 @@ import LinkRelation from '../linkRelation';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { SingletonRepresentation } from '../types/types';
 import ApiUtil from '../apiUtil';
+import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
 
 jest.mock('../representation/trackedRepresentationFactory');
 const trackedRepresentationFactory = TrackedRepresentationFactory as jest.Mocked<typeof TrackedRepresentationFactory>;
@@ -25,7 +26,7 @@ describe('resource, create', () => {
         ['Link type, link rel, ', { rel: LinkRelation.Self, href: uri }, Status.virtual],
     ])('singleton, %s', async (title: string, document: DocumentRepresentation | LinkType, expectedStatus: Status) => {
         const actual = await create(document);
-        if (actual) {
+        if (instanceOfTrackedRepresentation(actual)) {
             const { status } = TrackedRepresentationUtil.getState(actual);
             assertThat(status).is(expectedStatus);
         }
@@ -46,12 +47,16 @@ describe('resource, create', () => {
         const addItemToCollectionMock = jest.spyOn(RepresentationUtil, 'addItemToCollection');
         addItemToCollectionMock.mockImplementation(() => ({ links: [], items: [] } as CollectionRepresentation));
 
+        // return a create form targeting the version value
         const getMock = jest.spyOn(ApiUtil, 'get');
-        getMock.mockImplementation(async () => ({ links: [], items: [] }) as FormRepresentation);
+        getMock.mockResolvedValue({
+            links: [{ rel: LinkRelation.Self, href: "create-form" }],
+            items: [{ type: 'text', name: 'version' }]
+        } as FormRepresentation);
 
-        trackedRepresentationFactory.create.mockImplementation(async () => ({ links: [] } as SingletonRepresentation));
+        trackedRepresentationFactory.create.mockResolvedValue({ links: [], version: '1' } as SingletonRepresentation);
 
-        await create(SparseRepresentationFactory.make({ uri }), options);
+        await create(SparseRepresentationFactory.make({ uri, }), options);
 
         expect(factory).toBeCalledTimes(calledTimes);
 

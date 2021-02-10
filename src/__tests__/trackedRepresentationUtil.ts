@@ -4,6 +4,7 @@ import { Status } from '../representation/status';
 import TrackedRepresentationFactory from '../representation/sparseRepresentationFactory';
 import { TrackedRepresentation } from '../types/types';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
 
 describe('Tracked Representation Utils', () => {
 
@@ -59,12 +60,12 @@ describe('Tracked Representation Utils', () => {
         it('true', () => {
             type T = TrackedRepresentation<LinkedRepresentation>;
             const resource = TrackedRepresentationFactory.make({ uri: 'https://example.com/1' }) as T;
-            expect(TrackedRepresentationUtil.instanceOfTrackedRepresentation(resource)).toBeTruthy();
+            expect(instanceOfTrackedRepresentation(resource)).toBeTruthy();
         });
 
         it('false', () => {
             const resource = { links: [] };
-            expect(TrackedRepresentationUtil.instanceOfTrackedRepresentation(resource)).toBeFalsy();
+            expect(instanceOfTrackedRepresentation(resource)).toBeFalsy();
         });
     });
 });

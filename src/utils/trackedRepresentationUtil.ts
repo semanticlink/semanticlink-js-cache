@@ -1,4 +1,4 @@
-import { instanceOfLinkedRepresentation, LinkedRepresentation, LinkUtil } from 'semantic-link';
+import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import { state, TrackedRepresentation } from '../types/types';
 import { State } from '../representation/state';
 import anylogger from 'anylogger';
@@ -8,16 +8,13 @@ import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { ResourceAssignOptions } from '../interfaces/resourceAssignOptions';
 import SingletonMerger from '../representation/singletonMerger';
 import { instanceOfCollection } from './instanceOf/instanceOfCollection';
+import { instanceOfTrackedRepresentation } from './instanceOf/instanceOfTrackedRepresentation';
 
 const log = anylogger('TrackedRepresentationUtil');
 
 export default class TrackedRepresentationUtil {
     public static getState<T extends LinkedRepresentation, U extends TrackedRepresentation<T>>(resource: U): State {
         return resource[state];
-    }
-
-    public static instanceOfTrackedRepresentation<T extends LinkedRepresentation>(object: unknown | LinkedRepresentation): object is TrackedRepresentation<T> {
-        return instanceOfLinkedRepresentation(object) && (object as TrackedRepresentation<T>)[state] !== undefined;
     }
 
     /**
@@ -32,7 +29,7 @@ export default class TrackedRepresentationUtil {
         //       as soon as it known to be a tracked representation then it can cast string to K (rather than deal with
         //       string in the subsequent methods
 
-        if (this.instanceOfTrackedRepresentation(resource)) {
+        if (instanceOfTrackedRepresentation(resource)) {
             return instanceOfCollection(resource) ?
                 this.isCollectionTracked(resource, name as K) :
                 this.isSingletonTracked(resource, name as K);
@@ -48,7 +45,7 @@ export default class TrackedRepresentationUtil {
         K extends keyof T>(
         resource: T): K[] {
 
-        return this.instanceOfTrackedRepresentation(resource) ?
+        return instanceOfTrackedRepresentation(resource) ?
             [...this.getState(resource).collection, ...this.getState(resource).singleton] as K[] :
             [];
     }
@@ -143,8 +140,12 @@ export default class TrackedRepresentationUtil {
      * @param resource
      * @param options
      */
-    public static add<T extends LinkedRepresentation, U>(target: TrackedRepresentation<T>, prop: keyof T, resource: U, options?: ResourceAssignOptions): T {
-        if (this.instanceOfTrackedRepresentation(target)) {
+    public static add<T extends LinkedRepresentation, U extends LinkedRepresentation>(
+        target: T,
+        prop: keyof T | string,
+        resource: U,
+        options?: ResourceAssignOptions): T {
+        if (instanceOfTrackedRepresentation(target)) {
             // add as a tracked collection/singleton on state
             if (instanceOfCollection(resource)) {
                 this.getState(target).collection.add(prop as string);

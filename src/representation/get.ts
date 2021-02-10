@@ -1,5 +1,4 @@
-import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
-import { TrackedRepresentation } from '../types/types';
+import { LinkedRepresentation } from 'semantic-link';
 import NamedRepresentationFactory from './namedRepresentationFactory';
 import TrackedRepresentationFactory from './trackedRepresentationFactory';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
@@ -22,16 +21,15 @@ const log = anylogger('get');
  * @param resource
  * @param options
  */
-export default async function get<T extends LinkedRepresentation,
-    TResult extends LinkedRepresentation = TrackedRepresentation<T>>(
-    resource: TrackedRepresentation<T>,
+export default async function get<T extends LinkedRepresentation, TResult extends LinkedRepresentation = T>(
+    resource: T,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &
         ResourceLinkOptions &
         HttpRequestOptions &
         ResourceMergeOptions &
         ResourceFetchOptions &
-        ResourceUpdateOptions): Promise<TResult | undefined> {
+        ResourceUpdateOptions): Promise<TResult | T | undefined> {
 
     const {
         rel = undefined,
@@ -44,10 +42,9 @@ export default async function get<T extends LinkedRepresentation,
             // refresh collection first
             const collection = await TrackedRepresentationFactory.load(resource, options);
             // then check for existence
-            // TODO: needs to process collection<T & LocalState> rather than collection<T>
-            const item = RepresentationUtil.findInCollection(collection as unknown as CollectionRepresentation<T>, options) as TrackedRepresentation<T>;
+            const item = RepresentationUtil.findInCollection(collection, options);
             if (item) {
-                return await TrackedRepresentationFactory.load<T, TResult>(item, options);
+                return await TrackedRepresentationFactory.load(item, options) as TResult;
             } else {
                 log.debug('Item not found in collection');
                 return;
@@ -60,9 +57,9 @@ export default async function get<T extends LinkedRepresentation,
 
     // named resources
     if (rel) {
-        return await NamedRepresentationFactory.load<T, TResult>(resource, options);
+        return await NamedRepresentationFactory.load(resource, options);
     }
 
     // otherwise all resources
-    return await TrackedRepresentationFactory.load<T, TResult>(resource, options);
+    return await TrackedRepresentationFactory.load(resource, options) as T;
 }

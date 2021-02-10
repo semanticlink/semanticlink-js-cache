@@ -12,7 +12,7 @@ import LinkRelation from '../../linkRelation';
  */
 export function instanceOfForm(object: unknown | LinkedRepresentation): object is FormRepresentation {
     // form starts off looking like a collection with 'items'
-    const { items } = object as FormRepresentation;
+    const { items } = { ...object as FormRepresentation };
 
     if (items) {
         const [first]: FormItem[] = items;

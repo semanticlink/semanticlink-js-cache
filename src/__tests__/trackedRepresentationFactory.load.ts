@@ -87,7 +87,7 @@ describe('Tracked Representation Factory', () => {
                         }
                     );
 
-                const api = await TrackedRepresentationFactory.load($api);
+                const api = await TrackedRepresentationFactory.load($api) as TrackedRepresentation<ApiRepresentation>;
                 expect(get).toHaveBeenCalled();
 
                 const {

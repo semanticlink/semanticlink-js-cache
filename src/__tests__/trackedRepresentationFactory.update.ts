@@ -82,7 +82,7 @@ describe('Tracked Representation Factory', () => {
                         }
                     );
 
-                const api = await TrackedRepresentationFactory.update($api, document as unknown as DocumentRepresentation);
+                const api = await TrackedRepresentationFactory.update($api, document as unknown as DocumentRepresentation) as TrackedRepresentation<ApiRepresentation>;
                 expect(put).toHaveBeenCalled();
 
                 const {
@@ -135,7 +135,7 @@ describe('Tracked Representation Factory', () => {
                         };
                     }
                 });
-                const api = await TrackedRepresentationFactory.update($api, document as unknown as DocumentRepresentation);
+                const api = await TrackedRepresentationFactory.update($api, document as unknown as DocumentRepresentation) as TrackedRepresentation<ApiRepresentation>;
                 verifyMocks(getCount, postCount, putCount, deleteCount);
 
                 const { status } = TrackedRepresentationUtil.getState(api);

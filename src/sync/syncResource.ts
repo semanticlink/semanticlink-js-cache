@@ -21,6 +21,7 @@ import update from '../representation/update';
 import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
+import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('SyncLinkedRepresentation');
 
@@ -98,7 +99,7 @@ function syncInfos(strategies: StrategyType[], options?: SyncOptions & ResourceF
  */
 async function syncResourceInCollection<T extends LinkedRepresentation>(
     resource: CollectionRepresentation<T>,
-    document: T,
+    document: T | DocumentRepresentation<T>,
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<SyncInfo | undefined> {
 
     const {
@@ -114,11 +115,9 @@ async function syncResourceInCollection<T extends LinkedRepresentation>(
     // check whether to update or create
     if (item && !forceCreate) {
         // synchronise the item in the collection from the server
-        const result = await ApiUtil.get(
-            resource as TrackedRepresentation<CollectionRepresentation<T>>,
-            { ...options, where: item }) as TrackedRepresentation<T>;
+        const result = await ApiUtil.get<CollectionRepresentation<T>, T>(resource, { ...options, where: item });
         if (result) {
-            const resource = await ApiUtil.update(result, document as DocumentRepresentation<T>, options);
+            const resource = await ApiUtil.update(result, document, options);
             if (resource) {
                 return {
                     resource: resource,
@@ -186,7 +185,7 @@ async function synchroniseCollection<T extends LinkedRepresentation>(
     const updateResourceAndUpdateResolver: UpdateStrategy = async <T extends LinkedRepresentation>(updateResource: T, updateDataDocument: T) => {
         const result = await ApiUtil.get(updateResource as TrackedRepresentation<T>, options);
         if (result) {
-            const update = await ApiUtil.update(result, updateDataDocument as DocumentRepresentation<T>, options);
+            const update = await ApiUtil.update(result, updateDataDocument, options);
             if (update) {
                 const uri = LinkUtil.getUri(updateDataDocument, LinkRelation.Self);
                 const uri1 = LinkUtil.getUri(updateResource, LinkRelation.Self);
@@ -258,9 +257,7 @@ async function synchroniseCollection<T extends LinkedRepresentation>(
      * removed item
      */
     const removeContributeOnlyResourceAndUpdateResolver: DeleteStrategy = async <T extends LinkedRepresentation>(deleteResource: T) => {
-        const result = await ApiUtil.delete(
-            collectionResource as unknown as TrackedRepresentation<T>,
-            { ...options, where: deleteResource });
+        const result = await ApiUtil.delete(collectionResource, { ...options, where: deleteResource });
         if (result) {
             const uri = LinkUtil.getUri(deleteResource, LinkRelation.Self);
             if (uri) {
@@ -376,9 +373,9 @@ export async function getResource<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
     log.debug('sync resource %s', LinkUtil.getUri(resource, LinkRelation.Self));
-    const result = await ApiUtil.get(resource as TrackedRepresentation<T>, options);
+    const result = await ApiUtil.get(resource, options);
     if (result) {
-        const update = await ApiUtil.update(resource as TrackedRepresentation<T>, resourceDocument as DocumentRepresentation<T>, options);
+        const update = await ApiUtil.update(resource, resourceDocument, options);
         if (update) {
             await (await syncResources(resource, resourceDocument, strategies, options))();
         }
@@ -439,7 +436,7 @@ export async function getSingleton<T extends LinkedRepresentation>(
 
     const name = NamedRepresentationFactory.defaultNameStrategy(rel);
 
-    const namedResource = await get(parentResource as TrackedRepresentation<T>, { ...options, rel: rel });
+    const namedResource = await ApiUtil.get(parentResource, { ...options, rel: rel });
     if (namedResource) {
         const document = RepresentationUtil.getProperty(parentDocument, name) as DocumentRepresentation<T>;
         const updated = await update(namedResource, document, options);
@@ -450,23 +447,6 @@ export async function getSingleton<T extends LinkedRepresentation>(
         log.debug('[Sync] No update: singleton \'%s\' not found on %s', singletonName, LinkUtil.getUri(parentResource, LinkRelation.Self));
     }
     return parentResource;
-    /*
-        return cache
-            .getResource(parentResource, options)
-            .then(resource => {
-                return cache.tryGetSingleton(resource, singletonName, singletonRel, undefined, options);
-            })
-            .then(singletonResource => {
-                if (singletonResource) {
-                    return cache
-                        .updateResource(singletonResource, parentDocument[singletonName], options)
-                        .then(syncResources(singletonResource, parentDocument[singletonName], strategies, options));
-                } else {
-                    log.debug(`[Sync] No update: singleton '${singletonName}' not found on ${LinkUtil.getUri(parentResource, LinkRelation.Self)}`);
-                }
-            })
-            .then(() => parentResource);
-    */
 }
 
 /**
@@ -504,21 +484,19 @@ export async function getResourceInCollection<T extends LinkedRepresentation>(
     parentResource: T | TrackedRepresentation<T>,
     resourceDocument: T | DocumentRepresentation<T>,
     strategies: StrategyType[] = [],
-    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
+    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T | undefined> {
     log.debug('[Sync] collection %s with \'%s\'', LinkUtil.getUri(parentResource, LinkRelation.Self));
 
-    const result = await get(parentResource as TrackedRepresentation<T>, options);
-    if (result) {
-        const syncInfo = await syncResourceInCollection(result as unknown as CollectionRepresentation<T>, resourceDocument as T, options);
+    const result = await ApiUtil.get(parentResource, options);
+    if (instanceOfCollection(result)) {
+        const syncInfo = await syncResourceInCollection(result, resourceDocument as T, options);
         if (syncInfo) {
             return await syncInfos(strategies, options)(syncInfo) as T;
         }
+    } else {
+        log.error('result is not a collection')
     }
-    return result as unknown as T;
-    // return cache
-    //     .getCollection(parentResource, options)
-    //     .then(collectionResource => syncResourceInCollection(collectionResource, resourceDocument, options))
-    //     .then(syncInfos(strategies, options));
+    return result;
 }
 
 /**
@@ -559,25 +537,14 @@ export async function getResourceInNamedCollection<T extends LinkedRepresentatio
 ): Promise<T> {
     log.debug('[Sync] resource (named collection) \'%s\' on %s', collectionName, LinkUtil.getUri(parentResource, LinkRelation.Self));
 
-    const result = await get(parentResource as TrackedRepresentation<T>, { ...options, rel: collectionRel });
-    if (result) {
-        const syncInfo = await syncResourceInCollection(result as unknown as CollectionRepresentation<T>, resourceDocument as T, options);
+    const result = await get(parentResource, { ...options, rel: collectionRel });
+    if (instanceOfCollection(result)) {
+        const syncInfo = await syncResourceInCollection(result, resourceDocument, options);
         if (syncInfo) {
             return await syncInfos(strategies, options)(syncInfo) as T;
         }
     }
     return result as unknown as T;
-    /*
-        return (
-            cache
-                // ensure that the collection is added to the parent resource
-                .getNamedCollection(parentResource, collectionName, collectionRel, options)
-                .then(collectionResource => {
-                    return syncResourceInCollection(collectionResource, resourceDocument, options);
-                })
-                .then(syncInfos(strategies, options))
-        );
-    */
 }
 
 /**
@@ -611,16 +578,18 @@ export async function getCollectionInCollection<T extends LinkedRepresentation>(
     strategies: StrategyType[] = [],
     options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
 
-    const { info } = await synchroniseCollection(
-        collectionResource as unknown as CollectionRepresentation<T>,
-        collectionDocument as unknown as CollectionRepresentation<T>,
-        options);
-    if (info) {
-        // populate the potentially sparse collection - we need to ensure that
-        // any existing ones (old) are not stale and that any just created (sparse)
-        // are hydrated
-        await get(collectionResource as TrackedRepresentation<T>, { ...options, includeItems: true });
-        await tailRecursionThroughStrategies(strategies, info, options);
+    if (instanceOfCollection(collectionResource) && instanceOfCollection(collectionDocument)) {
+
+        const { info } = await synchroniseCollection(collectionResource, collectionDocument, options);
+        if (info) {
+            // populate the potentially sparse collection - we need to ensure that
+            // any existing ones (old) are not stale and that any just created (sparse)
+            // are hydrated
+            await get(collectionResource, { ...options, includeItems: true });
+            await tailRecursionThroughStrategies(strategies, info, options);
+        }
+    } else {
+        log.error('collection and document must both be collections %s', LinkUtil.getUri(collectionResource, LinkRelation.Self))
     }
     return collectionResource;
 }
@@ -664,8 +633,8 @@ export async function getCollectionInNamedCollection<T extends LinkedRepresentat
 ): Promise<T> {
     log.debug('[Sync] collection (in named collection) \'%s\' on %s', collectionName, LinkUtil.getUri(parentResource, LinkRelation.Self));
 
-    const result = await ApiUtil.get(parentResource as TrackedRepresentation<T>, { ...options, rel: collectionRel });
-    if (result) {
+    const result = await ApiUtil.get(parentResource, { ...options, rel: collectionRel });
+    if (instanceOfCollection(result) && instanceOfCollection(collectionDocument)) {
         // in the context of the collection, synchronise the collection part of the document
         await getCollectionInCollection(result, collectionDocument, strategies, options);
     } else {

@@ -19,6 +19,8 @@ import anylogger from 'anylogger';
 import RepresentationUtil from '../utils/representationUtil';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { State } from './state';
+import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
+import { instanceOfFeed } from '../utils/instanceOf/instanceOfFeed';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('TrackedRepresentationFactory');
@@ -36,15 +38,14 @@ export default class TrackedRepresentationFactory {
      * @param options
      * @returns a 201 returns a representation whereas the 200 and 202 return undefined
      */
-    public static async create<U extends LinkedRepresentation,
-        T extends LinkedRepresentation = TrackedRepresentation<U>>(
-        resource: U,
+    public static async create<T extends LinkedRepresentation, TResult extends LinkedRepresentation = T>(
+        resource: T | TrackedRepresentation<T>,
         document: DocumentRepresentation,
         options?: ResourceFactoryOptions &
             ResourceQueryOptions &
             ResourceLinkOptions &
             HttpRequestOptions &
-            ResourceFetchOptions): Promise<T | undefined> {
+            ResourceFetchOptions): Promise<TResult | TrackedRepresentation<TResult> | undefined> {
 
         const {
             rel = LinkRelation.Self,
@@ -76,8 +77,8 @@ export default class TrackedRepresentationFactory {
                     }
 
                     // TODO: decide on pluggable hydration strategy
-                    const hydrated = await this.load(SparseRepresentationFactory.make({ uri }), options);
-                    return hydrated;
+                    let newVar = await this.load(SparseRepresentationFactory.make({ uri }), options);
+                    return newVar;
                 } else {
                     // other response codes (200, 202) should be dealt with separately
                     // see https://stackoverflow.com/a/29096228
@@ -97,113 +98,112 @@ export default class TrackedRepresentationFactory {
         return undefined;
     }
 
-    public static async del<U extends LinkedRepresentation,
-        T extends TrackedRepresentation<U>>(
-        resource: T,
-        options?: ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceQueryOptions): Promise<T> {
+    public static async del<T extends LinkedRepresentation>(
+        resource: T | TrackedRepresentation<T>,
+        options?: ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceQueryOptions): Promise<T | TrackedRepresentation<T>> {
 
+        if (instanceOfTrackedRepresentation(resource)) {
 
-        const trackedState = TrackedRepresentationUtil.getState(resource);
-        if (!trackedState) {
+            const {
+                rel = LinkRelation.Self,
+                getUri = LinkUtil.getUri,
+            } = { ...options };
+
+            const uri = getUri(resource, rel);
+
+            // check uri exists is useful because it picks up early errors in the understanding (or implementation)
+            // of the API. It also keeps error out of the loading code below where it would fail too but is harder
+            // to diagnose.
+            if (uri) {
+                const trackedState = TrackedRepresentationUtil.getState(resource);
+
+                switch (trackedState.status) {
+                    case Status.virtual:
+                        log.info('Resource is client-side only and will not be deleted %s %s', uri, trackedState.status.toString());
+                        return resource as unknown as T;
+                    case Status.deleted:
+                    case Status.deleteInProgress:
+                        return Promise.reject(`Resource is deleted ${uri}`);
+                    case Status.forbidden: // TODO: enhance forbidden strategy as needed currently assumes forbidden access doesn't change per session
+                        log.info('Resource is already forbidden and will not be deleted %s', uri);
+                        return resource as unknown as T;
+                }
+
+                try {
+                    trackedState.previousStatus = trackedState.status;
+                    trackedState.status = Status.deleteInProgress;
+
+                    // when was it retrieved - for later queries
+                    const response = await HttpRequestFactory.Instance().del(resource, options);
+
+                    trackedState.status = Status.deleted;
+                    // mutate the original resource headers
+                    // how was it retrieved
+                    trackedState.headers = response.headers;
+                    // save the across-the-wire meta data so we can check for collisions/staleness
+                    trackedState.retrieved = new Date();
+
+                    return await resource as unknown as T;
+
+                } catch (e) {
+                    this.processError(e, uri, resource, trackedState);
+                }
+            } else {
+                log.error('Undefined returned on link \'%s\' (check stack trace)', rel);
+            }
+
+        } else {
             // TODO: decide if we want to make a locationOnly resource if possible and then continue
             return Promise.reject(`No state on '${LinkUtil.getUri(resource, LinkRelation.Self)}'`);
         }
-
-        const {
-            rel = LinkRelation.Self,
-            getUri = LinkUtil.getUri,
-        } = { ...options };
-
-        const uri = getUri(resource, rel);
-
-        // check uri exists is useful because it picks up early errors in the understanding (or implementation)
-        // of the API. It also keeps error out of the loading code below where it would fail too but is harder
-        // to diagnose.
-        if (uri) {
-
-            switch (trackedState.status) {
-                case Status.virtual:
-                    log.info('Resource is client-side only and will not be deleted %s %s', uri, trackedState.status.toString());
-                    return resource as unknown as T;
-                case Status.deleted:
-                case Status.deleteInProgress:
-                    return Promise.reject(`Resource is deleted ${uri}`);
-                case Status.forbidden: // TODO: enhance forbidden strategy as needed currently assumes forbidden access doesn't change per session
-                    log.info('Resource is already forbidden and will not be deleted %s', uri);
-                    return resource as unknown as T;
-            }
-
-            try {
-                trackedState.previousStatus = trackedState.status;
-                trackedState.status = Status.deleteInProgress;
-
-                // when was it retrieved - for later queries
-                const response = await HttpRequestFactory.Instance().del(resource, options);
-
-                trackedState.status = Status.deleted;
-                // mutate the original resource headers
-                // how was it retrieved
-                trackedState.headers = response.headers;
-                // save the across-the-wire meta data so we can check for collisions/staleness
-                trackedState.retrieved = new Date();
-
-                return await resource as unknown as T;
-
-            } catch (e) {
-                this.processError(e, uri, resource, trackedState);
-            }
-        } else {
-            log.error('Undefined returned on link \'%s\' (check stack trace)', rel);
-        }
-
-        return resource as unknown as T;
+        return resource;
 
     }
 
-    public static async update<T extends LinkedRepresentation,
-        TResult extends LinkedRepresentation = TrackedRepresentation<T>>(
-        resource: TrackedRepresentation<T>,
-        document: DocumentRepresentation<T>,
-        options?: ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceFetchOptions): Promise<TResult> {
+    public static async update<T extends LinkedRepresentation>(
+        resource: T | TrackedRepresentation<T>,
+        document: T | DocumentRepresentation<T>,
+        options?: ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceFetchOptions): Promise<T> {
 
-        const trackedState = TrackedRepresentationUtil.getState(resource);
-        if (!trackedState) {
-            // TODO: decide if we want to make a locationOnly resource if possible and then continue
+
+        if (instanceOfTrackedRepresentation(resource)) {
+
+            const {
+                rel = LinkRelation.Self,
+                getUri = LinkUtil.getUri,
+            } = { ...options };
+
+            const uri = getUri(resource, rel);
+
+            // check uri exists is useful because it picks up early errors in the understanding (or implementation)
+            // of the API. It also keeps error out of the loading code below where it would fail too but is harder
+            // to diagnose.
+            if (uri) {
+                const trackedState = TrackedRepresentationUtil.getState(resource);
+
+                try {
+                    const response = await HttpRequestFactory.Instance().update(resource, document, options);
+
+                    // mutate the original resource headers
+                    // how was it retrieved
+                    trackedState.headers = response.headers;
+                    // save the across-the-wire meta data so we can check for collisions/staleness
+                    trackedState.previousStatus = trackedState.status;
+                    trackedState.status = Status.hydrated;
+                    // when was it retrieved - for later queries
+                    trackedState.retrieved = new Date();
+
+                    return await this.processResource(resource, document, options) as T;
+
+                } catch (e) {
+                    this.processError(e, uri, resource, trackedState);
+                }
+            }
+        } else {
             return Promise.reject(`No state on '${LinkUtil.getUri(resource, LinkRelation.Self)}'`);
         }
 
-        const {
-            rel = LinkRelation.Self,
-            getUri = LinkUtil.getUri,
-        } = { ...options };
-
-        const uri = getUri(resource, rel);
-
-        // check uri exists is useful because it picks up early errors in the understanding (or implementation)
-        // of the API. It also keeps error out of the loading code below where it would fail too but is harder
-        // to diagnose.
-        if (uri) {
-
-            try {
-                const response = await HttpRequestFactory.Instance().update(resource, document, options);
-
-                // mutate the original resource headers
-                // how was it retrieved
-                trackedState.headers = response.headers;
-                // save the across-the-wire meta data so we can check for collisions/staleness
-                trackedState.previousStatus = trackedState.status;
-                trackedState.status = Status.hydrated;
-                // when was it retrieved - for later queries
-                trackedState.retrieved = new Date();
-
-                return await this.processResource(resource, document as LinkedRepresentation, options) as unknown as TResult;
-
-            } catch (e) {
-                this.processError(e, uri, resource, trackedState);
-            }
-        }
-
-        return resource as unknown as TResult;
+        return resource;
     }
 
     /**
@@ -217,81 +217,80 @@ export default class TrackedRepresentationFactory {
      * @param resource existing resource
      * @param options
      */
-    public static async load<T extends LinkedRepresentation,
-        TResult extends LinkedRepresentation = TrackedRepresentation<T>>(
-        resource: TrackedRepresentation<T>,
-        options?: ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceFetchOptions): Promise<TResult> {
+    public static async load<T extends LinkedRepresentation>(
+        resource: T | TrackedRepresentation<T>,
+        options?: ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceFetchOptions): Promise<T | TrackedRepresentation<T>> {
 
-        const trackedState = TrackedRepresentationUtil.getState(resource);
-        if (!trackedState) {
+        if (instanceOfTrackedRepresentation(resource)) {
+
+            const {
+                rel = LinkRelation.Self,
+                getUri = LinkUtil.getUri,
+            } = { ...options };
+
+            const uri = getUri(resource, rel);
+
+            // check uri exists is useful because it picks up early errors in the understanding (or implementation)
+            // of the API. It also keeps error out of the loading code below where it would fail too but is harder
+            // to diagnose.
+            if (uri) {
+                const trackedState = TrackedRepresentationUtil.getState(resource);
+
+                switch (trackedState.status) {
+                    case Status.virtual:
+                        log.info('Resource is client-side only and will not be fetched %s %s', uri, trackedState.status.toString());
+                        return resource;
+                    case Status.deleted:
+                    case Status.deleteInProgress:
+                        return Promise.reject(`Resource is deleted ${uri}`);
+                    case Status.forbidden: // TODO: enhance forbidden strategy as needed currently assumes forbidden access doesn't change per session
+                        log.info('Resource is already forbidden and will not be fetched %s', uri);
+                        return resource;
+                }
+
+                if (TrackedRepresentationUtil.needsFetchFromState(resource, options) ||
+                    TrackedRepresentationUtil.needsFetchFromHeaders(resource)) {
+                    try {
+                        const response = await HttpRequestFactory.Instance().load(resource, rel, options);
+
+                        // mutate the original resource headers
+                        // how was it retrieved
+                        trackedState.headers = response.headers;
+                        // save the across-the-wire meta data so we can check for collisions/staleness
+                        trackedState.previousStatus = trackedState.status;
+                        trackedState.status = Status.hydrated;
+                        // when was it retrieved - for later queries
+                        trackedState.retrieved = new Date();
+
+                        return await this.processResource(resource, response.data as DocumentRepresentation<T>, options) as T;
+
+                    } catch (e) {
+                        this.processError(e, uri, resource, trackedState);
+                    }
+                } else {
+                    log.debug('return cached resource: \'%s\'', uri);
+                }
+            } else {
+                log.error('Undefined returned on link \'%s\' (check stack trace)', rel);
+            }
+        } else {
             // TODO: decide if we want to make a locationOnly resource if possible and then continue
             return Promise.reject(`No state on '${LinkUtil.getUri(resource, LinkRelation.Self)}'`);
         }
 
-        const {
-            rel = LinkRelation.Self,
-            getUri = LinkUtil.getUri,
-        } = { ...options };
-
-        const uri = getUri(resource, rel);
-
-        // check uri exists is useful because it picks up early errors in the understanding (or implementation)
-        // of the API. It also keeps error out of the loading code below where it would fail too but is harder
-        // to diagnose.
-        if (uri) {
-
-            switch (trackedState.status) {
-                case Status.virtual:
-                    log.info('Resource is client-side only and will not be fetched %s %s', uri, trackedState.status.toString());
-                    return resource as unknown as TResult;
-                case Status.deleted:
-                case Status.deleteInProgress:
-                    return Promise.reject(`Resource is deleted ${uri}`);
-                case Status.forbidden: // TODO: enhance forbidden strategy as needed currently assumes forbidden access doesn't change per session
-                    log.info('Resource is already forbidden and will not be fetched %s', uri);
-                    return resource as unknown as TResult;
-            }
-
-            if (TrackedRepresentationUtil.needsFetchFromState(resource, options) ||
-                TrackedRepresentationUtil.needsFetchFromHeaders(resource)) {
-                try {
-                    const response = await HttpRequestFactory.Instance().load(resource, rel, options);
-
-                    // mutate the original resource headers
-                    // how was it retrieved
-                    trackedState.headers = response.headers;
-                    // save the across-the-wire meta data so we can check for collisions/staleness
-                    trackedState.previousStatus = trackedState.status;
-                    trackedState.status = Status.hydrated;
-                    // when was it retrieved - for later queries
-                    trackedState.retrieved = new Date();
-
-                    return await this.processResource(resource, response.data, options) as unknown as TResult;
-
-                } catch (e) {
-                    this.processError(e, uri, resource, trackedState);
-                }
-            } else {
-                log.debug('return cached resource: \'%s\'', uri);
-            }
-        } else {
-            log.error('Undefined returned on link \'%s\' (check stack trace)', rel);
-        }
-
-        return resource as unknown as TResult;
+        return resource;
     }
 
     /**
      * Removes the item from the collection by matching its Self link. If not found, it returns undefined.
      * If an items is removed from a collection, it is marked as 'stale'
      */
-    public static removeCollectionItem<U extends LinkedRepresentation,
-        T extends TrackedRepresentation<U>>(
-        collection: TrackedRepresentation<CollectionRepresentation<T>>,
+    public static removeCollectionItem<T extends LinkedRepresentation>(
+        collection: CollectionRepresentation<T> | TrackedRepresentation<CollectionRepresentation<T>>,
         item: T): T | undefined {
 
         const itemFromCollection = RepresentationUtil.removeItemFromCollection(collection, item);
-        if (itemFromCollection) {
+        if (instanceOfTrackedRepresentation(itemFromCollection)) {
             const trackedState = TrackedRepresentationUtil.getState(itemFromCollection);
             trackedState.previousStatus = trackedState.status;
             trackedState.status = Status.stale;
@@ -342,13 +341,15 @@ export default class TrackedRepresentationFactory {
         }
     }
 
-    private static async processResource<U extends LinkedRepresentation | FeedRepresentation, T extends TrackedRepresentation<U>>(
+    private static async processResource<T extends LinkedRepresentation>(
         resource: T,
-        representation: U,
-        options?: (ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceFetchOptions)): Promise<T> {
-        return await instanceOfCollection(representation) ?
-            this.processCollection(resource, representation as FeedRepresentation, options) :
-            this.processSingleton(resource, representation, options);
+        data: T | DocumentRepresentation<T> | FeedRepresentation,
+        options?: (ResourceLinkOptions & HttpRequestOptions & ResourceMergeOptions & ResourceFetchOptions)): Promise<T | CollectionRepresentation<T>> {
+        if (instanceOfFeed(data)) {
+            return await this.processCollection(resource as unknown as CollectionRepresentation<T>, data, options);
+        } else {
+            return await this.processSingleton(resource as T, data, options);
+        }
     }
 
 
@@ -357,14 +358,14 @@ export default class TrackedRepresentationFactory {
      * the number of items matching and all items at least sparsely populated. Use 'includeItems' flag
      * to fully hydrate each item.
      */
-    private static async processCollection<U extends LinkedRepresentation, T extends TrackedRepresentation<U>>(
-        resource: T,
-        representation: FeedRepresentation,
+    private static async processCollection<T extends LinkedRepresentation>(
+        resource: CollectionRepresentation<T>,
+        data: FeedRepresentation,
         options ?: ResourceLinkOptions &
             HttpRequestOptions &
             ResourceMergeOptions &
             ResourceFetchOptions &
-            ResourceQueryOptions): Promise<T> {
+            ResourceQueryOptions): Promise<CollectionRepresentation<T>> {
         const { rel = LinkRelation.Self, includeItems } = { ...options };
 
         const uri = LinkUtil.getUri(resource, rel);
@@ -374,20 +375,17 @@ export default class TrackedRepresentationFactory {
         }
 
         // ensure that all the items are sparsely populated
-        const fromFeed = SparseRepresentationFactory.make({
+        const fromFeed = SparseRepresentationFactory.make<CollectionRepresentation<T>>({
             uri,
             sparseType: 'collection',
-            on: representation,
+            on: data,
         });
 
         // merge the existing and the response such that
         //  - any in existing but not in response are removed from existing
         //  - any in response but not in existing are added
         // the result is to reduce network retrieval because existing hydrated items are not response
-        resource = CollectionMerger.merge(
-            resource as unknown as CollectionRepresentation,
-            fromFeed as unknown as CollectionRepresentation,
-            options) as any;
+        resource = CollectionMerger.merge(resource, fromFeed, options);
 
         // hydrate items is required (also, merged hydrated items won't go back across the network
         // unless there is a {@link forceLoad}
@@ -402,8 +400,8 @@ export default class TrackedRepresentationFactory {
     }
 
 
-    private static async processCollectionItems<T extends TrackedRepresentation<LinkedRepresentation>>(
-        resource: T,
+    private static async processCollectionItems<T extends LinkedRepresentation>(
+        resource: CollectionRepresentation<T>,
         options?: (ResourceLinkOptions &
             HttpRequestOptions &
             ResourceMergeOptions &
@@ -424,8 +422,8 @@ export default class TrackedRepresentationFactory {
         const waitAll = (batchSize > 0) ? parallelWaitAll : sequentialWaitAll;
         options = { ...options, rel: LinkRelation.Self };
 
-        await waitAll(resource as any, async item => {
-            await this.load(item as TrackedRepresentation<T>, options);
+        await waitAll(resource, async item => {
+            await this.load(item, options);
         });
     }
 
@@ -436,13 +434,13 @@ export default class TrackedRepresentationFactory {
      *
      * Note: singleton also processes a form and may need to be separated for deep merge of items
      */
-    private static async processSingleton<U extends LinkedRepresentation, T extends TrackedRepresentation<U>>(
+    private static async processSingleton<T extends LinkedRepresentation, U extends T | DocumentRepresentation<T> = T>(
         resource: T,
         representation: U,
         options ?: ResourceLinkOptions &
             HttpRequestOptions &
             ResourceMergeOptions &
-            ResourceFetchOptions): Promise<T> {
+            ResourceFetchOptions): Promise<Extract<U, T>> {
 
         return SingletonMerger.merge(resource, representation, options);
     }

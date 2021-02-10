@@ -7,7 +7,7 @@ import { MergeOptions } from './mergeOptions';
 export type EditFormMergeStrategy = {
     <U extends LinkedRepresentation = LinkedRepresentation,
         T extends U = TrackedRepresentation<U>>
-    (resource: T, document: DocumentRepresentation, form: FormRepresentation, options?: MergeOptions): Promise<T | undefined>;
+    (resource: T, document: T | DocumentRepresentation<T>, form: FormRepresentation, options?: MergeOptions): Promise<T | undefined>;
 };
 
 

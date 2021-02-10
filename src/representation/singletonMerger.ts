@@ -28,7 +28,7 @@ export default class SingletonMerger {
      * @param source The source object from which to copy properties
      * @param options
      */
-    public static merge<T, U>(target: T, source: U, options?: ResourceMergeOptions): T & U {
+    public static merge<T, U>(target: T, source: U, options?: ResourceMergeOptions): Extract<U, T> {
 
         const { set = optionsInstance.set } = { ...options };
 
@@ -36,11 +36,11 @@ export default class SingletonMerger {
             for (const key in source) {
                 set(target, key, source[key]);
             }
-            return target as T & U;
+            return target as Extract<U, T>;
         }
 
         /** ensure that the original object (and bindings) are returned—ie don't use spread */
-        return Object.assign(target, source);
+        return Object.assign(target, source) as Extract<U, T>;
     }
 
     /**
@@ -52,10 +52,10 @@ export default class SingletonMerger {
      * @param resource The resource object that is added to the target
      * @param options
      */
-    public static add<T, U>(target: T, prop: keyof T, resource: U, options?: ResourceAssignOptions): T {
+    public static add<T, U>(target: T, prop: keyof T | string, resource: U, options?: ResourceAssignOptions): T {
         const { set = optionsInstance.set } = { ...options };
         if (set) {
-            set(target, prop, resource);
+            set(target, prop as keyof T, resource);
         } else {
             /** ensure that the original object (and bindings) are returned—ie don't use spread */
             Object.assign(target, { [prop]: resource });

@@ -63,19 +63,22 @@ describe('resource, delete', () => {
         ],
     ])('%s', async (title: string, options: ResourceFactoryOptions, factory: any, calledTimes: number, whereItemsCalledTimes: number) => {
 
-        const findResourceInCollectionMock = jest.spyOn(RepresentationUtil, 'findInCollection');
+        const findInCollectionMock = jest.spyOn(RepresentationUtil, 'findInCollection');
         // Implementation always returns non-undefined result to trigger loading an item
-        findResourceInCollectionMock.mockImplementation(() => ({ links: [] }));
+        findInCollectionMock.mockImplementation(() => ({ links: [] }));
 
-        await del(SparseRepresentationFactory.make(options), options);
+        let resource = SparseRepresentationFactory.make(options);
+        trackedRepresentationFactory.load.mockResolvedValue(resource);
+
+        await del(resource, options);
         expect(factory).toBeCalledTimes(calledTimes);
         // note: could make asserts on what the factory was called with
 
         if (whereItemsCalledTimes > 0) {
-            expect(findResourceInCollectionMock).toHaveBeenCalledTimes(whereItemsCalledTimes);
+            expect(findInCollectionMock).toHaveBeenCalledTimes(whereItemsCalledTimes);
         }
 
-        findResourceInCollectionMock.mockRestore();
+        findInCollectionMock.mockRestore();
     });
 
 });

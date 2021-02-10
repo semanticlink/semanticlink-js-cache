@@ -20,10 +20,10 @@ import LinkRelation from '../linkRelation';
 import { DocumentRepresentation } from '../interfaces/document';
 import ResourceUpdateOptions from '../interfaces/resourceUpdateOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
-import { FormRepresentation } from '../interfaces/formRepresentation';
 import { defaultCreateFormStrategy } from './createFormMergeStrategy';
 import ApiUtil from '../apiUtil';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import { instanceOfForm } from '../utils/instanceOf/instanceOfForm';
 
 const log = anylogger('create');
 
@@ -31,9 +31,8 @@ const log = anylogger('create');
  *
  * TODO: accept but don't require TrackedRepresentation interface
  */
-export default async function create<U extends LinkedRepresentation = LinkedRepresentation,
-    T extends LinkedRepresentation = TrackedRepresentation<U>>(
-    document: DocumentRepresentation | LinkType,
+export default async function create<T extends LinkedRepresentation, U extends LinkedRepresentation = T>(
+    document: DocumentRepresentation<T> | TrackedRepresentation<T> | LinkType,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &
         ResourceLinkOptions &
@@ -53,7 +52,8 @@ export default async function create<U extends LinkedRepresentation = LinkedRepr
 
     if (on) {
         if (instanceOfCollection(on)) {
-            return await createCollectionItem(on, document as DocumentRepresentation, options) as unknown as T;
+            let newVar = await createCollectionItem(on, document as DocumentRepresentation, options);
+            return newVar as T;
         } else {
             log.warn('option \'on\' options cannot be used outside of a collection, skipping');
             // fall through and keep processing
@@ -79,19 +79,16 @@ async function createCollectionItem<T extends LinkedRepresentation>(
         ResourceLinkOptions &
         HttpRequestOptions &
         ResourceMergeOptions &
-        ResourceFetchOptions): Promise<TrackedRepresentation<T> | undefined> {
+        ResourceFetchOptions): Promise<T | undefined> {
 
     const {
         mergeStrategy = defaultCreateFormStrategy,
         formRel = [LinkRelation.CreateForm, LinkRelation.SearchForm] as RelationshipType,
     } = { ...options };
 
-    const form = await ApiUtil.get(resource as unknown as TrackedRepresentation<T>, {
-        ...options,
-        rel: formRel,
-    }) as FormRepresentation;
+    const form = await ApiUtil.get(resource, { ...options, rel: formRel, });
 
-    if (form) {
+    if (instanceOfForm(form)) {
         try {
             const merged = await mergeStrategy(document, form, options);
 
@@ -106,14 +103,14 @@ async function createCollectionItem<T extends LinkedRepresentation>(
                 const contextResource = hasSubmitRel ? form : resource;
                 const rel = hasSubmitRel ? LinkRelation.Submit : LinkRelation.Self;
 
-                const item = await TrackedRepresentationFactory.create(
+                const item = await TrackedRepresentationFactory.create<CollectionRepresentation, T>(
                     contextResource,
                     merged,
-                    { ...options, rel }) as TrackedRepresentation<T>;
+                    { ...options, rel });
 
                 // 201 will return an item compared with 200, 202
                 if (item) {
-                    RepresentationUtil.addItemToCollection(resource, item as LinkedRepresentation);
+                    RepresentationUtil.addItemToCollection(resource, item);
                     return item;
                 } // drop through and return undefined
 

@@ -5,7 +5,7 @@ import { DocumentRepresentation } from '../interfaces/document';
 export async function defaultPostFactory<T>(
     link: LinkType,
     rel: RelationshipType,
-    document: DocumentRepresentation<T>,
+    document: T | DocumentRepresentation<T>,
     options?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
 
     const { contentType = undefined } = { ...options };

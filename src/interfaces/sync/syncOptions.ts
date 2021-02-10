@@ -5,6 +5,7 @@ import { UriListResolver } from './uriListResolver';
 import { SyncResolverOptions } from './syncResolverOptions';
 import { FieldResolver } from './fieldResolver';
 import { Resolver } from '../resolver';
+import { ResourceQueryOptions } from '../resourceQueryOptions';
 
 export type PooledResolver = <T extends LinkedRepresentation>(resource: T, document: T, options?: SyncOptions) => Promise<void>;
 
@@ -55,9 +56,9 @@ export interface SyncOptions extends Partial<SyncResolverOptions> {
      * @see {@link defaultFindResourceInCollectionStrategy}
      */
     readonly findResourceInCollectionStrategy?: <T extends Representation>(
-        collection: CollectionRepresentation,
-        document: T,
-    ) => T;
+        collection: CollectionRepresentation<T>,
+        options?: ResourceQueryOptions,
+    ) => T | undefined;
 
     /**
      *

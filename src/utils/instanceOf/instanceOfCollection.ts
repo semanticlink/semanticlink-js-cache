@@ -9,7 +9,7 @@ import { instanceOfForm } from './instanceOfForm';
  * @param object
  * @returns whether the object is an instance on the interface
  */
-export function instanceOfCollection<T extends LinkedRepresentation = LinkedRepresentation>(object: unknown | CollectionRepresentation<T>): object is CollectionRepresentation<T> {
+export function instanceOfCollection<T extends LinkedRepresentation>(object: unknown | CollectionRepresentation<T>): object is CollectionRepresentation<T> {
 
     if (instanceOfLinkedRepresentation(object)) {
         const asObject = object as CollectionRepresentation;

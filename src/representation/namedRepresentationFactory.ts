@@ -1,5 +1,4 @@
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
-import { TrackedRepresentation } from '../types/types';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
 import LinkRelConvertUtil from '../utils/linkRelConvertUtil';
 import LinkRelation from '../linkRelation';
@@ -48,10 +47,9 @@ export default class NamedRepresentationFactory {
      * @param resource context resource that has the sub-resource added (and is tracked {@link State.collection} and {@link State.singleton})
      * @param options specify the {@link ResourceQueryOptions.rel} to pick the name resource
      */
-    public static async load<T extends LinkedRepresentation = LinkedRepresentation,
-        TResult extends LinkedRepresentation = TrackedRepresentation<T>>(
-        resource: TrackedRepresentation<T>,
-        options?: ResourceQueryOptions & ResourceAssignOptions): Promise<TResult | undefined> {
+    public static async load<T extends LinkedRepresentation, U extends LinkedRepresentation>(
+        resource: T,
+        options?: ResourceQueryOptions & ResourceAssignOptions): Promise<U | undefined> {
         const {
             rel = undefined,
             name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
@@ -59,11 +57,11 @@ export default class NamedRepresentationFactory {
 
         if (rel && name) {
             if (TrackedRepresentationUtil.isTracked(resource, name)) {
-                const namedResource = RepresentationUtil.getProperty(resource, name);
+                const namedResource = RepresentationUtil.getProperty(resource, name) as unknown as U;
                 if (namedResource) {
                     // don't just return value but ensure it has loading rules respected (eg expires)
-                    return await TrackedRepresentationFactory.load<T, TResult>(
-                        namedResource as unknown as TrackedRepresentation<T>,
+                    return await TrackedRepresentationFactory.load(
+                        namedResource,
                         { ...options, rel: LinkRelation.Self });
                 } // else fall through to undefined
                 // if the resource is tracked it is very unlikely that this resource doesn't exist
@@ -71,12 +69,12 @@ export default class NamedRepresentationFactory {
             } else {
                 const uri = LinkUtil.getUri(resource, rel);
                 if (uri) {
-                    const sparse = SparseRepresentationFactory.make({ uri });
-                    const namedResource = await TrackedRepresentationFactory.load<T, TResult>(
-                        sparse as unknown as TrackedRepresentation<T>,
+                    const sparse = SparseRepresentationFactory.make({ uri }) as U;
+                    const namedResource = await TrackedRepresentationFactory.load(
+                        sparse,
                         { ...options, rel: LinkRelation.Self });
                     if (namedResource) {
-                        TrackedRepresentationUtil.add(resource, name as keyof T, namedResource);
+                        TrackedRepresentationUtil.add(resource, name, namedResource);
                     }
                     return namedResource;
                 } // else fall through to undefined

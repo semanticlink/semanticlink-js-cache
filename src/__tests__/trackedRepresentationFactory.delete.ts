@@ -80,7 +80,7 @@ describe('Tracked Representation Factory', () => {
                     }
                 );
 
-                const api = await TrackedRepresentationFactory.del($api);
+                const api = await TrackedRepresentationFactory.del($api) as TrackedRepresentation<LinkedRepresentation>;
                 expect(del).toHaveBeenCalled();
 
                 const {
@@ -116,7 +116,7 @@ describe('Tracked Representation Factory', () => {
                 postCount: number,
                 putCount: number,
                 deleteCount: number) => {
-                const $api = SparseRepresentationFactory.make<ApiRepresentation>({ uri });
+                const $api = SparseRepresentationFactory.make<ApiRepresentation>({ uri }) as TrackedRepresentation<LinkedRepresentation>;
 
                 del.mockImplementation(async () => {
                     if (statusCode >= 400) {
@@ -131,7 +131,7 @@ describe('Tracked Representation Factory', () => {
                         };
                     }
                 });
-                const api = await TrackedRepresentationFactory.del($api);
+                const api = await TrackedRepresentationFactory.del($api) as TrackedRepresentation<LinkedRepresentation>;
                 verifyMocks(getCount, postCount, putCount, deleteCount);
 
                 const { status } = TrackedRepresentationUtil.getState(api);

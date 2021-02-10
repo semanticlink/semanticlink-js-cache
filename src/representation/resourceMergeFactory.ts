@@ -54,7 +54,7 @@ export default class ResourceMergeFactory {
      */
     public static async editMerge<T extends TrackedRepresentation<LinkedRepresentation> | LinkedRepresentation>(
         resource: T,
-        document: DocumentRepresentation,
+        document: T | DocumentRepresentation<T>,
         form: FormRepresentation,
         options?: MergeOptions): Promise<T | undefined> {
 
@@ -236,9 +236,9 @@ export default class ResourceMergeFactory {
      * @param options
      * @return the resource to be created
      */
-    private static async merge<T extends DocumentRepresentation,
+    private static async merge<T extends LinkedRepresentation,
         TForm extends FormRepresentation>(
-        resource: T,
+        resource: T | DocumentRepresentation<T>,
         form: TForm,
         options?: MergeOptions): Promise<DocumentRepresentation> {
         const resolvedDocument = await this.resolveLinksAndFields(resource, form, options);

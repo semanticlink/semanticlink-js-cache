@@ -5,7 +5,6 @@ import LinkRelation from '../linkRelation';
 import { defaultEditFormStrategy } from './editFormMergeStrategy';
 import get from './get';
 import { TrackedRepresentation } from '../types/types';
-import { FormRepresentation } from '../interfaces/formRepresentation';
 import { DocumentRepresentation } from '../interfaces/document';
 import TrackedRepresentationFactory from './trackedRepresentationFactory';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
@@ -14,8 +13,9 @@ import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { instanceOfUriList } from '../utils/instanceOf/instanceOfUriList';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import { instanceOfForm } from '../utils/instanceOf/instanceOfForm';
 
-const log = anylogger('update');
+const log = anylogger('Update');
 
 /**
  *
@@ -25,8 +25,8 @@ const log = anylogger('update');
  * @param options
  */
 export default async function update<T extends LinkedRepresentation>(
-    resource: TrackedRepresentation<T>,
-    document: DocumentRepresentation<T>,
+    resource: T | TrackedRepresentation<T> ,
+    document: T | DocumentRepresentation<T>,
     options?: ResourceUpdateOptions &
         ResourceLinkOptions &
         HttpRequestOptions &
@@ -47,8 +47,8 @@ export default async function update<T extends LinkedRepresentation>(
 }
 
 async function updateSingleton<T extends LinkedRepresentation>(
-    resource: TrackedRepresentation<T>,
-    document: DocumentRepresentation<T>,
+    resource: T | TrackedRepresentation<T>,
+    document: T | DocumentRepresentation<T>,
     options?: ResourceUpdateOptions &
         ResourceLinkOptions &
         HttpRequestOptions &
@@ -65,9 +65,9 @@ async function updateSingleton<T extends LinkedRepresentation>(
         formRel = LinkRelation.EditForm,
     } = { ...options };
 
-    const form = await get<T, FormRepresentation>(resource, { ...options, rel: formRel });
+    const form = await get(resource, { ...options, rel: formRel });
 
-    if (form) {
+    if (instanceOfForm(form)) {
         try {
             const merged = await mergeStrategy(resource, document, form, options);
 
