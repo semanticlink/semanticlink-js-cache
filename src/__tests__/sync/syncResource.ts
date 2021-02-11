@@ -3,14 +3,10 @@ import { Status } from '../../representation/status';
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import { TrackedRepresentation } from '../../types/types';
 import { assertThat } from 'mismatched';
-import {
-    getCollectionInNamedCollection,
-    getNamedCollectionInNamedCollection,
-    syncResource,
-} from '../../sync/syncResource';
 import { HttpRequestOptions } from '../../interfaces/httpRequestOptions';
 import LinkRelation from '../../linkRelation';
 import { AxiosResponse } from 'axios';
+import { syncResource } from '../../sync';
 
 describe('Synchroniser', () => {
     /**
@@ -533,38 +529,6 @@ describe('Synchroniser', () => {
                 expect(result).toBeDefined();
                 verifyMocks(3, 0, 0, 1);
             });
-        });
-
-        describe('getNamedCollectionInNamedCollection', () => {
-            /**
-             * This method chains {@link getCollectionInNamedCollection} so one test around it is good
-             * enough to show that it parents correctly
-             */
-
-            it('should not update when the collections (all items) are the same', async () => {
-                const noChangeParentCollection = {
-                    ...parent,
-                    todos: {
-                        ...todosCollection,
-                        items: [todo1, todo2],
-                    },
-                };
-                get
-                    .mockResolvedValueOnce({ data: { ...todosCollection } })
-                    .mockResolvedValueOnce({ data: todo1 })
-                    .mockResolvedValueOnce({ data: todo2 })
-                    .mockResolvedValueOnce({ data: editForm });
-
-                const result = await getNamedCollectionInNamedCollection(makeHydratedResource(parent), noChangeParentCollection, [], {
-                    ...options,
-                    rel: 'todos',
-                    relOnDocument: 'todos',
-                });
-
-                expect(result).toBeDefined();
-                verifyMocks(4, 0, 0, 0);
-            });
-
         });
 
         describe('getSingleton', () => {
