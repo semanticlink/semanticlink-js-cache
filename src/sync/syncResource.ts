@@ -345,82 +345,6 @@ async function syncResources<T extends LinkedRepresentation>(
 
     return async () => await Promise.all(strategies.map(async (strategy) => strategy({ resource, document, options })));
 }
-
-/**
- * Retrieves a resource and synchronises (its attributes) from the document
- *
- * Note: this is used for syncing two documents through their parents see {@link getSingleton}
- *
- *
- * @example
- *
- *     Resource               Document
- *
- *                  sync
- *     +-----+                +-----+
- *     |     |  <-----------+ |     |
- *     |     |                |     |
- *     +-----+                +-----+
- *
- * @param {LinkedRepresentation} resource
- * @param document
- * @param strategies
- * @param options
- * @return {Promise} containing the resource {@link LinkedRepresentation}
- */
-export async function getResource<T extends LinkedRepresentation>(
-    resource: T | TrackedRepresentation<T>,
-    document: DocumentRepresentation<T> | T,
-    strategies: StrategyType[] = [],
-    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
-
-    return await syncResource(resource, document, strategies, options);
-}
-
-
-/**
- * Retrieves a singleton resource on a parent resource and updates (its
- * attributes) based on a singleton of the same name in the given parent document.
- *
- * The parent maybe either a collection resource or a singleton resource
- *
- * Note: this is used for syncing two documents through their parents
- * (see {@link getResource} for non-parented)
- *
- * @example
- *
- *
- *     parent     singleton           singleton   parent
- *     Resource    Resource            Document   Document
- *
- *     +----------+                            +---------+
- *     |          |            sync            |         |
- *     |          +-----+                +-----+         |
- *     |     Named|     |  <-----------+ |     |Named    |
- *     |          |     |                |     |         |
- *     |          +-----+                +-----+         |
- *     |          |                            |         |
- *     |          |                       ^    |         |
- *     +----------+                       |    +---------+
- *                                        |
- *                                        +
- *                                        looks for
- *
- * @param resource
- * @param document
- * @param strategies
- * @param options
- * @return {Promise} containing the parent {@link LinkedRepresentation}
- */
-export async function getSingleton<T extends LinkedRepresentation>(
-    resource: TrackedRepresentation<T> | T,
-    document: DocumentRepresentation<T> | T,
-    strategies: StrategyType[] = [],
-    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
-): Promise<T> {
-    return await syncResource(resource, document, strategies, options);
-}
-
 /**
  * **************************************
  *
@@ -428,143 +352,6 @@ export async function getSingleton<T extends LinkedRepresentation>(
  *
  * **************************************
  */
-
-/**
- * Retrieves a resource item from a resource collection and synchronises (its attributes) from the document.
- *
- * @example
- *
- *     resource
- *     Collection         Document
- *
- *     +-----+
- *     |     |
- *     |     |
- *     +-----+    sync
- *         X                +---+
- *         X  <-----------+ | x |
- *         X                +---+
- *           items
- *
- * @param resource
- * @param document
- * @param strategies
- * @param options
- * @return {Promise} containing the resource {@link LinkedRepresentation}
- */
-export async function getResourceInCollection<T extends LinkedRepresentation>(
-    resource: T | TrackedRepresentation<T>,
-    document: T | DocumentRepresentation<T>,
-    strategies: StrategyType[] = [],
-    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
-    return await syncResource(resource, document, strategies, options);
-}
-
-/**
- * Retrieves a parent resource and its named collection with items (sparsely populated), finds the item in that
- * collection and then synchronises (its attributes) with the document.
- *
- *  @example
- *
- *      parent      resource
- *      Resource    Collection        Document
- *
- *      +----------+
- *      |          |
- *      |          +-----+
- *      |     Named|     |
- *      |          |     |
- *      |          +-----+    sync
- *      |          |   X                +---+
- *      |          |   X  <-----------+ | x |
- *      +----------+   X                +---+
- *                       items
- *
- * @param {LinkedRepresentation} resource
- * @param document
- * @param strategies
- * @param options
- * @return {Promise} containing the resource {@link LinkedRepresentation}
- */
-export async function getResourceInNamedCollection<T extends LinkedRepresentation>(
-    resource: TrackedRepresentation<T> | T,
-    document: DocumentRepresentation<T> | T,
-    strategies: StrategyType[] = [],
-    options?: SyncOptions & HttpRequestOptions
-): Promise<T> {
-
-    return await syncResource(resource, document, strategies, options);
-}
-
-/**
- * Retrieves a collection resource with items (sparsely populated), then synchronises the
- * collection items where each item may be updated (its attributes), a new item created or an item removed.
- *
- *  @example
- *
- *     resource              document
- *     Collection            Collection
- *
- *
- *                  sync
- *     +-----+                +-----+
- *     |     |  <-----------+ |     |
- *     |     |                |     |
- *     +-----+                +-----+
- *         X                     X
- *         X items               X items
- *         X                     X
- *
- * @param resource
- * @param document
- * @param strategies
- * @param options
- * @return {Promise} containing the collection {@link CollectionRepresentation}
- */
-export async function getCollectionInCollection<T extends LinkedRepresentation>(
-    resource: T | TrackedRepresentation<T>,
-    document: T | DocumentRepresentation<T>,
-    strategies: StrategyType[] = [],
-    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions): Promise<T> {
-
-    return await syncResource(resource, document, strategies, options);
-}
-
-/**
- * Retrieves a parent resource and its named collection with items (sparsely populated), then synchronises the
- * collection items where each item may be updated (its attributes), a new item created or an item removed.
- *
- * This method is used when you have context of one parent and the document collection  (see {@link getNamedCollectionInNamedCollection})
- *
- *  @example
- *
- *      parent     resource              document
- *      Resource   Collection            Collection
- *
- *     +----------+
- *     |          |            sync
- *     |          +-----+                +-----+
- *     |     Named|     |  <-----------+ |     |
- *     |          |     |                |     |
- *     |          +-----+                +-----+
- *     |          |   X                     X
- *     |          |   X items               X items
- *     +----------+   X                     X
- *
- * @param resource
- * @param document
- * @param strategies
- * @param options
- * @return {Promise} containing the {@link CollectionRepresentation}
- */
-export async function getCollectionInNamedCollection<T extends LinkedRepresentation>(
-    resource: TrackedRepresentation<T> | T,
-    document: DocumentRepresentation<T> | T,
-    strategies: StrategyType[] = [],
-    options?: SyncOptions & ResourceFetchOptions & HttpRequestOptions
-): Promise<T> {
-    return await syncResource(resource, document, strategies, options);
-}
 
 /**
  * Retrieves a parent resource and its named collection with items (sparsely populated), then given the
@@ -613,7 +400,7 @@ export async function getNamedCollectionInNamedCollection<T extends LinkedRepres
 
     if (rel && relOnDocument) {
         let namedDocument = RepresentationUtil.getProperty(document, name) as DocumentRepresentation;
-        return await getCollectionInNamedCollection(resource, namedDocument, strategies, {
+        return await syncResource(resource, namedDocument, strategies, {
             ...options,
             rel,
             name
@@ -840,7 +627,7 @@ export async function syncResource<T extends LinkedRepresentation>(
         const result = await ApiUtil.get(resource, { ...options, rel });
         if (instanceOfCollection(result)) {
             // in the context of the collection, synchronise the collection part of the document
-            await getCollectionInCollection(result, document, strategies, options);
+            await syncResource(result, document, strategies, options);
         } else {
             log.info('[Sync] No \'%s\' on resource %s', name, LinkUtil.getUri(resource, LinkRelation.Self));
         }

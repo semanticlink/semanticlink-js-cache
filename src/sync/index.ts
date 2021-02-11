@@ -1,11 +1,4 @@
-import {
-    getCollectionInCollection,
-    getCollectionInNamedCollection,
-    getResource,
-    getResourceInCollection,
-    getResourceInNamedCollection,
-    getSingleton,
-} from './syncResource';
+import { syncResource, } from './syncResource';
 import { LinkedRepresentation, LinkType, LinkUtil } from 'semantic-link';
 import { instanceOfResourceSync } from '../utils/instanceOf/instanceOfResourceSync';
 import { SyncType } from '../interfaces/sync/types';
@@ -25,9 +18,9 @@ const log = anylogger('Sync');
 
 async function processSync<T extends LinkedRepresentation>(resource: TrackedRepresentation<T> | T, document: DocumentRepresentation<T> | T, strategies: any[], options: SyncOptions) {
     if (instanceOfCollection(document)) {
-        await getCollectionInCollection(resource, document, strategies, options) as T;
+        await syncResource(resource, document, strategies, options) as T;
     } else {
-        await getResourceInCollection(resource, document, strategies, options);
+        await syncResource(resource, document, strategies, options);
     }
 }
 
@@ -169,7 +162,7 @@ export async function sync<T extends LinkedRepresentation>(syncAction: SyncType<
             if (instanceOfCollection(document)) {
                 throw new Error('Not Implement: a document collection cannot be synchronised onto a singleton');
             }
-            await getResource(resource, document, strategies, options);
+            await syncResource(resource, document, strategies, options);
         }
         return;
     }
@@ -197,11 +190,11 @@ export async function sync<T extends LinkedRepresentation>(syncAction: SyncType<
 
     const collection = RepresentationUtil.getProperty(document, name);
     if (instanceOfCollection(collection)) {
-        await getCollectionInNamedCollection(resource, collection, strategies, { ...options, rel });
+        await syncResource(resource, collection as unknown as T, strategies, { ...options, rel });
         return;
     }
 
     instanceOfCollection(resource) ?
-        await getResourceInNamedCollection(resource, document, strategies, { ...options, rel }) :
-        await getSingleton(resource, document, strategies, { ...options, rel, relOnDocument: rel });
+        await syncResource(resource, document, strategies, { ...options, rel }) :
+        await syncResource(resource, document, strategies, { ...options, rel, relOnDocument: rel });
 }

@@ -6,10 +6,7 @@ import { assertThat } from 'mismatched';
 import {
     getCollectionInNamedCollection,
     getNamedCollectionInNamedCollection,
-    getResource,
-    getResourceInCollection,
-    getResourceInNamedCollection,
-    getSingleton,
+    syncResource,
 } from '../../sync/syncResource';
 import { HttpRequestOptions } from '../../interfaces/httpRequestOptions';
 import LinkRelation from '../../linkRelation';
@@ -139,7 +136,7 @@ describe('Synchroniser', () => {
              *  - requires one call to hydrate
              *  - requires one call to load the edit form
              */
-            const result = await getResource(makeUnknownResource(resource), { ...resource }, [], options);
+            const result = await syncResource(makeUnknownResource(resource), { ...resource }, [], options);
             expect(result).toBeDefined();
             verifyMocks(2, 0, 0, 0);
         });
@@ -169,7 +166,7 @@ describe('Synchroniser', () => {
 
             // const sparseResource = SparseRepresentationFactory.make({ uri: 'https://api.example.com/tenant/90a936d4a3' });
 
-            const result = await getResource(makeUnknownResource(resource), document, [], options);
+            const result = await syncResource(makeUnknownResource(resource), document, [], options);
 
             expect(result).toBeDefined();
             // verifyMocks(1, 0, 0, 0);
@@ -221,7 +218,7 @@ describe('Synchroniser', () => {
                     status: 201,
                 });
 
-            const result = await getResourceInCollection(makeUnknownResource(collection), document, [], options);
+            const result = await syncResource(makeUnknownResource(collection), document, [], options);
 
             expect(result).toBeDefined();
             verifyMocks(3, 1, 0, 0);
@@ -368,7 +365,7 @@ describe('Synchroniser', () => {
                     .mockResolvedValueOnce({ data: { ...editForm } });
 
                 // put.mockResolvedValueOnce({ status: 200 });
-                const result = await getResourceInNamedCollection(makeHydratedResource(parent), noChangeDocument, [], {
+                const result = await syncResource(makeHydratedResource(parent), noChangeDocument, [], {
                     ...options,
                     rel: 'todos'
                 });
@@ -404,7 +401,7 @@ describe('Synchroniser', () => {
 
                 put.mockResolvedValue(successPut);
 
-                const result = await getResourceInNamedCollection(makeHydratedResource(parent), changedDocument, [], {
+                const result = await syncResource(makeHydratedResource(parent), changedDocument, [], {
                     ...options,
                     rel: 'todos'
                 });
@@ -426,7 +423,7 @@ describe('Synchroniser', () => {
 
                 post.mockResolvedValueOnce(() => ({ headers: { location: 'https://api.example.com/todo/new' } }));
 
-                const result = await getResourceInNamedCollection(makeHydratedResource(parent), newDocument, [], {
+                const result = await syncResource(makeHydratedResource(parent), newDocument, [], {
                     ...options,
                     rel: 'todos'
                 });
@@ -450,7 +447,7 @@ describe('Synchroniser', () => {
                     .mockResolvedValueOnce({ data: todo2 })
                     .mockResolvedValueOnce({ data: editForm });
 
-                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), noChangeCollection, [], {
+                const result = await syncResource(makeHydratedResource(parent), noChangeCollection, [], {
                     ...options,
                     rel: 'todos'
                 });
@@ -481,7 +478,7 @@ describe('Synchroniser', () => {
                 get.mockImplementation(fakeResponseFactory);
                 put.mockResolvedValueOnce({ status: 200 });
 
-                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), oneItemChangedInCollection, [], {
+                const result = await syncResource(makeHydratedResource(parent), oneItemChangedInCollection, [], {
                     ...options,
                     rel: 'todos'
                 });
@@ -505,7 +502,7 @@ describe('Synchroniser', () => {
                 get.mockImplementation(fakeResponseFactory);
                 post.mockResolvedValueOnce({ headers: { location: 'https://api.example.com/todo/newOne934875' } });
 
-                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), oneItemAddedInCollection, [], {
+                const result = await syncResource(makeHydratedResource(parent), oneItemAddedInCollection, [], {
                     ...options,
                     rel: 'todos'
                 });
@@ -528,7 +525,7 @@ describe('Synchroniser', () => {
                 del.mockResolvedValueOnce(() => ({}));
 
 
-                const result = await getCollectionInNamedCollection(makeHydratedResource(parent), oneItemRemovedInCollection, [], {
+                const result = await syncResource(makeHydratedResource(parent), oneItemRemovedInCollection, [], {
                     ...options,
                     rel: 'todos'
                 });
@@ -630,7 +627,7 @@ describe('Synchroniser', () => {
                     .mockResolvedValueOnce({ data: editForm });
 
 
-                const result = await getSingleton(hydratedParent, noChangeParent, [], {
+                const result = await syncResource(hydratedParent, noChangeParent, [], {
                     ...options,
                     rel: 'user',
                     relOnDocument: 'user',
@@ -658,7 +655,7 @@ describe('Synchroniser', () => {
                 put.mockResolvedValueOnce(() => ({}));
 
 
-                const result = await getSingleton(hydratedParent, changedSingletonOnParent, [], {
+                const result = await syncResource(hydratedParent, changedSingletonOnParent, [], {
                     ...options,
                     rel: 'user',
                     relOnDocument: 'user',
@@ -694,7 +691,7 @@ describe('Synchroniser', () => {
                             expect(options).toBeDefined();
                         });
 
-                    const result = await getSingleton(hydratedParent, changedSingletonOnParent, [opts => strategy({ ...opts })], {
+                    const result = await syncResource(hydratedParent, changedSingletonOnParent, [opts => strategy({ ...opts })], {
                         ...options,
                         rel: 'user',
                         relOnDocument: 'user',
