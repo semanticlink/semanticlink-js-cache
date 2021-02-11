@@ -37,7 +37,7 @@ export const defaultFindResourceInCollectionStrategy = RepresentationUtil.findIn
  * on the change sets required (syncInfos). The calls can be processed either all at once (parallel using a map wait all
  * which is implemented as a Promise.all) or one at a time (sequentially, note there is no partial batching).
  *
- * The approach is set using {@link CacheOptions.strategyBatchSize} when non-zero (defined)
+ * The approach is set using {@link ResourceFetchOptions.strategyBatchSize} when non-zero (defined)
  *
  * When syncing a tree/graph, each path of resources is synchronised via a set of strategies. The syncInfo is the state action
  * (update, create, delete) on the resource and the strategy is how resources are traversed.
@@ -345,6 +345,7 @@ async function syncResources<T extends LinkedRepresentation>(
 
     return async () => await Promise.all(strategies.map(async (strategy) => strategy({ resource, document, options })));
 }
+
 /**
  * **************************************
  *
@@ -358,7 +359,7 @@ async function syncResources<T extends LinkedRepresentation>(
  * parent document which has document collection items it synchronises the items where each item may be
  * updated (its attributes), a new item created or an item removed.
  *
- * This method is used when you have parent contexts for both collections (see {@link getCollectionInNamedCollection})
+ * This method is used when you have parent contexts for both collections
  *
  * @example
  *
@@ -393,7 +394,6 @@ export async function getNamedCollectionInNamedCollection<T extends LinkedRepres
         rel = undefined,
         relOnDocument = undefined,
         name = NamedRepresentationFactory.defaultNameStrategy(rel, resource),
-        nameOnDocument = NamedRepresentationFactory.defaultNameStrategy(relOnDocument, document as T),
     } = { ...options };
     // do not pass down
     options = { ...options, rel: undefined, name: undefined, relOnDocument: undefined, nameOnDocument: undefined };
@@ -433,7 +433,7 @@ export async function getNamedCollectionInNamedCollection<T extends LinkedRepres
  *
  * Retrieves a resource and synchronises (its attributes) from the document
  *
- * Note: this is used for syncing two documents through their parents see {@link getSingleton}
+ * Note: this is used for syncing two documents through their parents
  *
  *
  * @example
@@ -456,7 +456,6 @@ export async function getNamedCollectionInNamedCollection<T extends LinkedRepres
  * The parent maybe either a collection resource or a singleton resource
  *
  * Note: this is used for syncing two documents through their parents
- * (see {@link getResource} for non-parented)
  *
  * @example
  *
