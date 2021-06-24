@@ -39,25 +39,25 @@
   },
   "homepage": "https://github.com/semanticlink/semantic-network#readme",
   "devDependencies": {
-    "@babel/core": "^7.12.13",
-    "@babel/preset-env": "^7.12.13",
-    "@babel/preset-typescript": "^7.12.13",
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-typescript": "^7.14.5",
     "@types/jest": "^26.0.20",
     "@types/jest-each": "^24.3.0",
-    "@typescript-eslint/eslint-plugin": "^4.15.0",
-    "@typescript-eslint/parser": "^4.15.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/parser": "^4.28.0",
     "babel-jest": "^26.0.1",
-    "eslint": "^7.19.0",
+    "eslint": "^7.29.0",
     "jest": "^26.0.1",
     "jest-each": "^26.0.1",
     "jest-extended": "^0.11.5",
-    "mismatched": "^2.1.6",
+    "mismatched": "^2.7.1",
     "ts-jest": "^26.5.1",
     "typescript": ">=4.1.5",
     "ulog": "^2.0.0-beta.15"
   },
   "dependencies": {
-    "anylogger": "^1.0.10",
+    "anylogger": "^1.0.11",
     "semantic-link": "git://github.com/semanticlink/semanticlink-js.git"
   },
   "peerDependencies": {
