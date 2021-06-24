@@ -13,7 +13,7 @@ export interface HttpRequestOptions {
         rel: RelationshipType,
         document: T | DocumentRepresentation<T>,
         options?: AxiosRequestConfig
-    ) => Promise<AxiosResponse<T | undefined>>;
+    ) => Promise<AxiosResponse<void>>;
     postFactory?: <T>(
         link: LinkType,
         rel: RelationshipType,

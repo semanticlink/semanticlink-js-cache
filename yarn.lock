@@ -1756,19 +1756,15 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-anylogger@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/anylogger/-/anylogger-1.0.10.tgz#0a2df51403ecf76d58aec80579ce3e7514cae164"
-  integrity sha512-iZsA9nnDpeS6A19W6LcOKqAxk2pbc93rOl4KnfOItmqdvVktv1rNqqOsY7I2j8wjt0slmGnInapKnfmKAifFDw==
-
-anylogger@^1.0.11:
+anylogger@>0.11, anylogger@^1.0.11:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/anylogger/-/anylogger-1.0.11.tgz#0ee55f294c6b921070dc29acd2ac9f1f35200625"
   integrity sha512-sKTWPTG2/d71kLGVmymMJQQslUppxvCz6DN/eODL3/ckmfygZzD0t4P5tRXE3qpM62jI98F/YTHHzFhM12jiJQ==
 
-"anylogger@git://github.com/semanticlink/anylogger.git":
-  version "0.22.0-ts"
-  resolved "git://github.com/semanticlink/anylogger.git#65d9f4aeaf4dc130b59eef085c4d786bc00b329b"
+anylogger@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/anylogger/-/anylogger-1.0.10.tgz#0a2df51403ecf76d58aec80579ce3e7514cae164"
+  integrity sha512-iZsA9nnDpeS6A19W6LcOKqAxk2pbc93rOl4KnfOItmqdvVktv1rNqqOsY7I2j8wjt0slmGnInapKnfmKAifFDw==
 
 anymatch@^2.0.0:
   version "2.0.0"
@@ -1860,12 +1856,12 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
 
-axios@^0.19.2:
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
-  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+axios@>=0.20.0:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
-    follow-redirects "1.5.10"
+    follow-redirects "^1.10.0"
 
 babel-jest@^26.0.1, babel-jest@^26.6.3:
   version "26.6.3"
@@ -2297,13 +2293,6 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
-
-debug@=3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
-  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
-  dependencies:
-    ms "2.0.0"
 
 debug@^2.2.0, debug@^2.3.3:
   version "2.6.9"
@@ -2836,12 +2825,10 @@ flatted@^3.1.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.1.0.tgz#a5d06b4a8b01e3a63771daa5cb7a1903e2e57067"
   integrity sha512-tW+UkmtNg/jv9CSofAKvgVcO7c2URjhTdW1ZTkcAritblu8tajiYy7YisnIflEwtKssCtOxpnBRoCB7iap0/TA==
 
-follow-redirects@1.5.10:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
-  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
-  dependencies:
-    debug "=3.1.0"
+follow-redirects@^1.10.0:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.1.tgz#d9114ded0a1cfdd334e164e6662ad02bfd91ff43"
+  integrity sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -4812,12 +4799,13 @@ saxes@^5.0.0:
   dependencies:
     xmlchars "^2.2.0"
 
-"semantic-link@git://github.com/semanticlink/semanticlink-js.git":
-  version "1.0.4"
-  resolved "git://github.com/semanticlink/semanticlink-js.git#dad0a125fe94e9be103a9494f4cc70536d845739"
+semantic-link@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/semantic-link/-/semantic-link-1.0.5.tgz#d731d9658064812eb79f714bd1dca10052b17525"
+  integrity sha512-Kl1K5Ox9BptbZDVDhxPQFyUM0cvq52yH69cqtZBsMhasyW3ERPP1bKDDTzfhgqhVNjeXMXuCfJeIq0PkKHAvvw==
   dependencies:
-    anylogger "git://github.com/semanticlink/anylogger.git"
-    axios "^0.19.2"
+    anylogger ">0.11"
+    axios ">=0.20.0"
 
 "semver@2 || 3 || 4 || 5", semver@^5.4.1, semver@^5.5.0:
   version "5.7.1"

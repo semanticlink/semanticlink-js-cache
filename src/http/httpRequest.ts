@@ -30,14 +30,14 @@ export default class HttpRequest {
     public async update<T extends LinkedRepresentation>(
         resource: T,
         document: T | DocumentRepresentation<T>,
-        options?: HttpRequestOptions & AxiosRequestConfig): Promise<AxiosResponse<T | undefined>> {
+        options?: HttpRequestOptions & AxiosRequestConfig): Promise<AxiosResponse<void>> {
 
         const {
             rel = LinkRelation.Self,
             putFactory = this.options.putFactory,
         } = { ...options };
 
-        return await putFactory(resource, rel, document, options);
+        return await putFactory(resource, rel, document, options)
     }
 
     public async create<T extends LinkedRepresentation>(

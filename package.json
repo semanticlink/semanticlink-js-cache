@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "anylogger": "^1.0.11",
-    "semantic-link": "git://github.com/semanticlink/semanticlink-js.git"
+    "semantic-link": "^1.0.5"
   },
   "peerDependencies": {
     "tslib": ">=1.11"

@@ -6,7 +6,7 @@ export async function defaultPutFactory<T>(
     link: LinkType,
     rel: RelationshipType,
     document: T | DocumentRepresentation<T>,
-    options?: AxiosRequestConfig): Promise<AxiosResponse<T | undefined>> {
+    options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
 
     const { contentType = undefined } = { ...options };
     return await HttpUtil.put(link, rel, document as T, contentType, options);
