@@ -3974,12 +3974,10 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-kurly@^2.0.0-beta.2:
-  version "2.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/kurly/-/kurly-2.0.0-beta.2.tgz#319548c5136438b60c9eb5dc2e2bef453b4c3602"
-  integrity sha512-AysNnS/Us6r/8qAV372KqALtXXLfQZyRyiVzxUsBFpNFunk2rg1pY6i8xUiS5+JAZNJKuhehj4+9TExMUPl6+w==
-  dependencies:
-    anylogger "^1.0.10"
+kurly@^2.0.0-beta.3:
+  version "2.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/kurly/-/kurly-2.0.0-beta.3.tgz#571b02745f9c68b6a5ee012fda8106bd54a87203"
+  integrity sha512-WXSRkhL2VV9lI/sPomBDV9Xf4oQ1s/RiUqzxKt4slkG7ndCxcDfXJ2ZXdxEYDRfevnkSOxmiVX3etunBlHqTAw==
 
 leven@^3.1.0:
   version "3.1.0"
@@ -5336,13 +5334,13 @@ typescript@>=4.1.5:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.5.tgz#123a3b214aaff3be32926f0d8f1f6e704eb89a72"
   integrity sha512-6OSu9PTIzmn9TCDiovULTnET6BgXtDYL4Gg4szY+cGsc3JP1dQL8qvE8kShTRx1NIw4Q9IBHlwODjkjWEtMUyA==
 
-ulog@^2.0.0-beta.15:
-  version "2.0.0-beta.15"
-  resolved "https://registry.yarnpkg.com/ulog/-/ulog-2.0.0-beta.15.tgz#59087f2d1ed732b86e7bb89fc78b370c152aedf9"
-  integrity sha512-pjqXb2KwgRM6w3PvDMzQO4ImHc98ZQJNUGeMmaZkqLcklhmUwyuxsjVvaKrP+/+Cyv5qY6xw+W1BaAcD0bVkcg==
+ulog@^2.0.0-beta.18:
+  version "2.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/ulog/-/ulog-2.0.0-beta.18.tgz#ef4f51879047d312e71f4e38a1bd05ceef8ff020"
+  integrity sha512-VDu/VBOAJxUr2+WBrNdSWSFc9TzjUppf5hNVTYkW3hf23oEWMYftS0w2cImoH6tKnhBvzCy/z6ZNgorPYyfnWA==
   dependencies:
     anylogger "^1.0.10"
-    kurly "^2.0.0-beta.2"
+    kurly "^2.0.0-beta.3"
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"
