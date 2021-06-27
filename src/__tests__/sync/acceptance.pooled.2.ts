@@ -101,7 +101,8 @@ describe('Steps with pooled (new) resources', () => {
 
         resource = makeHydratedResource(page1);
         await Step.loadStep(resource, options);
-        assertThat(resource.steps).is(collectionIsEmpty);
+        // assertThat(resource.steps).is(collectionIsEmpty);
+        assertThat(resource.steps?.items.length).is(0);
     });
 
     afterEach(() => {

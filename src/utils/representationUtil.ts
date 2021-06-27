@@ -14,21 +14,13 @@ import { instanceOfCollection } from './instanceOf/instanceOfCollection';
 import { TrackedRepresentation } from '../types/types';
 
 const log = anylogger('RepresentationUtil');
-/**
- * internal type for {@link properties}
- */
-type ObjectKeys<T> =
-    T extends Record<string, unknown> ? (keyof T)[] :
-        T extends number ? [] :
-            T extends Array<any> | string ? string[] :
-                never;
 
 /**
  * internal type for {@link properties}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ObjectConstructor {
-    keys<T>(o: T): ObjectKeys<T>
+    keys<T>(o: T): Extract<keyof T, string>[]
 }
 
 /**
@@ -40,15 +32,22 @@ interface ObjectConstructor {
  * @param representation representation object
  * @returns array of all the field property keys
  */
-export function properties<T extends LinkedRepresentation | Partial<T>, P extends keyof T>(representation: T): P[] {
+export function properties<T extends LinkedRepresentation | Partial<T>,
+    TField extends Omit<Extract<keyof T, string>, "links">>(representation: T): TField[] {
     return Object.keys(representation)
-        .map(x => x as P)
-        .filter(x => x !== 'links');
+        .filter(x => x !== 'links') as unknown as TField[];
 }
 
-export function getProperty<T, K extends keyof T>(o: T, propertyName: K | string): T[K] {
+export function getProperty<T, K extends Extract<keyof T, string>>(o: T, propertyName: K | string): T[K] {
     return o[propertyName as K];
 }
+
+/*
+export function getProperty22<T extends LinkedRepresentation,
+    TField extends Omit<Extract<keyof T, string>, "links">>(o: T, propertyName: TField): T[TField] {
+    return o[propertyName];
+}
+*/
 
 
 type NoUndefinedOrEmptyProperties<T> = {
@@ -58,11 +57,14 @@ type NoUndefinedOrEmptyProperties<T> = {
 /**
  * Remove fields that have empty and undefined values from the object.
  */
-export function compact<T extends LinkedRepresentation>(representation: T): NoUndefinedOrEmptyProperties<T> {
+export function compact<T extends LinkedRepresentation,
+    TField extends Omit<Extract<keyof T, string>, "links">>(representation: T): NoUndefinedOrEmptyProperties<T> {
 
     for (const field of properties(representation)) {
+        // @ts-ignore can't work out index types with Omit
         const prop = RepresentationUtil.getProperty(representation, field);
         if (prop && typeof prop === 'object' && (/*prop === '' ||*/ prop === undefined || prop === null)) {
+            // @ts-ignore really unsure how to get typing here (LinkedRepresentation need index type)
             delete representation[field];
         }
     }
@@ -72,7 +74,8 @@ export function compact<T extends LinkedRepresentation>(representation: T): NoUn
 /**
  * Remove fields that have empty and undefined values from the object.
  */
-export function omit<T extends LinkedRepresentation, P extends keyof T>(representation: T, properties: P[]): Omit<T, P> {
+export function omit<T extends LinkedRepresentation,
+    TField extends Extract<keyof T, string>>(representation: T, properties: TField[]): Omit<T, TField> {
 
     for (const property of properties) {
         delete representation[property];

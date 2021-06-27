@@ -22,6 +22,7 @@ import { State } from './state';
 import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
 import { instanceOfFeed } from '../utils/instanceOf/instanceOfFeed';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
+import { FormRepresentation } from '../interfaces/formRepresentation';
 
 const log = anylogger('TrackedRepresentationFactory');
 
@@ -38,8 +39,8 @@ export default class TrackedRepresentationFactory {
      * @param options
      * @returns a 201 returns a representation whereas the 200 and 202 return undefined
      */
-    public static async create<T extends LinkedRepresentation, TResult extends LinkedRepresentation = T>(
-        resource: T | TrackedRepresentation<T>,
+    public static async create<T extends LinkedRepresentation, TResult extends LinkedRepresentation>(
+        resource: T | TrackedRepresentation<T> | FormRepresentation,
         document: DocumentRepresentation,
         options?: ResourceFactoryOptions &
             ResourceQueryOptions &

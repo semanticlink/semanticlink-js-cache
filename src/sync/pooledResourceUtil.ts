@@ -1,5 +1,5 @@
 import anylogger from 'anylogger';
-import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
+import { CollectionRepresentation, LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import ApiUtil from '../apiUtil';
 import LinkRelation from '../linkRelation';
 import { TrackedRepresentation } from '../types/types';
@@ -38,7 +38,10 @@ function addToResolver<T extends LinkedRepresentation>(document: T, resource: T,
  * @return {Promise} containing the created resource
  * @private
  */
-async function makeAndResolveResource<T extends LinkedRepresentation>(collectionResource: T, resourceDocument: T, options?: PooledCollectionOptions): Promise<T | undefined> {
+async function makeAndResolveResource<T extends LinkedRepresentation>(
+    collectionResource: T,
+    resourceDocument: T,
+    options?: PooledCollectionOptions): Promise<T | undefined> {
     const result = await ApiUtil.create(resourceDocument, {
         ...options,
         on: collectionResource,
@@ -99,13 +102,13 @@ export default class PooledResourceUtil {
                             log.error('Unexpected error: resource \'%s\' is not found on %s', resolvedUri, uri);
                         }
                     } else {
-                        return await makeAndResolveResource(resource, aDocument, options) as T;
+                        return await makeAndResolveResource(resource, aDocument as unknown as CollectionRepresentation<T>, options) as unknown as T;
                     }
                 }
 
             } else {
                 // strategy four: make if we can because we at least might have the attributes
-                return await makeAndResolveResource(resource, aDocument, options) as T;
+                return await makeAndResolveResource(resource, aDocument as unknown as CollectionRepresentation<T>, options) as unknown as T;
             }
         }
 
@@ -121,17 +124,17 @@ export default class PooledResourceUtil {
      *
      * @return {Promise<string>} containing the uri resource {@link LinkedRepresentation}
      */
-    public static async get<T extends LinkedRepresentation>(
-        resource: LinkedRepresentation,
+    public static async get<T extends LinkedRepresentation, TResult extends LinkedRepresentation>(
+        resource: T | TrackedRepresentation<T>,
         collectionName: string,
         collectionRel: RelationshipType,
-        resourceDocument: T,
-        options?: PooledCollectionOptions): Promise<T | undefined> {
+        resourceDocument: TResult,
+        options?: PooledCollectionOptions): Promise<TResult | undefined> {
 
-        const result = await ApiUtil.get(resource as TrackedRepresentation<T>, { ...options, rel: collectionRel });
+        const result = await ApiUtil.get(resource, { ...options, rel: collectionRel });
         if (result) {
             log.debug('Pooled collection \'%s\' on %s', collectionName, LinkUtil.getUri(resource, LinkRelation.Self));
-            return this.sync(result, resourceDocument, options);
+            return await this.sync(result, resourceDocument, options) as TResult;
         }
     }
 }

@@ -21,7 +21,7 @@ const log = anylogger('get');
  * @param resource
  * @param options
  */
-export default async function get<T extends LinkedRepresentation, TResult extends LinkedRepresentation = T>(
+export default async function get<T extends LinkedRepresentation, TResult extends LinkedRepresentation>(
     resource: T,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &
@@ -29,7 +29,7 @@ export default async function get<T extends LinkedRepresentation, TResult extend
         HttpRequestOptions &
         ResourceMergeOptions &
         ResourceFetchOptions &
-        ResourceUpdateOptions): Promise<TResult | T | undefined> {
+        ResourceUpdateOptions): Promise<TResult | undefined> {
 
     const {
         rel = undefined,
@@ -61,5 +61,5 @@ export default async function get<T extends LinkedRepresentation, TResult extend
     }
 
     // otherwise all resources
-    return await TrackedRepresentationFactory.load(resource, options) as T;
+    return await TrackedRepresentationFactory.load(resource, options) as unknown as TResult;
 }

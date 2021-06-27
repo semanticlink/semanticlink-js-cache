@@ -182,7 +182,7 @@ export default class FieldResolverUtil {
             log.bind('rel name strategy did not return name on %s', LinkUtil.getUri(fieldValue as LinkedRepresentation, LinkRelation.Self));
         }
 
-        return fieldValue as T;
+        return fieldValue;
     }
 
     /**

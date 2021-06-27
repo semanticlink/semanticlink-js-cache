@@ -3,7 +3,7 @@ import { FormItem } from '../interfaces/formItem';
 import FieldResolverUtil from '../utils/fieldResolverUtil';
 import { FieldType } from '../types/formTypes';
 import { MergeOptions } from '../interfaces/mergeOptions';
-import { FieldValue } from 'src/interfaces/fieldResolver';
+import { FieldValue } from '../interfaces/fieldResolver';
 
 describe('Form util, resolve', () => {
 
@@ -196,14 +196,13 @@ describe('Form util, resolve', () => {
                 mockResolverRelName(relName);
                 return async resource => {
                     mockResolverResource(resource);
-                    return 'resolved resource';
+                    return null;
                 };
             },
         } as MergeOptions;
-        const actual = await FieldResolverUtil.resolveResource(fieldValue, formItem, options);
+        await FieldResolverUtil.resolveResource(fieldValue, formItem, options);
         expect(mockResolverRelName).toHaveBeenCalledWith(relName);
         expect(mockResolverResource).toHaveBeenCalledWith(fieldValue);
-        assertThat(actual).is('resolved resource');
     });
 
 });

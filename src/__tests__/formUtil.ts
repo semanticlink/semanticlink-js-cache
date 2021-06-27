@@ -18,7 +18,7 @@ describe('Form util', () => {
         ['distinct - two items and default', [{ name: 'a' }, { name: 'a' }], ['a'], ['a']],
     ])('fields to accept, %s', (title: string, items: FormItem[], defaults: string[], expected: string[]) => {
         const form = { items: items } as FormRepresentation;
-        const fields = FormUtil.fieldsToAccept(form, defaults);
+        const fields = FormUtil.fieldsToAccept(form, defaults) as string[];
         assertThat(fields).is(expected);
 
     });
@@ -44,9 +44,17 @@ describe('Form util', () => {
         ['new, one item', {}, { a: 'new' }, [{ name: 'a' }], [], ['a']],
         ['same, one item', { links: [], a: 'existing' }, { a: 'existing' }, [{ name: 'a' }], [], []],
         ['updated, one item', { links: [], a: 'existing' }, { a: 'updated' }, [{ name: 'a' }], [], ['a']],
-    ])('fields requiring update, %s', (title: string, resource: Partial<LinkedRepresentation>, document: DocumentRepresentation, items: FormItem[], defaults: string[], expected: string[]) => {
+    ])('fields requiring update, %s', (
+        title: string,
+        resource: Partial<LinkedRepresentation>,
+        document: DocumentRepresentation,
+        items: FormItem[],
+        defaults: string[],
+        expected: string[]) => {
         const form = { items: items } as FormRepresentation;
+        // @ts-ignore sorry, can't quite line up typings
         const fields = FormUtil.fieldsRequiringUpdate(resource, document, form, defaults);
+        // @ts-ignore sorry, can't quite line up typings
         assertThat(fields).is(expected);
     });
 

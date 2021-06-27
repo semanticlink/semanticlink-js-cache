@@ -34,14 +34,15 @@ export class FormUtil {
      * }
      * </pre>
      */
-    public static fieldsToAccept<T, P extends keyof T = keyof T>(
-        form: FormRepresentation,
-        defaultFields: (P | string)[] = []): P[] {
+    public static fieldsToAccept<T extends LinkedRepresentation | Partial<T> = LinkedRepresentation,
+        TForm extends FormRepresentation = FormRepresentation,
+        TField extends Omit<Extract<keyof T, string>, "links"> = Omit<Extract<keyof T, string>, "links">>(form: TForm, defaultFields: TField[]): TField[]
+    public static fieldsToAccept<TForm extends FormRepresentation>(form: TForm, defaultFields: string[] = []): string[] {
 
         const fieldsFromForm = (form.items || []).map(x => x.name);
         const allFields = defaultFields?.concat(fieldsFromForm);
         const distinctFields = new Set<string>(allFields as Iterable<string>);
-        return Array.from(distinctFields) as P[];
+        return Array.from(distinctFields);
     }
 
     /**
@@ -53,21 +54,21 @@ export class FormUtil {
      */
     public static fieldsToResolve<T extends LinkedRepresentation | Partial<T>,
         TForm extends FormRepresentation,
-        P extends keyof T = keyof T>(
+        TField extends Extract<keyof T, string> = Extract<keyof T, string>>(
         document: T,
         form: TForm,
-        defaultFields: (P | string)[] = []): P[] {
+        defaultFields: TField[] = []): Omit<Extract<keyof T, string>, "links">[] {
 
         // preparation: get all the fields to return back to the API
-        const fieldsToReturn = FormUtil.fieldsToAccept<T>(form, defaultFields);
+        const fieldsToReturn = FormUtil.fieldsToAccept(form, defaultFields);
 
         // pick all the fields as specified from the form
         const fields = RepresentationUtil.fields(document);
 
         // resolve
         return (fieldsToReturn ?
-            fields.filter(fieldName => fieldsToReturn.includes(fieldName)) :
-            fields) as P[];
+            fields.filter(fieldName => fieldsToReturn.includes(fieldName as TField)) :
+            fields);
 
     }
 
@@ -82,10 +83,10 @@ export class FormUtil {
      */
     public static linksToResolve<T extends LinkedRepresentation | Partial<T>,
         TForm extends FormRepresentation,
-        P extends keyof T = keyof T>(
+        TField extends Extract<keyof T, string> = Extract<keyof T, string>>(
         document: T,
         form: TForm,
-        defaultFields: (P | string)[] = []): P[] {
+        defaultFields: TField[] = []): TField[] {
 
         // preparation: get all the fields to return back to the API
         // pick only link rels that exist in the form
@@ -95,9 +96,9 @@ export class FormUtil {
         //     relsToReturn.filter(fieldName => LinkUtil.matches(document as LinkedRepresentation, fieldName)) :
         //     []) as P[];
 
-        return FormUtil.fieldsToAccept<T>(form, defaultFields)
-            .map(field => LinkRelConvertUtil.camelToDash(field as string))
-            .filter(fieldName => LinkUtil.matches(document as LinkedRepresentation, fieldName)) as P[];
+        return FormUtil.fieldsToAccept(form, defaultFields)
+            .flatMap(field => LinkRelConvertUtil.camelToDash(field) as TField)
+            .filter(fieldName => LinkUtil.matches(document as LinkedRepresentation, fieldName));
     }
 
     /**
@@ -126,21 +127,21 @@ export class FormUtil {
      */
     public static fieldsRequiringUpdate<T extends LinkedRepresentation | Partial<T>,
         TForm extends FormRepresentation,
-        P extends keyof T = keyof T>(
+        TField extends Extract<keyof T, string> = Extract<keyof T, string>>(
         resource: T,
         document: T | DocumentRepresentation<T>,
         form: TForm,
-        defaultFields: (P | string)[] = []): P[] {
+        defaultFields: TField[] = []): TField[] {
 
-        const fieldsToCheck = FormUtil.fieldsToAccept<T>(form, defaultFields);
+        const fieldsToCheck = FormUtil.fieldsToAccept(form, defaultFields);
 
         // only return fields that are different
         return fieldsToCheck
             .filter(field => {
                 // omit any fields that match
                 // WARNING: This might have problems if the field is a 'multiple'    <<<<<<<<<<<<<<<< ---- please review
-                return !(RepresentationUtil.getProperty(resource, field) === RepresentationUtil.getProperty(document as Extract<T, T>, field));
-            }) as P[];
+                return !(RepresentationUtil.getProperty(resource, field) === RepresentationUtil.getProperty(document, field));
+            });
     }
 
     /**
@@ -149,18 +150,19 @@ export class FormUtil {
      * @param form
      * @param options
      */
-    public static fieldsToReturnFromForm<T extends LinkedRepresentation | Partial<T>>(
+    public static fieldsToReturnFromForm<T extends LinkedRepresentation | Partial<T>,
+        TField extends Extract<keyof T, string>>(
         document: T,
         form: FormRepresentation,
         options?: MergeOptions): DocumentRepresentation {
 
-
-        const { defaultFields } = { ...options };
-        const fieldsToResolve = FormUtil.fieldsToResolve(document, form, defaultFields);
+        const { defaultFields = [] } = { ...options };
+        const fieldsToResolve = FormUtil.fieldsToResolve(document, form, defaultFields as TField[]);
 
         const doc = {} as DocumentRepresentation;
         for (const field of fieldsToResolve) {
-            doc[field as string] = RepresentationUtil.getProperty(document, field);
+            // really not sure how to avoid indexer errors
+            doc[field as unknown as string] = RepresentationUtil.getProperty(document, field as TField);
         }
         return doc;
     }
