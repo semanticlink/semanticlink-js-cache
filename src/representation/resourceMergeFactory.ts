@@ -52,10 +52,12 @@ export default class ResourceMergeFactory {
      * @param form required to specify the merge fields
      * @param options
      */
-    public static async editMerge<T extends TrackedRepresentation<LinkedRepresentation> | LinkedRepresentation>(
+    public static async editMerge<T extends TrackedRepresentation | LinkedRepresentation,
+        TForm extends FormRepresentation,
+        TField extends Extract<keyof T, string>>(
         resource: T,
         document: T | DocumentRepresentation<T>,
-        form: FormRepresentation,
+        form: TForm,
         options?: MergeOptions): Promise<T | undefined> {
 
         const {
@@ -68,7 +70,7 @@ export default class ResourceMergeFactory {
         // return undefined if the flag is on and there are no updates
         if (undefinedWhenNoUpdateRequired) {
             // now check if the two resources are actually different based on matching only fields that need to be returned
-            const fieldsToUpdate = FormUtil.fieldsRequiringUpdate(resource, newDocument, form, defaultFields);
+            const fieldsToUpdate = FormUtil.fieldsRequiringUpdate<T, TForm>(resource, newDocument, form, defaultFields as TField[]);
 
             if (fieldsToUpdate?.length > 0) {
                 log.info(

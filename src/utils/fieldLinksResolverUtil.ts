@@ -19,9 +19,11 @@ export class FieldLinksResolverUtil {
      *
      * Note: while this treats a link rel as a uri-list, it doesn't current support multiple resolutions
      */
-    public static async resolveLinks<T extends LinkedRepresentation | Partial<T>>(
+    public static async resolveLinks<T extends LinkedRepresentation | Partial<T>,
+        TForm extends FormRepresentation,
+        TField extends Extract<keyof T, string>>(
         resource: T,
-        form: FormRepresentation,
+        form: TForm,
         options?: MergeOptions): Promise<T | undefined> {
 
         if (!resource) {
@@ -30,7 +32,7 @@ export class FieldLinksResolverUtil {
         }
 
         const { defaultFields } = { ...options };
-        const linksToResolve = FormUtil.linksToResolve(resource, form, defaultFields);
+        const linksToResolve = FormUtil.linksToResolve<T, TForm>(resource, form, defaultFields as TField[]);
 
         const { resourceResolver } = { ...options };
         for (const rel of linksToResolve) {

@@ -36,6 +36,7 @@ enum FieldValueType {
      */
     group
 }
+
 /**
  * Mapping strategy between the across-the-wire field types and internal types
  *
@@ -77,26 +78,33 @@ export default class FieldResolverUtil {
      *
      * Note: field names are converted to tracked names
      */
-    public static async resolveFields(document: DocumentRepresentation, form: FormRepresentation, options?: MergeOptions): Promise<DocumentRepresentation> {
+    public static async resolveFields<T extends DocumentRepresentation,
+        TForm extends FormRepresentation,
+        TField extends Extract<keyof T, string>>(
+        document: DocumentRepresentation,
+        form: FormRepresentation,
+        options?: MergeOptions): Promise<DocumentRepresentation> {
 
         const { defaultFields } = { ...options };
 
         // pick all the fields as specified from the form
-        const fieldsToResolve = FormUtil.fieldsToResolve(document, form, defaultFields);
+        const fieldsToResolve = FormUtil.fieldsToResolve(document, form, defaultFields as TField[]);
 
         for (const field of fieldsToResolve) {
             // find out whether there is a matching field in the form to the link relation
-            const formItem = FormUtil.findByField(form, field);
+            const formItem = FormUtil.findByField(form, field as string);
             if (formItem) {
-                const fieldValue = await this.resolve(document[field] as FieldValue, formItem, options);
+                const fieldValue = await this.resolve(document[field as string] as FieldValue, formItem, options);
                 if (fieldValue) {
                     const { fieldResolver } = { ...options };
                     log.debug('resolving field %s', field);
+                    // @ts-ignore TS2538: Type 'Omit ' cannot be used as an index type.
                     (document)[field] = fieldResolver ?
-                        fieldResolver(field, fieldValue, options) :
+                        fieldResolver(field as string, fieldValue, options) :
                         fieldValue;
                 } else {
                     // an undefined result adds 'undefined' to field rather than remove
+                    // @ts-ignore TS2538: Type 'Omit ' cannot be used as an index type.
                     document[field] = fieldValue;
                     log.warn('Field \'%s\' is not resolved', field);
                 }
