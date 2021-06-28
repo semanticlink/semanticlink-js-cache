@@ -82,7 +82,7 @@ export default class FieldResolverUtil {
         TForm extends FormRepresentation,
         TField extends Extract<keyof T, string>>(
         document: DocumentRepresentation,
-        form: FormRepresentation,
+        form: TForm,
         options?: MergeOptions): Promise<DocumentRepresentation> {
 
         const { defaultFields } = { ...options };
@@ -98,12 +98,14 @@ export default class FieldResolverUtil {
                 if (fieldValue) {
                     const { fieldResolver } = { ...options };
                     log.debug('resolving field %s', field);
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore TS2538: Type 'Omit ' cannot be used as an index type.
                     (document)[field] = fieldResolver ?
                         fieldResolver(field as string, fieldValue, options) :
                         fieldValue;
                 } else {
                     // an undefined result adds 'undefined' to field rather than remove
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore TS2538: Type 'Omit ' cannot be used as an index type.
                     document[field] = fieldValue;
                     log.warn('Field \'%s\' is not resolved', field);

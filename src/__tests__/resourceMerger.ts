@@ -81,6 +81,7 @@ describe('Resource Merger', () => {
         it('object', async () => {
             const actual = await ResourceMergeFactory.editMerge(resource, document, form, options);
             assertThat(actual).is({
+                // eslint-disable-next-line
                 // @ts-ignore
                 name: match.ofType.string,
                 order: 3,
@@ -151,6 +152,7 @@ describe('Resource Merger', () => {
 
         it('merge', async () => {
             const merged = await ResourceMergeFactory.editMerge(resource, document, form);
+            // eslint-disable-next-line
             // @ts-ignore
             assertThat(merged).is({ name: match.ofType.string() });
         });
@@ -221,6 +223,7 @@ describe('Resource Merger', () => {
                 expect(called).toHaveBeenCalled();
                 assertThat(result).is({
                     name: 'Simplest SurveyXX',
+                    // eslint-disable-next-line
                     // @ts-ignore
                     role: 'http://example.com/role/2XX',
                 });
@@ -251,6 +254,7 @@ describe('Resource Merger', () => {
                 ['merge, undefinedWhenNoUpdateRequired, false', { undefinedWhenNoUpdateRequired: false }, document],
             ])('%s', async (title: string, options: MergeOptions, expected: DocumentRepresentation | undefined) => {
                 const actual = await ResourceMergeFactory.editMerge(resource, document, form, options);
+                // eslint-disable-next-line
                 // @ts-ignore
                 assertThat(actual).is(expected);
             });
@@ -335,6 +339,7 @@ describe('Resource Merger', () => {
                 // set to false so that resource is returned
                 const options = { undefinedWhenNoUpdateRequired: false };
                 const actual = await ResourceMergeFactory.editMerge(resource as unknown as LinkedRepresentation, resource, form, options);
+                // eslint-disable-next-line
                 // @ts-ignore
                 assertThat(actual).is(resource);
             });

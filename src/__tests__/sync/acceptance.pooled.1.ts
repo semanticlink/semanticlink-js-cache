@@ -13,7 +13,7 @@ import { AxiosResponse } from 'axios';
 import { TrackedRepresentation } from '../../types/types';
 import SparseRepresentationFactory from '../../representation/sparseRepresentationFactory';
 import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
-import StepRepresentation from '../domain/interfaces/stepRepresentation';
+import { StepRepresentation } from '../domain/interfaces/stepRepresentation';
 import LinkRelation from '../../linkRelation';
 import Step from '../domain/step';
 import { uriMappingResolver } from '../../sync/uriMappingResolver';

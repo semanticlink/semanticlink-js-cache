@@ -233,7 +233,7 @@ export async function syncResource<T extends LinkedRepresentation>(
                 return await SyncUtil.syncInfos(strategies, options)(syncInfo) as T;
             }
         } else {
-            log.error('result is not a collection')
+            log.error('result is not a collection');
         }
         return result as T;
     } else if (rel && !relOnDocument && instanceOfDocumentCollection(document)) {

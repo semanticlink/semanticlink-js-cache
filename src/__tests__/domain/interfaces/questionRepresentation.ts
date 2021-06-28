@@ -4,7 +4,7 @@ import QuestionType from './questionType';
 import ChoiceCollection from './choiceCollection';
 
 
-export default interface QuestionRepresentation extends LinkedRepresentation {
+export interface QuestionRepresentation extends LinkedRepresentation {
     name: string;
     description: string;
     instructions: string;

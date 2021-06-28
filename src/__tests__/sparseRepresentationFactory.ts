@@ -48,11 +48,13 @@ describe('Sparse Representation Factory', () => {
                     const resource = SparseRepresentationFactory.make(options);
 
                     it('should be defined as linkedRepresentation', () => {
+                        // eslint-disable-next-line
                         // @ts-ignore
                         assertThat(resource).is(linkedRepresentation);
                     });
 
                     it('should be of type', () => {
+                        // eslint-disable-next-line
                         // @ts-ignore
                         assertThat(resource).is(type);
                     });
@@ -87,6 +89,7 @@ describe('Sparse Representation Factory', () => {
                     const resource = SparseRepresentationFactory.make<CollectionRepresentation>(options);
 
                     it('should be of type', () => {
+                        // eslint-disable-next-line
                         // @ts-ignore
                         assertThat(resource).is(collectionRepresentation);
                     });
@@ -101,6 +104,7 @@ describe('Sparse Representation Factory', () => {
 
                     it('any items are singletons', () => {
                         for (const item of resource.items) {
+                            // eslint-disable-next-line
                             // @ts-ignore
                             assertThat(item).is(singletonRepresentation);
                         }

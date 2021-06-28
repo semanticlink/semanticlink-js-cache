@@ -5,7 +5,6 @@ import SparseRepresentationFactory from '../../representation/sparseRepresentati
 import { TrackedRepresentation } from '../../types/types';
 import LinkRelation from '../../linkRelation';
 import { assertThat } from 'mismatched';
-import get from '../../representation/get';
 import ApiUtil from '../../apiUtil';
 
 /**
@@ -13,7 +12,7 @@ import ApiUtil from '../../apiUtil';
  */
 const makeFromFixture = <T extends LinkedRepresentation>(document: T): TrackedRepresentation<T> =>
     // note: clone the document for multiple uses
-    SparseRepresentationFactory.make({ on: { ...document }});
+    SparseRepresentationFactory.make({ on: { ...document } });
 
 describe('get', () => {
 

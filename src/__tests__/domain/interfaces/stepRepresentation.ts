@@ -3,7 +3,7 @@ import StepType from './stepType';
 import StepCollection from './stepCollection';
 import { FormRepresentation } from '../../../interfaces/formRepresentation';
 
-export default interface StepRepresentation extends LinkedRepresentation {
+export interface StepRepresentation extends LinkedRepresentation {
     name: string;
     description: string | Uri;
     order: number;

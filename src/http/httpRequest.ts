@@ -37,7 +37,7 @@ export default class HttpRequest {
             putFactory = this.options.putFactory,
         } = { ...options };
 
-        return await putFactory(resource, rel, document, options)
+        return await putFactory(resource, rel, document, options);
     }
 
     public async create<T extends LinkedRepresentation>(

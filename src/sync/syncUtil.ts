@@ -11,7 +11,7 @@ import {
     CreateStrategy,
     DeleteStrategy,
     SyncResolverOptions,
-    UpdateStrategy
+    UpdateStrategy,
 } from '../interfaces/sync/syncResolverOptions';
 import { TrackedRepresentation } from '../types/types';
 import LinkRelation from '../linkRelation';
@@ -202,7 +202,7 @@ export default class SyncUtil {
         return async () => await Promise.all(strategies.map(async (strategy) => strategy({
             resource,
             document,
-            options
+            options,
         })));
     }
 

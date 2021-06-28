@@ -31,13 +31,13 @@ const log = anylogger('create');
  *
  * TODO: accept but don't require TrackedRepresentation interface
  */
-export default async function create<T extends LinkedRepresentation, U extends LinkedRepresentation = T>(
+export default async function create<T extends LinkedRepresentation, TResult extends LinkedRepresentation = T>(
     document: DocumentRepresentation<T> | TrackedRepresentation<T> | LinkType,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &
         ResourceLinkOptions &
         HttpRequestOptions &
-        ResourceFetchOptions): Promise<T | undefined> {
+        ResourceFetchOptions): Promise<TResult | undefined> {
 
     if (!document) {
         log.debug('No document provided to create');
@@ -52,8 +52,8 @@ export default async function create<T extends LinkedRepresentation, U extends L
 
     if (on) {
         if (instanceOfCollection(on)) {
-            let newVar = await createCollectionItem(on, document as DocumentRepresentation, options);
-            return newVar as T;
+            const newVar = await createCollectionItem(on, document as DocumentRepresentation, options);
+            return newVar as TResult;
         } else {
             log.warn('option \'on\' options cannot be used outside of a collection, skipping');
             // fall through and keep processing
@@ -65,7 +65,7 @@ export default async function create<T extends LinkedRepresentation, U extends L
         if (!uri) {
             log.warn('no uri found on rel \'%s\' on resource create', rel);
         }
-        return SparseRepresentationFactory.make({ uri }) as T;
+        return SparseRepresentationFactory.make({ uri }) as TResult;
     }
 
 
@@ -86,7 +86,7 @@ async function createCollectionItem<T extends LinkedRepresentation>(
         formRel = [LinkRelation.CreateForm, LinkRelation.SearchForm] as RelationshipType,
     } = { ...options };
 
-    const form = await ApiUtil.get(resource, { ...options, rel: formRel, });
+    const form = await ApiUtil.get(resource, { ...options, rel: formRel });
 
     if (instanceOfForm(form)) {
         try {

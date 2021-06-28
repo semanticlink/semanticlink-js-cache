@@ -1,5 +1,5 @@
 import { FormType } from '../types/formTypes';
-import { Link, Uri } from 'semantic-link';
+import { Uri } from 'semantic-link';
 
 export interface FormItem {
     /**

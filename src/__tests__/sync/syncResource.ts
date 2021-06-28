@@ -363,7 +363,7 @@ describe('Synchroniser', () => {
                 // put.mockResolvedValueOnce({ status: 200 });
                 const result = await syncResource(makeHydratedResource(parent), noChangeDocument, [], {
                     ...options,
-                    rel: 'todos'
+                    rel: 'todos',
                 });
 
                 expect(result).toBeDefined();
@@ -399,7 +399,7 @@ describe('Synchroniser', () => {
 
                 const result = await syncResource(makeHydratedResource(parent), changedDocument, [], {
                     ...options,
-                    rel: 'todos'
+                    rel: 'todos',
                 });
 
                 expect(result).toBeDefined();
@@ -421,7 +421,7 @@ describe('Synchroniser', () => {
 
                 const result = await syncResource(makeHydratedResource(parent), newDocument, [], {
                     ...options,
-                    rel: 'todos'
+                    rel: 'todos',
                 });
 
                 expect(result).toBeDefined();
@@ -445,7 +445,7 @@ describe('Synchroniser', () => {
 
                 const result = await syncResource(makeHydratedResource(parent), noChangeCollection, [], {
                     ...options,
-                    rel: 'todos'
+                    rel: 'todos',
                 });
 
                 expect(result).toBeDefined();
@@ -476,7 +476,7 @@ describe('Synchroniser', () => {
 
                 const result = await syncResource(makeHydratedResource(parent), oneItemChangedInCollection, [], {
                     ...options,
-                    rel: 'todos'
+                    rel: 'todos',
                 });
 
                 expect(result).toBeDefined();
@@ -500,7 +500,7 @@ describe('Synchroniser', () => {
 
                 const result = await syncResource(makeHydratedResource(parent), oneItemAddedInCollection, [], {
                     ...options,
-                    rel: 'todos'
+                    rel: 'todos',
                 });
 
                 expect(result).toBeDefined();
@@ -523,7 +523,7 @@ describe('Synchroniser', () => {
 
                 const result = await syncResource(makeHydratedResource(parent), oneItemRemovedInCollection, [], {
                     ...options,
-                    rel: 'todos'
+                    rel: 'todos',
                 });
 
                 expect(result).toBeDefined();

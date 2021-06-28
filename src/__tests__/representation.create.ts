@@ -50,13 +50,13 @@ describe('resource, create', () => {
         // return a create form targeting the version value
         const getMock = jest.spyOn(ApiUtil, 'get');
         getMock.mockResolvedValue({
-            links: [{ rel: LinkRelation.Self, href: "create-form" }],
-            items: [{ type: 'text', name: 'version' }]
+            links: [{ rel: LinkRelation.Self, href: 'create-form' }],
+            items: [{ type: 'text', name: 'version' }],
         } as FormRepresentation);
 
         trackedRepresentationFactory.create.mockResolvedValue({ links: [], version: '1' } as SingletonRepresentation);
 
-        await create(SparseRepresentationFactory.make({ uri, }), options);
+        await create(SparseRepresentationFactory.make({ uri }), options);
 
         expect(factory).toBeCalledTimes(calledTimes);
 

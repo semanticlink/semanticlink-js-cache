@@ -21,7 +21,6 @@ import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { State } from './state';
 import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
 import { instanceOfFeed } from '../utils/instanceOf/instanceOfFeed';
-import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 
 const log = anylogger('TrackedRepresentationFactory');
@@ -78,7 +77,7 @@ export default class TrackedRepresentationFactory {
                     }
 
                     // TODO: decide on pluggable hydration strategy
-                    let newVar = await this.load(SparseRepresentationFactory.make({ uri }), options);
+                    const newVar = await this.load(SparseRepresentationFactory.make({ uri }), options);
                     return newVar;
                 } else {
                     // other response codes (200, 202) should be dealt with separately

@@ -33,7 +33,7 @@ interface ObjectConstructor {
  * @returns array of all the field property keys
  */
 export function properties<T extends LinkedRepresentation | Partial<T>,
-    TField extends Omit<Extract<keyof T, string>, "links">>(representation: T): TField[] {
+    TField extends Omit<Extract<keyof T, string>, 'links'>>(representation: T): TField[] {
     return Object.keys(representation)
         .filter(x => x !== 'links') as unknown as TField[];
 }
@@ -57,13 +57,14 @@ type NoUndefinedOrEmptyProperties<T> = {
 /**
  * Remove fields that have empty and undefined values from the object.
  */
-export function compact<T extends LinkedRepresentation,
-    TField extends Omit<Extract<keyof T, string>, "links">>(representation: T): NoUndefinedOrEmptyProperties<T> {
+export function compact<T extends LinkedRepresentation>(representation: T): NoUndefinedOrEmptyProperties<T> {
 
     for (const field of properties(representation)) {
+        // eslint-disable-next-line
         // @ts-ignore can't work out index types with Omit
         const prop = RepresentationUtil.getProperty(representation, field);
         if (prop && typeof prop === 'object' && (/*prop === '' ||*/ prop === undefined || prop === null)) {
+            // eslint-disable-next-line
             // @ts-ignore really unsure how to get typing here (LinkedRepresentation need index type)
             delete representation[field];
         }

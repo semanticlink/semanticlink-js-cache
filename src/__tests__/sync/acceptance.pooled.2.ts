@@ -25,9 +25,8 @@ import { sync } from '../../sync';
 import CustomLinkRelation from '../domain/customLinkRelation';
 import { HttpRequestFactory } from '../../http/httpRequestFactory';
 import { assertThat } from 'mismatched';
-import StepRepresentation from '../domain/interfaces/stepRepresentation';
+import { StepRepresentation } from '../domain/interfaces/stepRepresentation';
 import { PooledCollectionOptions } from '../../interfaces/pooledCollectionOptions';
-import { collectionIsEmpty } from '../helpers/representationMatcher';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
 
 const log = anylogger('Steps Test');
@@ -36,7 +35,7 @@ const log = anylogger('Steps Test');
  * Helper to create a {@link LinkedRepresentation} with {@link State}
  */
 const makeHydratedResource = <T extends LinkedRepresentation>(document: T): T | TrackedRepresentation<T> =>
-    SparseRepresentationFactory.make({ on: document  });
+    SparseRepresentationFactory.make({ on: document });
 
 describe('Steps with pooled (new) resources', () => {
     let options: ResourceQueryOptions;

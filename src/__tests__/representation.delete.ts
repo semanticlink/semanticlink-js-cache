@@ -67,7 +67,7 @@ describe('resource, delete', () => {
         // Implementation always returns non-undefined result to trigger loading an item
         findInCollectionMock.mockImplementation(() => ({ links: [] }));
 
-        let resource = SparseRepresentationFactory.make(options);
+        const resource = SparseRepresentationFactory.make(options);
         trackedRepresentationFactory.load.mockResolvedValue(resource);
 
         await del(resource, options);

@@ -36,7 +36,7 @@ export class FormUtil {
      */
     public static fieldsToAccept<T extends LinkedRepresentation | Partial<T> = LinkedRepresentation,
         TForm extends FormRepresentation = FormRepresentation,
-        TField extends Omit<Extract<keyof T, string>, "links"> = Omit<Extract<keyof T, string>, "links">>(form: TForm, defaultFields: TField[]): TField[]
+        TField extends Omit<Extract<keyof T, string>, 'links'> = Omit<Extract<keyof T, string>, 'links'>>(form: TForm, defaultFields: TField[]): TField[]
     public static fieldsToAccept<TForm extends FormRepresentation>(form: TForm, defaultFields: string[] = []): string[] {
 
         const fieldsFromForm = (form.items || []).map(x => x.name);
@@ -57,7 +57,7 @@ export class FormUtil {
         TField extends Extract<keyof T, string> = Extract<keyof T, string>>(
         document: T,
         form: TForm,
-        defaultFields: TField[] = []): Omit<Extract<keyof T, string>, "links">[] {
+        defaultFields: TField[] = []): Omit<Extract<keyof T, string>, 'links'>[] {
 
         // preparation: get all the fields to return back to the API
         const fieldsToReturn = FormUtil.fieldsToAccept(form, defaultFields);

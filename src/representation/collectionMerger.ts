@@ -39,10 +39,12 @@ export default class CollectionMerger {
             // rvalue is NOT empty
             // find all the indexes that match and sort highest to lowest
             // if not sorted, the index position changes relative to what was taken out
+            /*
             const excludes = rvalue
                 .items
                 .map((item) => lvalue.items.findIndex(r => canonicalOrSelf(item, r)))
                 .filter(x => x >= 0);
+            */
 
             const indexes: number[] = items
                 .map((item, index) => {
