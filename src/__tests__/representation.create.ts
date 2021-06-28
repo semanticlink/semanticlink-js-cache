@@ -1,17 +1,17 @@
-import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
-import TrackedRepresentationFactory from '../representation/trackedRepresentationFactory';
-import RepresentationUtil from '../utils/representationUtil';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
+import { TrackedRepresentationFactory } from '../representation/trackedRepresentationFactory';
+import { RepresentationUtil } from '../utils/representationUtil';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
-import create from '../representation/create';
+import { create } from '../representation/create';
 import { Status } from '../representation/status';
 import { DocumentRepresentation } from '../interfaces/document';
 import { CollectionRepresentation, LinkType } from 'semantic-link';
-import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
+import { TrackedRepresentationUtil } from '../utils/trackedRepresentationUtil';
 import { assertThat } from 'mismatched';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { SingletonRepresentation } from '../types/types';
-import ApiUtil from '../apiUtil';
+import { ApiUtil } from '../apiUtil';
 import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
 
 jest.mock('../representation/trackedRepresentationFactory');

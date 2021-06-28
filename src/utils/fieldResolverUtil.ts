@@ -3,7 +3,7 @@ import { DocumentRepresentation } from '../interfaces/document';
 import { FormItem } from '../interfaces/formItem';
 import { MergeOptions } from '../interfaces/mergeOptions';
 import { FieldType } from '../types/formTypes';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import anylogger from 'anylogger';
 import { FormUtil } from './formUtil';
 import { FormRepresentation } from '../interfaces/formRepresentation';
@@ -69,7 +69,7 @@ function formType(formItem: FormItem): FieldValueType {
     }
 }
 
-export default class FieldResolverUtil {
+export class FieldResolverUtil {
 
 
     /**

@@ -1,10 +1,10 @@
-import SparseRepresentationFactory from '../../representation/sparseRepresentationFactory';
+import { SparseRepresentationFactory } from '../../representation/sparseRepresentationFactory';
 import { Status } from '../../representation/status';
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import { TrackedRepresentation } from '../../types/types';
 import { assertThat } from 'mismatched';
 import { HttpRequestOptions } from '../../interfaces/httpRequestOptions';
-import LinkRelation from '../../linkRelation';
+import { LinkRelation } from '../../linkRelation';
 import { AxiosResponse } from 'axios';
 import { syncResource } from '../../sync';
 

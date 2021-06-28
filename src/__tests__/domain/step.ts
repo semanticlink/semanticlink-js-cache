@@ -1,9 +1,9 @@
 import { StepCollection } from './interfaces/stepCollection';
-import CustomLinkRelation from './customLinkRelation';
+import { CustomLinkRelation } from './customLinkRelation';
 import anylogger from 'anylogger';
-import ApiUtil from '../../apiUtil';
+import { ApiUtil } from '../../apiUtil';
 import { ResourceQueryOptions } from '../../interfaces/resourceQueryOptions';
-import StepType from './interfaces/stepType';
+import { StepType } from './interfaces/stepType';
 import { StepRepresentation } from './interfaces/stepRepresentation';
 import { TrackedRepresentation } from '../../types/types';
 import { QuestionRepresentation } from './interfaces/questionRepresentation';
@@ -11,7 +11,7 @@ import { ChoiceCollection } from './interfaces/choiceCollection';
 
 const log = anylogger('Step');
 
-export default class Step {
+export class Step {
 
     /**
      * Return steps collection with items hydrated

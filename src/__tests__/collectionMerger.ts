@@ -1,6 +1,6 @@
 import { CollectionRepresentation, Uri } from 'semantic-link';
-import CollectionMerger from '../representation/collectionMerger';
-import TrackedRepresentationFactory from '../representation/sparseRepresentationFactory';
+import { CollectionMerger } from '../representation/collectionMerger';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
 
 /**
  * Increasing counter to create new & unique resource names
@@ -16,7 +16,7 @@ const uniqueUri = (id: string | number | undefined = undefined): Uri => `http://
 const makeItems = (items: number[]) => items.map(x => uniqueUri(x));
 
 function makeCollection(items: number[]) {
-    return TrackedRepresentationFactory.make({
+    return SparseRepresentationFactory.make({
         uri: uniqueUri(10),
         sparseType: 'collection',
         defaultItems: makeItems(items),

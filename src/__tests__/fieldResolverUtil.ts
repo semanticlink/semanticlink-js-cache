@@ -1,6 +1,6 @@
 import { assertThat } from 'mismatched';
 import { FormItem } from '../interfaces/formItem';
-import FieldResolverUtil from '../utils/fieldResolverUtil';
+import { FieldResolverUtil } from '../utils/fieldResolverUtil';
 import { FieldType } from '../types/formTypes';
 import { MergeOptions } from '../interfaces/mergeOptions';
 import { FieldValue } from '../interfaces/fieldResolver';

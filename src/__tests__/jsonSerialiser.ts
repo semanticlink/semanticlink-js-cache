@@ -1,11 +1,11 @@
-import JsonSerialiser from '../utils/jsonSerialiser';
+import { JsonSerialiser } from '../utils/jsonSerialiser';
 import { assertThat, match } from 'mismatched';
-import TrackedRepresentationFactory from '../representation/sparseRepresentationFactory';
-import LinkRelation from '../linkRelation';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
+import { LinkRelation } from '../linkRelation';
 
 describe('Resource', () => {
     it('should be defined', () => {
-        const resource = TrackedRepresentationFactory.make({ uri: 'https://example.com/1' });
+        const resource = SparseRepresentationFactory.make({ uri: 'https://example.com/1' });
 
         assertThat(JSON.parse(JsonSerialiser.toJson(resource)))
             .is({

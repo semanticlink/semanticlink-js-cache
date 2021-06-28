@@ -1,4 +1,4 @@
-export default class LinkRelation {
+export class LinkRelation {
     static readonly Self = 'self';
     static readonly Canonical = 'canonical';
     static readonly Up = 'up';

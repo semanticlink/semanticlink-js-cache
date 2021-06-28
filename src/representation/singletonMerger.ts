@@ -18,7 +18,7 @@ export const options = createInstance();
 /**
  * A helper class for manipulating items in a {@link SingletonRepresentation}.
  */
-export default class SingletonMerger {
+export class SingletonMerger {
 
     /**
      * Copy the values of all of the enumerable own properties from one or more source objects to a target object.

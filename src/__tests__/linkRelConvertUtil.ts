@@ -1,4 +1,4 @@
-import LinkRelConvertUtil from '../utils/linkRelConvertUtil';
+import { LinkRelConvertUtil } from '../utils/linkRelConvertUtil';
 
 const { camelToDash, dashToCamel, filterCamelToDash, relTypeToCamel } = LinkRelConvertUtil;
 

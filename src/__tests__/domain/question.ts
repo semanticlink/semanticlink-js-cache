@@ -1,8 +1,8 @@
 import { CollectionRepresentation, LinkedRepresentation, LinkUtil } from 'semantic-link';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
-import LinkRelation from '../../linkRelation';
-import CustomLinkRelation from './customLinkRelation';
-import Differencer from '../../sync/differencer';
+import { LinkRelation } from '../../linkRelation';
+import { CustomLinkRelation } from './customLinkRelation';
+import { Differencer } from '../../sync/differencer';
 import { sync } from '../../sync';
 import anylogger from 'anylogger';
 import { emptyName } from '../../utils/comparators/emptyName';

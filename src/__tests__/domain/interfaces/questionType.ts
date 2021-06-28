@@ -11,5 +11,3 @@ export enum QuestionType {
     declaration = '//enum/question/declaration',
     accept = '//enum/question/accept',
 }
-
-export default QuestionType;

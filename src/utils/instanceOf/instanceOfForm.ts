@@ -1,7 +1,7 @@
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import { FormRepresentation } from '../../interfaces/formRepresentation';
 import { FormItem } from '../../interfaces/formItem';
-import LinkRelation from '../../linkRelation';
+import { LinkRelation } from '../../linkRelation';
 
 /**
  * A guard to detect whether the object is a form {@link FormRepresentation}

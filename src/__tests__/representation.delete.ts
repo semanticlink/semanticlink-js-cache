@@ -1,8 +1,8 @@
-import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
-import TrackedRepresentationFactory from '../representation/trackedRepresentationFactory';
-import RepresentationUtil from '../utils/representationUtil';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
+import { TrackedRepresentationFactory } from '../representation/trackedRepresentationFactory';
+import { RepresentationUtil } from '../utils/representationUtil';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
-import del from '../representation/delete';
+import { del } from '../representation/delete';
 
 jest.mock('../representation/trackedRepresentationFactory');
 const trackedRepresentationFactory = TrackedRepresentationFactory as jest.Mocked<typeof TrackedRepresentationFactory>;

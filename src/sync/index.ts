@@ -4,22 +4,22 @@ import { StrategyType, SyncType } from '../interfaces/sync/types';
 import { ResourceSync } from '../interfaces/sync/resourceSync';
 import { SyncOptions } from '../interfaces/sync/syncOptions';
 import { NamedResourceSync } from '../interfaces/sync/namedResourceSync';
-import LinkRelConvertUtil from '../utils/linkRelConvertUtil';
+import { LinkRelConvertUtil } from '../utils/linkRelConvertUtil';
 import anylogger from 'anylogger';
-import RepresentationUtil from '../utils/representationUtil';
+import { RepresentationUtil } from '../utils/representationUtil';
 import { instanceOfUriList } from '../utils/instanceOf/instanceOfUriList';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 import { TrackedRepresentation } from '../types/types';
 import { DocumentRepresentation } from '../interfaces/document';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
-import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
+import { NamedRepresentationFactory } from '../representation/namedRepresentationFactory';
 import { instanceOfSingleton } from '../utils/instanceOf/instanceOfSingleton';
-import LinkRelation from '../linkRelation';
-import ApiUtil from '../apiUtil';
+import { LinkRelation } from '../linkRelation';
+import { ApiUtil } from '../apiUtil';
 import { instanceOfDocumentCollection } from '../utils/instanceOf/instanceOfDocumentCollection';
 import { instanceOfDocumentSingleton } from '../utils/instanceOf/instanceOfDocumentSingleton';
-import SyncUtil from './syncUtil';
+import { SyncUtil } from './syncUtil';
 
 const log = anylogger('Sync');
 

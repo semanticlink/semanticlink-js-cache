@@ -8,10 +8,10 @@ import {
 } from './helpers/representationMatcher';
 import { Status } from '../representation/status';
 import each from 'jest-each';
-import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
-import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
-import LinkRelation from '../linkRelation';
+import { TrackedRepresentationUtil } from '../utils/trackedRepresentationUtil';
+import { LinkRelation } from '../linkRelation';
 
 describe('Sparse Representation Factory', () => {
 

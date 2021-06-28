@@ -7,7 +7,7 @@ const log = anylogger('CollectionMerger');
 /**
  * A helper class for manipulating items in a {@link CollectionRepresentation.items}.
  */
-export default class CollectionMerger {
+export class CollectionMerger {
     /**
      * Omit items in the lvalue that are not in the rvalue.
      * Returns the lvalue (mutated).

@@ -1,11 +1,11 @@
 import { LinkedRepresentation } from 'semantic-link';
-import TrackedRepresentationFactory from './trackedRepresentationFactory';
+import { TrackedRepresentationFactory } from './trackedRepresentationFactory';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
-import RepresentationUtil from '../utils/representationUtil';
+import { RepresentationUtil } from '../utils/representationUtil';
 import anylogger from 'anylogger';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 import { TrackedRepresentation } from '../types/types';
@@ -19,7 +19,7 @@ const log = anylogger('delete');
  * @param options
  * @returns removed representation or default
  */
-export default async function del<T extends LinkedRepresentation>(
+export async function del<T extends LinkedRepresentation>(
     resource: T | TrackedRepresentation<T>,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &

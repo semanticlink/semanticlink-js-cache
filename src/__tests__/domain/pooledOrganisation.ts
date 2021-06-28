@@ -4,11 +4,11 @@ import {
     PooledResourceResolver,
     RelName,
 } from '../../sync/pooledResource';
-import CustomLinkRelation from './customLinkRelation';
+import { CustomLinkRelation } from './customLinkRelation';
 import { Question } from './question';
 
 
-export default class PooledOrganisation<T extends LinkedRepresentation> extends PooledResource<T> {
+export class PooledOrganisation<T extends LinkedRepresentation> extends PooledResource<T> {
 
     protected makeResolvers(): Record<RelName, PooledResourceResolver> {
         return {

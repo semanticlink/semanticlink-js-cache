@@ -1,8 +1,8 @@
 import { self as parentStepsUri } from './314-workflow/step-pages-feed';
 import { self as editUri } from './form/edit';
 import { self as stepsUri } from './ac5-page-1/step-page-1-feed';
-import CustomLinkRelation from '../../../../../domain/customLinkRelation';
-import LinkRelation from '../../../../../../linkRelation';
+import { CustomLinkRelation } from '../../../../../domain/customLinkRelation';
+import { LinkRelation } from '../../../../../../linkRelation';
 
 export const selfUri = 'https://api.example.com/organisation/a656927b0f/step/314ee4fc57';
 export const resource = {

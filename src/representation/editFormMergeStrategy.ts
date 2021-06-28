@@ -1,5 +1,5 @@
 import { EditFormMergeStrategy } from '../interfaces/editFormMergeStrategy';
-import ResourceMergeFactory from './resourceMergeFactory';
+import { ResourceMergeFactory } from './resourceMergeFactory';
 import { MergeOptions } from '../interfaces/mergeOptions';
 import anylogger from 'anylogger';
 

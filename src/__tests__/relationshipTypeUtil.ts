@@ -1,7 +1,7 @@
 import { assertThat } from 'mismatched';
 import each from 'jest-each';
 import { RelationshipType } from 'semantic-link';
-import RelationshipTypeUtil from '../utils/relationshipTypeUtil';
+import { RelationshipTypeUtil } from '../utils/relationshipTypeUtil';
 
 
 describe('RelationshipType Util', () => {

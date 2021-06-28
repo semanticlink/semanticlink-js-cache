@@ -7,21 +7,21 @@ import {
     RelationshipType,
 } from 'semantic-link';
 import { TrackedRepresentation } from '../types/types';
-import TrackedRepresentationFactory from './trackedRepresentationFactory';
+import { TrackedRepresentationFactory } from './trackedRepresentationFactory';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import anylogger from 'anylogger';
-import RepresentationUtil from '../utils/representationUtil';
-import SparseRepresentationFactory from './sparseRepresentationFactory';
-import LinkRelation from '../linkRelation';
+import { RepresentationUtil } from '../utils/representationUtil';
+import { SparseRepresentationFactory } from './sparseRepresentationFactory';
+import { LinkRelation } from '../linkRelation';
 import { DocumentRepresentation } from '../interfaces/document';
-import ResourceUpdateOptions from '../interfaces/resourceUpdateOptions';
+import { ResourceUpdateOptions } from '../interfaces/resourceUpdateOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { defaultCreateFormStrategy } from './createFormMergeStrategy';
-import ApiUtil from '../apiUtil';
+import { ApiUtil } from '../apiUtil';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 import { instanceOfForm } from '../utils/instanceOf/instanceOfForm';
 
@@ -31,7 +31,7 @@ const log = anylogger('create');
  *
  * TODO: accept but don't require TrackedRepresentation interface
  */
-export default async function create<T extends LinkedRepresentation, TResult extends LinkedRepresentation = T>(
+export async function create<T extends LinkedRepresentation, TResult extends LinkedRepresentation = T>(
     document: DocumentRepresentation<T> | TrackedRepresentation<T> | LinkType,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &

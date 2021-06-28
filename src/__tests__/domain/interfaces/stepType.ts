@@ -5,5 +5,3 @@ export enum StepType {
     image = '//enum/step/section/image',
     video = '//enum/step/section/video',
 }
-
-export default StepType;

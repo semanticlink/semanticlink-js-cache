@@ -1,6 +1,6 @@
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import { LinkedRepresentation } from 'semantic-link';
-import RepresentationUtil from '../utils/representationUtil';
+import { RepresentationUtil } from '../utils/representationUtil';
 
 describe('Representation utils', () => {
 

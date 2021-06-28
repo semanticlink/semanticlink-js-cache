@@ -1,7 +1,7 @@
 import { LinkedRepresentation } from 'semantic-link';
 import { FormRepresentation } from '../../../interfaces/formRepresentation';
-import QuestionType from './questionType';
-import ChoiceCollection from './choiceCollection';
+import { QuestionType } from './questionType';
+import { ChoiceCollection } from './choiceCollection';
 
 
 export interface QuestionRepresentation extends LinkedRepresentation {

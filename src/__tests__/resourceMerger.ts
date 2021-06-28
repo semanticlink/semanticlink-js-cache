@@ -1,12 +1,12 @@
 import { assertThat, match } from 'mismatched';
-import ResourceMergeFactory, { noopResolver, noopResourceResolver } from '../representation/resourceMergeFactory';
+import { noopResolver, noopResourceResolver, ResourceMergeFactory } from '../representation/resourceMergeFactory';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { DocumentRepresentation } from '../interfaces/document';
 import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
 import { ResourceResolver } from '../interfaces/resourceResolver';
 import { FormUtil } from '../utils/formUtil';
 import { FieldType } from '../types/formTypes';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import { MergeOptions } from '../interfaces/mergeOptions';
 
 const addSuffixResolver = (u: string) => u + 'XX';

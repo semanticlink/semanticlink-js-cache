@@ -1,7 +1,7 @@
 import anylogger from 'anylogger';
 import { SyncResultItem } from '../../interfaces/sync/types';
 import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
-import Differencer from '../../sync/differencer';
+import { Differencer } from '../../sync/differencer';
 import { SyncOptions } from '../../interfaces/sync/syncOptions';
 
 const log = anylogger('test');

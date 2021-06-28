@@ -1,14 +1,14 @@
 import { FormRepresentation } from '../interfaces/formRepresentation';
-import RepresentationUtil from './representationUtil';
+import { RepresentationUtil } from './representationUtil';
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import { FormItem } from '../interfaces/formItem';
 import { DocumentRepresentation } from '../interfaces/document';
 import { MergeOptions } from '../interfaces/mergeOptions';
 import { noopResolver } from '../representation/resourceMergeFactory';
-import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
-import LinkRelation from '../linkRelation';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
+import { LinkRelation } from '../linkRelation';
 import anylogger from 'anylogger';
-import LinkRelConvertUtil from './linkRelConvertUtil';
+import { LinkRelConvertUtil } from './linkRelConvertUtil';
 import { FieldType } from '../types/formTypes';
 import { instanceOfCollection } from './instanceOf/instanceOfCollection';
 

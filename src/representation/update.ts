@@ -1,12 +1,12 @@
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
-import ResourceUpdateOptions from '../interfaces/ResourceUpdateOptions';
+import { ResourceUpdateOptions } from '../interfaces/ResourceUpdateOptions';
 import anylogger from 'anylogger';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import { defaultEditFormStrategy } from './editFormMergeStrategy';
-import get from './get';
+import { get } from './get';
 import { TrackedRepresentation } from '../types/types';
 import { DocumentRepresentation } from '../interfaces/document';
-import TrackedRepresentationFactory from './trackedRepresentationFactory';
+import { TrackedRepresentationFactory } from './trackedRepresentationFactory';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
@@ -24,7 +24,7 @@ const log = anylogger('Update');
  * @param document
  * @param options
  */
-export default async function update<T extends LinkedRepresentation>(
+export async function update<T extends LinkedRepresentation>(
     resource: T | TrackedRepresentation<T> ,
     document: T | DocumentRepresentation<T>,
     options?: ResourceUpdateOptions &

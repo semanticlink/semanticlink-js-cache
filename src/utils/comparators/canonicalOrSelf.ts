@@ -1,5 +1,5 @@
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
-import LinkRelation from '../../linkRelation';
+import { LinkRelation } from '../../linkRelation';
 
 /**
  * Match on the Canonical or Self link relation on the resources

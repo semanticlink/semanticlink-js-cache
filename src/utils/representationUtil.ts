@@ -6,10 +6,10 @@ import {
     Uri,
 } from 'semantic-link';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
-import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
-import LinkRelation from '../linkRelation';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
+import { LinkRelation } from '../linkRelation';
 import anylogger from 'anylogger';
-import NamedRepresentationFactory from '../representation/namedRepresentationFactory';
+import { NamedRepresentationFactory } from '../representation/namedRepresentationFactory';
 import { instanceOfCollection } from './instanceOf/instanceOfCollection';
 import { TrackedRepresentation } from '../types/types';
 
@@ -149,7 +149,7 @@ export function findInCollection<T extends LinkedRepresentation>(
 
 
 // TODO: inline methods
-export default class RepresentationUtil {
+export class RepresentationUtil {
     public static fields = properties;
     public static compact = compact;
     public static omit = omit;

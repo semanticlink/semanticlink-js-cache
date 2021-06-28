@@ -1,5 +1,5 @@
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
-import HttpRequest from './httpRequest';
+import { HttpRequest } from './httpRequest';
 import { defaultOptions } from './defaultRequestOptions';
 
 export class HttpRequestFactory {

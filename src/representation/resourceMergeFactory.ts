@@ -1,14 +1,14 @@
 import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import { FormRepresentation } from '../interfaces/formRepresentation';
 import { MergeOptions } from '../interfaces/mergeOptions';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import { ResourceResolver } from '../interfaces/resourceResolver';
 import anylogger from 'anylogger';
 import { DocumentRepresentation } from '../interfaces/document';
 import { TrackedRepresentation } from '../types/types';
 import { Resolver } from '../interfaces/resolver';
 import { FormUtil } from '../utils/formUtil';
-import FieldResolverUtil from '../utils/fieldResolverUtil';
+import { FieldResolverUtil } from '../utils/fieldResolverUtil';
 import { FieldLinksResolverUtil } from '../utils/fieldLinksResolverUtil';
 
 export const noop = (): void => {
@@ -28,7 +28,7 @@ const log = anylogger('ResourceMerger');
  * Processes difference sets (created, update, delete) for between two client-side collections {@Link CollectionRepresentation}
  *
  */
-export default class ResourceMergeFactory {
+export class ResourceMergeFactory {
 
     public static async createMerge<T extends DocumentRepresentation>(
         resource: T,

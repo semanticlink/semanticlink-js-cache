@@ -3,7 +3,7 @@ import anylogger from 'anylogger';
 
 const log = anylogger('RelationshipTypeUtil');
 
-export default class RelationshipTypeUtil {
+export class RelationshipTypeUtil {
 
     /**
      * Takes a string or a Regexp and makes camel cased strings.

@@ -1,5 +1,3 @@
 import { EditMergeOptions } from './editMergeOptions';
 
-type ResourceUpdateOptions = EditMergeOptions;
-
-export default ResourceUpdateOptions;
+export type ResourceUpdateOptions = EditMergeOptions;

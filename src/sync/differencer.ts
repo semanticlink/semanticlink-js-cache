@@ -1,7 +1,7 @@
 import anylogger from 'anylogger';
 import { CollectionRepresentation, LinkedRepresentation, LinkUtil } from 'semantic-link';
 import { defaultEqualityOperators } from '../utils/comparators';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import { ComparableRepresentation, Comparator } from '../interfaces/comparator';
 import { SyncOptions } from '../interfaces/sync/syncOptions';
 import { CreateType, DeleteType, SyncResultItem, UpdateType } from '../interfaces/sync/types';
@@ -25,7 +25,7 @@ interface MoveType {
 }
 
 
-export default class Differencer {
+export class Differencer {
     /**
      * A default set of comparisons made to check if two resource
      * representation refer to the same resource in a collection.

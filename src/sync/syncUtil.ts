@@ -5,7 +5,7 @@ import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { SyncInfo } from '../interfaces/sync/syncInfo';
 import { DocumentRepresentation } from '../interfaces/document';
-import ApiUtil from '../apiUtil';
+import { ApiUtil } from '../apiUtil';
 import { noopResolver } from '../representation/resourceMergeFactory';
 import {
     CreateStrategy,
@@ -14,14 +14,14 @@ import {
     UpdateStrategy,
 } from '../interfaces/sync/syncResolverOptions';
 import { TrackedRepresentation } from '../types/types';
-import LinkRelation from '../linkRelation';
-import Differencer from './differencer';
+import { LinkRelation } from '../linkRelation';
+import { Differencer } from './differencer';
 import anylogger from 'anylogger';
-import RepresentationUtil from '../utils/representationUtil';
+import { RepresentationUtil } from '../utils/representationUtil';
 
 const log = anylogger('SyncUtil');
 
-export default class SyncUtil {
+export class SyncUtil {
 
     public static defaultFindResourceInCollectionStrategy = RepresentationUtil.findInCollection;
 

@@ -1,13 +1,13 @@
 import { LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
-import LinkRelConvertUtil from '../utils/linkRelConvertUtil';
-import LinkRelation from '../linkRelation';
-import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
-import TrackedRepresentationFactory from './trackedRepresentationFactory';
+import { LinkRelConvertUtil } from '../utils/linkRelConvertUtil';
+import { LinkRelation } from '../linkRelation';
+import { TrackedRepresentationUtil } from '../utils/trackedRepresentationUtil';
+import { TrackedRepresentationFactory } from './trackedRepresentationFactory';
 import anylogger from 'anylogger';
 import { ResourceAssignOptions } from '../interfaces/resourceAssignOptions';
-import SparseRepresentationFactory from './sparseRepresentationFactory';
-import RepresentationUtil from '../utils/representationUtil';
+import { SparseRepresentationFactory } from './sparseRepresentationFactory';
+import { RepresentationUtil } from '../utils/representationUtil';
 
 const log = anylogger('NamedRepresentationFactory');
 
@@ -32,7 +32,7 @@ function firstLinkNameStrategy(rel: RelationshipType | undefined, representation
     return LinkRelConvertUtil.relTypeToCamel(rel);
 }
 
-export default class NamedRepresentationFactory {
+export class NamedRepresentationFactory {
 
     public static defaultNameStrategy: NameStrategy = firstLinkNameStrategy;
 

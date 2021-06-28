@@ -6,11 +6,11 @@ import anylogger from 'anylogger';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { instanceOfFeed } from '../utils/instanceOf/instanceOfFeed';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 
 const log = anylogger('SparseRepresentationFactory');
 
-export default class SparseRepresentationFactory {
+export class SparseRepresentationFactory {
 
     public static mappedTitleAttributeName = 'name' as const;
 

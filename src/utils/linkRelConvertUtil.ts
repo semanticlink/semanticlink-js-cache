@@ -1,7 +1,7 @@
 import { instanceOfLinkSelector, RelationshipType } from 'semantic-link';
 
 
-export default class LinkRelConvertUtil {
+export class LinkRelConvertUtil {
 
     private static NameRegex = /([A-Z])/g;
     private static EMPTY = '';

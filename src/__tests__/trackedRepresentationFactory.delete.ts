@@ -1,12 +1,12 @@
 import { LinkedRepresentation } from 'semantic-link';
 import { assertThat } from 'mismatched';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
-import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
+import { TrackedRepresentationUtil } from '../utils/trackedRepresentationUtil';
 import { Status } from '../representation/status';
 import { TrackedRepresentation } from '../types/types';
-import SparseRepresentationFactory from '../representation/sparseRepresentationFactory';
-import TrackedRepresentationFactory from '../representation/trackedRepresentationFactory';
-import LinkRelation from '../linkRelation';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
+import { TrackedRepresentationFactory } from '../representation/trackedRepresentationFactory';
+import { LinkRelation } from '../linkRelation';
 
 describe('Tracked Representation Factory', () => {
 

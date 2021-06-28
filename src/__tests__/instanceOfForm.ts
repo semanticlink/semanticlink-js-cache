@@ -1,6 +1,6 @@
 import { instanceOfForm } from '../utils/instanceOf/instanceOfForm';
 import { assertThat } from 'mismatched';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 
 describe('instance of form', () => {
 

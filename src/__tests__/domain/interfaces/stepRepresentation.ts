@@ -1,6 +1,6 @@
 import { LinkedRepresentation, Uri } from 'semantic-link';
-import StepType from './stepType';
-import StepCollection from './stepCollection';
+import { StepType } from './stepType';
+import { StepCollection } from './stepCollection';
 import { FormRepresentation } from '../../../interfaces/formRepresentation';
 
 export interface StepRepresentation extends LinkedRepresentation {

@@ -1,15 +1,15 @@
 import { LinkedRepresentation } from 'semantic-link';
-import NamedRepresentationFactory from './namedRepresentationFactory';
-import TrackedRepresentationFactory from './trackedRepresentationFactory';
+import { NamedRepresentationFactory } from './namedRepresentationFactory';
+import { TrackedRepresentationFactory } from './trackedRepresentationFactory';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
-import RepresentationUtil from '../utils/representationUtil';
+import { RepresentationUtil } from '../utils/representationUtil';
 import anylogger from 'anylogger';
-import ResourceUpdateOptions from '../interfaces/resourceUpdateOptions';
+import { ResourceUpdateOptions } from '../interfaces/resourceUpdateOptions';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 
 const log = anylogger('get');
@@ -21,7 +21,7 @@ const log = anylogger('get');
  * @param resource
  * @param options
  */
-export default async function get<T extends LinkedRepresentation, TResult extends LinkedRepresentation>(
+export async function get<T extends LinkedRepresentation, TResult extends LinkedRepresentation>(
     resource: T,
     options?: ResourceFactoryOptions &
         ResourceQueryOptions &

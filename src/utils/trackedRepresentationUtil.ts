@@ -2,17 +2,17 @@ import { LinkedRepresentation, LinkUtil } from 'semantic-link';
 import { state, TrackedRepresentation } from '../types/types';
 import { State } from '../representation/state';
 import anylogger from 'anylogger';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 import { Status } from '../representation/status';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { ResourceAssignOptions } from '../interfaces/resourceAssignOptions';
-import SingletonMerger from '../representation/singletonMerger';
+import { SingletonMerger } from '../representation/singletonMerger';
 import { instanceOfCollection } from './instanceOf/instanceOfCollection';
 import { instanceOfTrackedRepresentation } from './instanceOf/instanceOfTrackedRepresentation';
 
 const log = anylogger('TrackedRepresentationUtil');
 
-export default class TrackedRepresentationUtil {
+export class TrackedRepresentationUtil {
     public static getState<T extends LinkedRepresentation, U extends TrackedRepresentation<T>>(resource: U): State {
         return resource[state];
     }

@@ -1,7 +1,7 @@
-import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
+import { TrackedRepresentationUtil } from '../utils/trackedRepresentationUtil';
 import { CollectionRepresentation, LinkedRepresentation } from 'semantic-link';
 import { Status } from '../representation/status';
-import TrackedRepresentationFactory from '../representation/sparseRepresentationFactory';
+import { SparseRepresentationFactory } from '../representation/sparseRepresentationFactory';
 import { TrackedRepresentation } from '../types/types';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
 import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
@@ -11,7 +11,7 @@ describe('Tracked Representation Utils', () => {
     describe('location only', function() {
         type T = TrackedRepresentation<LinkedRepresentation> & { test: string };
         type K = keyof T;
-        const resource = TrackedRepresentationFactory.make({ uri: 'https://example.com/1' }) as T;
+        const resource = SparseRepresentationFactory.make({ uri: 'https://example.com/1' }) as T;
 
         it('getState, should be defined', () => {
             expect(resource).not.toBeNull();
@@ -48,8 +48,8 @@ describe('Tracked Representation Utils', () => {
     describe('add', () => {
         it('added item is tracked', () => {
             type T = TrackedRepresentation<LinkedRepresentation> & { me: LinkedRepresentation };
-            const resource = TrackedRepresentationFactory.make({ uri: 'https://example.com' }) as T;
-            const toAdd = TrackedRepresentationFactory.make({ uri: 'https://example.com/me' }) as TrackedRepresentation<LinkedRepresentation>;
+            const resource = SparseRepresentationFactory.make({ uri: 'https://example.com' }) as T;
+            const toAdd = SparseRepresentationFactory.make({ uri: 'https://example.com/me' }) as TrackedRepresentation<LinkedRepresentation>;
             TrackedRepresentationUtil.add(resource, 'me', toAdd);
             expect(TrackedRepresentationUtil.isTracked(resource, 'me')).toBeTruthy();
         });
@@ -59,7 +59,7 @@ describe('Tracked Representation Utils', () => {
 
         it('true', () => {
             type T = TrackedRepresentation<LinkedRepresentation>;
-            const resource = TrackedRepresentationFactory.make({ uri: 'https://example.com/1' }) as T;
+            const resource = SparseRepresentationFactory.make({ uri: 'https://example.com/1' }) as T;
             expect(instanceOfTrackedRepresentation(resource)).toBeTruthy();
         });
 

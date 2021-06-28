@@ -1,4 +1,4 @@
-export default class JsonSerialiser {
+export class JsonSerialiser {
 
     /**
      * A replacer function to strip the state from a model

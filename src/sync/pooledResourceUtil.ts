@@ -1,9 +1,9 @@
 import anylogger from 'anylogger';
 import { CollectionRepresentation, LinkedRepresentation, LinkUtil, RelationshipType } from 'semantic-link';
-import ApiUtil from '../apiUtil';
-import LinkRelation from '../linkRelation';
+import { ApiUtil } from '../apiUtil';
+import { LinkRelation } from '../linkRelation';
 import { TrackedRepresentation } from '../types/types';
-import RepresentationUtil from '../utils/representationUtil';
+import { RepresentationUtil } from '../utils/representationUtil';
 import { noopResolver } from '../representation/resourceMergeFactory';
 import { PooledCollectionOptions } from '../interfaces/pooledCollectionOptions';
 import { instanceOfCollection } from '../utils/instanceOf/instanceOfCollection';
@@ -53,7 +53,7 @@ async function makeAndResolveResource<T extends LinkedRepresentation>(
     return undefined;
 }
 
-export default class PooledResourceUtil {
+export class PooledResourceUtil {
 
     /**
      * Used for provisioning a pooled resource. Based on

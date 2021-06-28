@@ -2,9 +2,9 @@ import { LinkedRepresentation, LinkType, RelationshipType } from 'semantic-link'
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
 import { DocumentRepresentation } from '../interfaces/document';
-import LinkRelation from '../linkRelation';
+import { LinkRelation } from '../linkRelation';
 
-export default class HttpRequest {
+export class HttpRequest {
     private options: Required<HttpRequestOptions>;
 
     constructor(options: Required<HttpRequestOptions>) {

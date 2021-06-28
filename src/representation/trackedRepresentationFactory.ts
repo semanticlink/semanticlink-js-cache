@@ -3,20 +3,20 @@ import { TrackedRepresentation } from '../types/types';
 import { Status } from './status';
 import { ResourceLinkOptions } from '../interfaces/resourceLinkOptions';
 import { HttpRequestOptions } from '../interfaces/httpRequestOptions';
-import SingletonMerger from './singletonMerger';
-import LinkRelation from '../linkRelation';
+import { SingletonMerger } from './singletonMerger';
+import { LinkRelation } from '../linkRelation';
 import { HttpRequestFactory } from '../http/httpRequestFactory';
 import { HttpRequestError } from '../interfaces/httpRequestError';
-import TrackedRepresentationUtil from '../utils/trackedRepresentationUtil';
+import { TrackedRepresentationUtil } from '../utils/trackedRepresentationUtil';
 import { ResourceQueryOptions } from '../interfaces/resourceQueryOptions';
 import { ResourceMergeOptions } from '../interfaces/resourceAssignOptions';
 import { parallelWaitAll, sequentialWaitAll } from '../utils/promiseWaitAll';
-import CollectionMerger from './collectionMerger';
-import SparseRepresentationFactory from './sparseRepresentationFactory';
+import { CollectionMerger } from './collectionMerger';
+import { SparseRepresentationFactory } from './sparseRepresentationFactory';
 import { ResourceFetchOptions } from '../interfaces/resourceFetchOptions';
 import { DocumentRepresentation } from '../interfaces/document';
 import anylogger from 'anylogger';
-import RepresentationUtil from '../utils/representationUtil';
+import { RepresentationUtil } from '../utils/representationUtil';
 import { ResourceFactoryOptions } from '../interfaces/resourceFactoryOptions';
 import { State } from './state';
 import { instanceOfTrackedRepresentation } from '../utils/instanceOf/instanceOfTrackedRepresentation';
@@ -25,7 +25,7 @@ import { FormRepresentation } from '../interfaces/formRepresentation';
 
 const log = anylogger('TrackedRepresentationFactory');
 
-export default class TrackedRepresentationFactory {
+export class TrackedRepresentationFactory {
 
     /**
      * Creates (POST) a representation in the context of a resource. The resulting representation from the Location header
